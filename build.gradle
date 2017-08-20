@@ -1,0 +1,70 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+project.version = "1.0.0-SNAPSHOT"
+project.group = 'com.codingchili'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    maven { url 'http://repo.maven.apache.org/maven2' }
+
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile name: 'core-1.0.3-SNAPSHOT'
+}
+
+test {
+    testLogging {
+        exceptionFormat "full"
+    }
+    reports.html.enabled = false
+}
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+jar {
+    from {
+        (configurations.runtime).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    manifest {
+        attributes 'Implementation-Title': 'flashcards',
+                'Implementation-Version': version,
+                'Main-Class': 'com.codingchili.flashcards.Service'
+    }
+}
+
+task alljavadoc(type: Javadoc) {
+    source subprojects.collect { it.sourceSets.main.allJava }
+    classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+    destinationDir = file("${buildDir}/docs/javadoc")
+}
+
+task archiveJavadoc(type: Zip, dependsOn: alljavadoc) {
+    baseName = 'javadocs'
+    from fileTree(file("${buildDir}/docs/javadoc"))
+}
+
+task testReport(type: TestReport, dependsOn: 'build') {
+    destinationDir = file("$buildDir/reports/allTests")
+    reportOn subprojects*.test
+}
+
+task archiveTestReport(type: Zip, dependsOn: testReport) {
+    baseName = 'testreport'
+    from fileTree(file("$buildDir/reports/allTests"))
+}
