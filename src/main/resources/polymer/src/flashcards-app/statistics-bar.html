@@ -9,7 +9,7 @@
       :host {
         display: block;
       }
-      .stat-box {
+      #box {
         height: 324px;
         margin-top: 32px;
         display: flex;
@@ -44,7 +44,7 @@
       }
         </style>
 
-        <div class="stat-box">
+        <div id="box">
             <template is="dom-repeat" items="{{statistics}}">
 
                 <iron-ajax auto id$="{{item.name}}" url="[[api]]"
@@ -52,7 +52,7 @@
                         handle-as="json" method="post" last-response="{{item.query}}">
                 </iron-ajax>
 
-                <paper-card on-click="clicked">
+                <paper-card on-click="clicked" elevation="3">
                     <div class="header">[[item.description]]</div>
                     <div class="value">[[item.query.size]]</div>
                     <iron-icon icon="[[item.icon]]"></iron-icon>

@@ -10,7 +10,6 @@
         display: block;
         width: 100%;
         height: 100%;
-        margin-top: 32px;
       }
       paper-card {
         width: 100%;
@@ -38,7 +37,7 @@
 
         </style>
 
-        <paper-card id="box">
+        <paper-card id="box" elevation="3">
             <paper-input label="[[name]]" id="search" on-keydown="search" value="{{text}}" autofocus>
                 <iron-icon icon="[[icon]]" slot="prefix"></iron-icon>
                 <div slot="suffix"></div>

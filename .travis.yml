@@ -4,6 +4,7 @@ dist: trusty
 jdk: oraclejdk9
 install: true
 script:
+  - npm install -g polymer-cli
   - ./gradlew -version
   - ./gradlew build
 notifications:
