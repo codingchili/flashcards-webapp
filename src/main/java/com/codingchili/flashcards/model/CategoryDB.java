@@ -10,6 +10,7 @@ import io.vertx.core.Handler;
 
 import java.util.Collection;
 
+import static com.codingchili.core.configuration.CoreStrings.ID_NAME;
 import static com.codingchili.flashcards.model.FlashCard.ID_OWNER;
 import static com.codingchili.flashcards.model.FlashCategory.ID_SHARED;
 import static com.codingchili.flashcards.model.FlashCategory.ID_USERS;
@@ -19,7 +20,8 @@ import static java.util.stream.Collectors.toList;
  * Handles storage of categories.
  */
 public class CategoryDB implements AsyncCategoryStore {
-    public static final String ARRAY = "[]";
+    private static final String ARRAY = "[]";
+    private static final int MAX_PUBLIC_RESULTS = 24;
     private AsyncStorage<FlashCategory> categories;
 
     public CategoryDB(CoreContext core) {
@@ -52,8 +54,13 @@ public class CategoryDB implements AsyncCategoryStore {
     }
 
     @Override
-    public void shared(Handler<AsyncResult<Collection<FlashCategory>>> handler) {
-        categories.query(ID_SHARED).equalTo(true).execute(handler);
+    public void shared(Handler<AsyncResult<Collection<FlashCategory>>> handler, String name) {
+        categories.query(ID_SHARED)
+                .equalTo(true)
+                .and(ID_NAME)
+                .startsWith(name)
+                .pageSize(MAX_PUBLIC_RESULTS)
+                .execute(handler);
     }
 
     @Override

@@ -8,9 +8,9 @@ import com.codingchili.core.security.TokenFactory;
 import com.codingchili.core.storage.AsyncStorage;
 import com.codingchili.core.storage.StorageLoader;
 import com.codingchili.flashcards.AppConfig;
-import com.codingchili.flashcards.response.AccountSearchResponse;
 import io.vertx.core.Future;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import static com.codingchili.core.configuration.CoreStrings.ID_USERNAME;
@@ -22,7 +22,6 @@ public class AccountDB implements AsyncAccountStore {
     private TokenFactory factory = AppConfig.factory();
     private AsyncStorage<Account> accounts;
     private HashHelper hasher;
-    private CoreContext core;
 
     public AccountDB(CoreContext core) {
         this.hasher = new HashHelper(core);
@@ -69,16 +68,16 @@ public class AccountDB implements AsyncAccountStore {
     }
 
     @Override
-    public Future<AccountSearchResponse> search(String username) {
-        Future<AccountSearchResponse> future = Future.future();
+    public Future<Collection<Account>> search(String username) {
+        Future<Collection<Account>> future = Future.future();
         accounts.query(ID_USERNAME).startsWith(username)
                 .pageSize(16)
                 .orderBy(ID_USERNAME)
                 .execute(done -> {
                     if (done.succeeded()) {
-                        future.complete(new AccountSearchResponse(done.result().stream()
-                                .map(Account::getUsername)
-                                .collect(Collectors.toList())));
+                        future.complete(done.result().stream()
+                                .map(account -> account.setPassword(null))
+                                .collect(Collectors.toList()));
                     } else {
                         future.fail(done.cause());
                     }

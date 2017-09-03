@@ -1,0 +1,13 @@
+{
+  "builds": [{
+    "js": {"minify": true},
+    "css": {"minify": true},
+    "html": {"minify": true},
+    "bundle": true
+  }],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}

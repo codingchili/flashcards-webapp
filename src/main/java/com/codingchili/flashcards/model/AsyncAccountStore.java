@@ -2,8 +2,9 @@ package com.codingchili.flashcards.model;
 
 import com.codingchili.core.security.Account;
 import com.codingchili.core.security.Token;
-import com.codingchili.flashcards.response.AccountSearchResponse;
 import io.vertx.core.Future;
+
+import java.util.Collection;
 
 /**
  * Interface used to handle authentication and the storage of users.
@@ -31,7 +32,7 @@ public interface AsyncAccountStore {
      * @param username the query string, must match the beginning.
      * @return a collection of users with an username that resembles the given
      */
-    Future<AccountSearchResponse> search(String username);
+    Future<Collection<Account>> search(String username);
 
     /**
      * Gets the number of accounts in the system.

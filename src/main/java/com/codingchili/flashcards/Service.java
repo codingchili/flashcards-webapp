@@ -27,9 +27,11 @@ public class Service implements CoreService {
                 .setHandlers(1)
                 .setListeners(1);
 
-        LaunchContext context = new LaunchContext();
-        context.settings().service(Service.class);
-        new Launcher(context);
+        Configurations.launcher()
+                .deployable(Service.class)
+                .setClustered(false);
+
+        Launcher.start(new LaunchContext(args));
     }
 
     @Override

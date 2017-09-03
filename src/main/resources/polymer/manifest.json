@@ -1,0 +1,7 @@
+{
+  "name": "flashcards",
+  "short_name": "flashcards",
+  "description": "Flashcard repository",
+  "start_url": "/",
+  "display": "standalone"
+}

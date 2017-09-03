@@ -30,7 +30,7 @@ public interface AsyncCategoryStore {
      *
      * @return callback
      */
-    void shared(Handler<AsyncResult<Collection<FlashCategory>>> handler);
+    void shared(Handler<AsyncResult<Collection<FlashCategory>>> handler, String request);
 
     /**
      * Lists all categories either owned or shared with the given user.

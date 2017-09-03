@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/src/flashcards-app/statistics-bar.html">
+<link rel="import" href="/src/flashcards-app/box-search.html">
+
+<dom-module id="index-view">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            .page {
+                display: flex;
+                align-items: stretch;
+            }
+        </style>
+
+        <div class="page">
+            <statistics-bar></statistics-bar>
+            <box-search></box-search>
+        </div>
+
+    </template>
+
+    <script>
+    class IndexView extends Polymer.Element {
+      static get is() { return 'index-view'; }
+      constructor() {
+        super();
+      }
+    }
+    window.customElements.define(IndexView.is, IndexView);
+    </script>
+</dom-module>

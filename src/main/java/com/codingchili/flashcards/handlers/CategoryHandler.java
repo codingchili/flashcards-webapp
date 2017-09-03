@@ -21,7 +21,7 @@ import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
 /**
  * Handler controller for categories.
  */
-@Address("category")
+@Address("categories")
 public class CategoryHandler implements CoreHandler {
     private Protocol<RequestHandler<Request>> protocol = new Protocol<>(this);
     private TokenFactory tokenFactory = AppConfig.factory();
@@ -54,7 +54,7 @@ public class CategoryHandler implements CoreHandler {
 
     @Public("public")
     public void publicCategories(CategoryRequest request) {
-        categories.shared(request::result);
+        categories.shared(request::result, request.categoryName());
     }
 
     @Private("share")

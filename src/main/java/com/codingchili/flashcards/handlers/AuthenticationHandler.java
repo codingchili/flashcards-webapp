@@ -13,7 +13,7 @@ import com.codingchili.flashcards.response.SizeResponse;
 /**
  * Handler controller for authentication.
  */
-@Address("login")
+@Address("accounts")
 public class AuthenticationHandler implements CoreHandler {
     private Protocol<RequestHandler<Request>> protocol = new Protocol<>(this);
     private AsyncAccountStore accounts;

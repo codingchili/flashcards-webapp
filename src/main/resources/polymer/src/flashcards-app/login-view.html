@@ -1,0 +1,146 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<dom-module id="login-view">
+    <template>
+        <style>
+      :host {
+        display: flex;
+        width: 100%;
+        height: 100%;
+      }
+      #box {
+        width: 300px;
+        height: 375px;
+        margin: auto;
+        margin-top: 42px;
+      }
+      paper-button {
+        background-color: var(--paper-pink-400);
+        color: #ffffff;
+        width: 100%;
+        margin-top: 32px;
+      }
+        paper-input {
+        --paper-input-container-focus-color: var(--paper-pink-400);
+        --paper-input-container-invalid-color: var(--paper-pink-400);
+        --paper-input-container-input-color: #000000;
+      }
+      #cancel-button {
+        background-color: var(--paper-indigo-200);
+        margin-top: 16px;
+      }
+    </style>
+
+        <paper-card id="box">
+            <h2 hidden$="[[registration]]">Authenticate</h2>
+            <h2 hidden$="[[!registration]]">Register</h2>
+            <paper-input label="Username" id="userinput" on-keydown="onkey" value="{{username}}" autofocus></paper-input>
+            <paper-input label="Password" id="passwordinput" on-keydown="onkey" value="{{password}}"></paper-input>
+            <paper-input hidden$="[[!registration]]" id="pass-repeat" on-keydown="onkey" label="Password (repeat)" value="{{password-repeat}}"></paper-input>
+
+            <paper-button hidden$="[[registration]]" raised on-tap="call">Authenticate</paper-button>
+            <paper-button hidden$="[[!registration]]" raised on-tap="call">Register</paper-button>
+            <paper-button hidden$="[[!registration]]" id="cancel-button" on-tap="setLogin">Cancel</paper-button>
+        </paper-card>
+
+        <paper-toast id="toast" text="{{message}}"></paper-toast>
+
+        <iron-ajax id="registerjax" url="[[api]]"
+                   body='{"target":"accounts", "route":"register", "username":"[[username]]", "password": "[[password]]"}'
+                   handle-as="json" method="post" on-response="doRegister">
+        </iron-ajax>
+
+        <iron-ajax id="loginjax" url="[[api]]" method="post"
+                   body='{"target":"accounts", "route":"authenticate", "username": "[[username]]", "password":"[[password]]"}'
+                   handle-as="json" on-response="doLogin">
+        </iron-ajax>
+    </template>
+
+</dom-module>
+
+<script>
+    class LoginView extends Polymer.Element {
+      static get is() { return 'login-view'; }
+
+      constructor() {
+        super();
+        this.api = application.api();
+        this.registration = false;
+
+        application.subscribe('onLoginPage', () => {
+            this.$.userinput.focus();
+        });
+      }
+
+      doLogin(e) {
+       let response = e.detail.response;
+
+        switch (response.status) {
+            case ACCEPTED:
+                application.onAuthenticated(response);
+                break;
+            case MISSING:
+                this.setRegister();
+                this.showMessage('User does not exist.');
+                break;
+            case ERROR: {
+                this.showMessage(response.message);
+                this.password = '';
+                this.$.userinput.focus();
+                this.$.passwordinput.focus();
+            }
+        }
+      }
+
+      doRegister(e) {
+        let data = e.detail.response;
+
+        switch (data.status) {
+            case ACCEPTED:
+                application.onAuthenticated(data);
+                break;
+            case CONFLICT:
+                this.$.userinput.focus();
+                this.showMessage('User already exists.');
+                break;
+            case ERROR:
+                this.showMessage(data.message);
+        }
+      }
+
+      onkey(e) {
+        if (e.keyCode == 13) {
+            this.call();
+        }
+      }
+
+      call() {
+        if (this.registration) {
+            if (this.password == this['password-repeat']) {
+                this.$.registerjax.generateRequest();
+            } else {
+                this.showMessage('Password needs to match.');
+            }
+        } else {
+            this.$.loginjax.generateRequest();
+        }
+      }
+
+      setRegister() {
+        this.registration = true;
+        this.$['pass-repeat'].focus();
+      }
+
+      setLogin() {
+        this.registration = false;
+        this.$.userinput.focus();
+      }
+
+      showMessage(text) {
+        this.message = text;
+        this.$.toast.open();
+      }
+    }
+    window.customElements.define(LoginView.is, LoginView);
+  </script>

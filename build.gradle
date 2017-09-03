@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'java'
 apply plugin: 'idea'
 
@@ -34,6 +36,18 @@ task sourcesJar(type: Jar) {
     classifier 'sources'
     from sourceSets.main.allSource
 }
+
+ext {
+    polymerBin = Os.isFamily(Os.FAMILY_WINDOWS) ? 'polymer.cmd' : 'polymer'
+}
+
+task polymer(type: Exec) {
+    workingDir "./src/main/resources/polymer"
+    commandLine = [polymerBin, "build"]
+}
+
+
+jar.dependsOn polymer
 
 jar {
     from {
