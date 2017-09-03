@@ -1,4 +1,4 @@
-# flashcards-webapp
+# flashcards-webapp [![Build Status](https://travis-ci.org/codingchili/flashcards-webapp.svg?branch=master)](https://travis-ci.org/codingchili/flashcards-webapp)
 
 An open source web application to help with managing flashcards. Built as microservices using [chili-core](https://github.com/codingchili/chili-core).
 
