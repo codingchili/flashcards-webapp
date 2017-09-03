@@ -37,7 +37,7 @@
             <h2 hidden$="[[!registration]]">Register</h2>
             <paper-input label="Username" id="userinput" on-keydown="onkey" value="{{username}}" autofocus></paper-input>
             <paper-input label="Password" id="passwordinput" on-keydown="onkey" value="{{password}}"></paper-input>
-            <paper-input hidden$="[[!registration]]" id="pass-repeat" on-keydown="onkey" label="Password (repeat)" value="{{password-repeat}}"></paper-input>
+            <paper-input hidden$="[[!registration]]" id="pass-repeat" on-keydown="onkey" label="Password (repeat)" value="{{passrepeat}}"></paper-input>
 
             <paper-button hidden$="[[registration]]" raised on-tap="call">Authenticate</paper-button>
             <paper-button hidden$="[[!registration]]" raised on-tap="call">Register</paper-button>
@@ -117,7 +117,7 @@
 
       call() {
         if (this.registration) {
-            if (this.password == this['password-repeat']) {
+            if (this.password == this.passrepeat) {
                 this.$.registerjax.generateRequest();
             } else {
                 this.showMessage('Password needs to match.');

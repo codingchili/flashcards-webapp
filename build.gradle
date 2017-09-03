@@ -39,11 +39,20 @@ task sourcesJar(type: Jar) {
 
 ext {
     polymerBin = Os.isFamily(Os.FAMILY_WINDOWS) ? 'polymer.cmd' : 'polymer'
+    bowerBin = Os.isFamily(Os.FAMILY_WINDOWS) ? 'bower.cmd' : 'bower'
 }
 
-task polymer(type: Exec) {
-    workingDir "./src/main/resources/polymer"
-    commandLine = [polymerBin, "build"]
+task polymer {
+    doLast {
+        exec {
+            workingDir "./src/main/resources/polymer"
+            commandLine = [bowerBin, "install"]
+        }
+        exec {
+            workingDir "./src/main/resources/polymer"
+            commandLine = [polymerBin, "build"]
+        }
+    }
 }
 
 
