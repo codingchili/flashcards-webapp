@@ -5,6 +5,7 @@ jdk: oraclejdk9
 install: true
 script:
   - npm install -g polymer-cli
+  - npm install -g bower
   - ./gradlew -version
   - ./gradlew build
 notifications:
