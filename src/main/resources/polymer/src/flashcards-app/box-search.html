@@ -2,23 +2,17 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
 
 <dom-module id="box-search">
     <template>
+        <style include="shared-styles"></style>
         <style>
       :host {
         display: block;
         width: 100%;
         height: 100%;
-      }
-      paper-card {
-        width: 100%;
-        height: 100%;
-      }
-      paper-input {
-        --paper-input-container-focus-color: var(--paper-pink-400);
-        --paper-input-container-invalid-color: var(--paper-pink-400);
-        --paper-input-container-input-color: #000000;
       }
       #search {
         width: 324px;
@@ -32,9 +26,9 @@
         color: rgba(0, 0, 0, 0.4);
       }
       #box {
-        height: 90%;
+        width: 100%;
+        min-height: 524px;
       }
-
         </style>
 
         <paper-card id="box" elevation="3">
@@ -43,15 +37,17 @@
                 <div slot="suffix"></div>
             </paper-input>
 
-            <template is="dom-repeat" items="{{result.collection}}">
-                <paper-card id="search-hit">
-                    [[item.username]]<br>
-                </paper-card>
-            </template>
+            <div id="hits">
+                <template is="dom-repeat" items="{{result.collection}}">
+                    <paper-card id="search-hit" elevation="1">
+                        [[item.username]]<br>
+                    </paper-card>
+                </template>
+            </div>
         </paper-card>
 
         <iron-ajax id="ajax" url="[[api]]" method="post"
-                   body='{{json}}'
+                   body='{{json}}' debounce-duration="0"
                    handle-as="json" on-response="response">
         </iron-ajax>
 

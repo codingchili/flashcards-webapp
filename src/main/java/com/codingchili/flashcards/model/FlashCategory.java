@@ -2,6 +2,7 @@ package com.codingchili.flashcards.model;
 
 import com.codingchili.core.storage.Storable;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
  * A set of flash cards that can be shared.
  */
 public class FlashCategory implements Storable {
-    public static final String ID_SHARED = "shared";
+    static final String ID_SHARED = "shared";
     public static final String ID_USERS = "users";
     private static final int MAX_SCORE_HISTORY = 10;
     private boolean shared = false;
@@ -17,6 +18,7 @@ public class FlashCategory implements Storable {
     private String name;
     private Set<String> users = new HashSet<>();
     private List<FlashScore> highscores = new ArrayList<>();
+    private ZonedDateTime created;
 
     public String getOwner() {
         return owner;
@@ -89,5 +91,18 @@ public class FlashCategory implements Storable {
     @Override
     public String id() {
         return owner + "_" + name;
+    }
+
+    @Override
+    public int hashCode() {
+        return id().hashCode();
+    }
+
+    public void setCreated(ZonedDateTime created) {
+        this.created = created;
+    }
+
+    public ZonedDateTime getCreated() {
+        return created;
     }
 }

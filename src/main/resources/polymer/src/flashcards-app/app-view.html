@@ -13,9 +13,14 @@
 <link rel="import" href="/src/flashcards-app/index-view.html">
 <link rel="import" href="/src/flashcards-app/login-view.html">
 <link rel="import" href="/src/flashcards-app/card-view.html">
+<link rel="import" href="/src/flashcards-app/category-view.html">
+<link rel="import" href="/src/flashcards-app/settings-view.html">
+<link rel="import" href="/src/flashcards-app/account-view.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 <dom-module id="app-view">
     <template>
+        <style include="shared-styles"></style>
         <style>
           :host {
             display: block;
@@ -25,32 +30,15 @@
           }
           #about {
             width: 426px;
-            height: 522px;
+            height: 502px;
           }
           #about-buttons {
             position: absolute;
-            bottom: 12px;
-            right: 12px;
-          }
-          paper-button {
-            background-color: var(--paper-pink-400);
-            color: #ffffff;
-          }
-          paper-item {
-            font-weight: bold;
-          }
-          paper-menu > paper-item:hover {
-            background-color: var(--paper-pink-400);
-            color: #ffffff;
-            font-weight: bold;
-            user-select: none;
-            cursor: pointer;
-          }
-          app-toolbar {
-            background-color: var(--paper-pink-400);
-            font-family: 'Roboto', Helvetica, sans-serif;
-            color: white;
-            --app-toolbar-font-size: 24px;
+            bottom: 0px;
+            right: 0px;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
           }
         </style>
         <app-location route="{{route}}"></app-location>
@@ -74,8 +62,7 @@
                 <paper-item on-click="login" hidden$="[[authenticated]]">Login</paper-item>
 
                 <paper-item on-click="categories" hidden$="[[!authenticated]]">My Categories</paper-item>
-                <paper-item on-click="shared" hidden$="[[!authenticated]]">Friends Categories</paper-item>
-                <paper-item on-click="public" hidden$="[[!authenticated]]">Public Categories</paper-item>
+                <paper-item on-click="search" hidden$="[[!authenticated]]">Search</paper-item>
                 <paper-item on-click="settings" hidden$="[[!authenticated]]">Settings</paper-item>
                 <paper-item on-click="account" hidden$="[[!authenticated]]">Account</paper-item>
                 <paper-item on-click="logout" hidden$="[[!authenticated]]">Logout</paper-item>
@@ -88,9 +75,12 @@
             <index-view name="" route="{{subroute}}"></index-view>
             <login-view name="login" route="{{subroute}}"></login-view>
             <card-view name="cards" route="{{subroute}}"></card-view>
+            <category-view name="categories" route="{{subroute}}"></category-view>
+            <account-view name="account" route="{{subroute}}"></account-view>
+            <settings-view name="settings" route="{{subroute}}"></settings-view>
         </iron-pages>
 
-        <paper-dialog id="about">
+        <paper-dialog id="about" modal>
             <a href="https://github.com/codingchili/flashcards-webapp" target="_blank">
                 <img style="position: absolute; top: 0; right: 0; border: 0;"
                      src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"
@@ -115,7 +105,6 @@
                     <li><a href="https://github.com/Polymer/polymer" target="_blank">Polymer 2.0</a></li>
                     <li><a href="https://github.com/eclipse/vert.x" target="_blank">Vertx</a></li>
                     <li><a href="https://github.com/hazelcast/hazelcast" target="_blank">Hazelcast</a></li>
-                    <li><a href="https://github.com/elastic/elasticsearch" target="_blank">ElasticSearch</a></li>
                     <li><a href="https://github.com/npgall/cqengine" target="_blank">CQEngine</a></li>
                     <li><a href="https://github.com/mongodb/mongo" target="_blank">MongoDB</a></li>
                 </ul>
@@ -154,13 +143,25 @@
         this.$.drawer.open();
       }
 
-      search() {
-        if (application.authenticated) {
+      categories() {
+        this.set('route.path', '/categories');
+        this.$.drawer.close();
+      }
 
-        } else {
-            this.set('route.path', '/')
-        }
+      search() {
+        this.set('route.path', '/')
         application.publish('onSearchPage');
+        this.$.drawer.close();
+      }
+
+    account() {
+        this.set('route.path', '/account')
+        this.$.drawer.close();
+      }
+
+    settings() {
+        this.set('route.path', '/settings')
+        this.$.drawer.close();
       }
 
       about() {
@@ -176,8 +177,7 @@
 
       logout() {
         application.onLogout();
-        this.$.drawer.close();
-        application.publish('onLoginPage');
+        this.login();
       }
     }
     window.customElements.define(AppView.is, AppView);

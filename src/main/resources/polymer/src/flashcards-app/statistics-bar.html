@@ -2,9 +2,12 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
 
 <dom-module id="statistics-bar">
     <template>
+        <style include="shared-styles"></style>
         <style>
       :host {
         display: block;
@@ -16,13 +19,6 @@
         align-items: center;
         flex-direction: column;
         justify-content: space-around;
-      }
-      paper-card {
-        margin: auto;
-        width: 152px;
-        height: 64px;
-        user-select: none;
-        cursor: pointer;
       }
       .header {
         font-size: 14px;
@@ -42,14 +38,21 @@
         top: 4px;
         right: 8px;
       }
+        paper-card {
+            margin: auto;
+            width: 152px;
+            height: 64px;
+            user-select: none;
+            cursor: pointer;
+          }
         </style>
 
         <div id="box">
             <template is="dom-repeat" items="{{statistics}}">
 
                 <iron-ajax auto id$="{{item.name}}" url="[[api]]"
-                        body='{"target":"[[item.name]]", "route":"size"}'
-                        handle-as="json" method="post" last-response="{{item.query}}">
+                           body='{"target":"[[item.name]]", "route":"size"}'
+                           handle-as="json" method="post" last-response="{{item.query}}">
                 </iron-ajax>
 
                 <paper-card on-click="clicked" elevation="1">
@@ -90,5 +93,6 @@
     }
 
     window.customElements.define(StatisticsBar.is, StatisticsBar);
+
     </script>
 </dom-module>

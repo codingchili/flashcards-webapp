@@ -1,0 +1,48 @@
+<!-- shared-styles.html -->
+<dom-module id="shared-styles">
+    <template>
+        <style>
+          paper-input {
+                --paper-input-container-focus-color: var(--paper-pink-400);
+                --paper-input-container-invalid-color: var(--paper-pink-400);
+                --paper-input-container-input-color: #000000;
+            }
+          paper-button {
+            background-color: var(--paper-pink-400);
+            color: #ffffff;
+            width: 100%;
+            margin-top: 32px;
+            margin-left: 0px;
+            margin-right: 0px;
+          }
+        .cancel-button {
+           background-color: var(--paper-indigo-200);
+           margin-top: 16px;
+        }
+          paper-item {
+            font-weight: bold;
+          }
+          paper-menu > paper-item:hover {
+            background-color: var(--paper-pink-400);
+            color: #ffffff;
+            font-weight: bold;
+            user-select: none;
+            cursor: pointer;
+          }
+          app-toolbar {
+            background-color: var(--paper-pink-400);
+            font-family: 'Roboto', Helvetica, sans-serif;
+            color: white;
+            --app-toolbar-font-size: 24px;
+          }
+        paper-toast {
+            width: 100%;
+            margin: 0px;
+            text-align: center;
+            background-color: var(--paper-indigo-400);
+            color: #ffffff;
+      }
+
+        </style>
+    </template>
+</dom-module>

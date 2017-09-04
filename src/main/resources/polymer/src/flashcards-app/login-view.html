@@ -1,8 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 <dom-module id="login-view">
     <template>
+        <style include="shared-styles"></style>
         <style>
       :host {
         display: flex;
@@ -11,37 +13,27 @@
       }
       #box {
         width: 300px;
-        height: 375px;
         margin: auto;
         margin-top: 42px;
       }
-      paper-button {
-        background-color: var(--paper-pink-400);
-        color: #ffffff;
-        width: 100%;
-        margin-top: 32px;
-      }
-        paper-input {
-        --paper-input-container-focus-color: var(--paper-pink-400);
-        --paper-input-container-invalid-color: var(--paper-pink-400);
-        --paper-input-container-input-color: #000000;
-      }
-      #cancel-button {
-        background-color: var(--paper-indigo-200);
-        margin-top: 16px;
+      .header {
+          margin-bottom: 0px;
+          text-align: center;
+          font-family: 'Roboto', Helvetica, sans-serif;
       }
     </style>
 
         <paper-card id="box" elevation="3">
-            <h2 hidden$="[[registration]]">Authenticate</h2>
-            <h2 hidden$="[[!registration]]">Register</h2>
+            <h2 class="header" hidden$="[[registration]]">Authenticate</h2>
+            <h2 class="header" hidden$="[[!registration]]">Register</h2>
             <paper-input label="Username" id="userinput" on-keydown="onkey" value="{{username}}" autofocus></paper-input>
-            <paper-input label="Password" id="passwordinput" on-keydown="onkey" value="{{password}}"></paper-input>
-            <paper-input hidden$="[[!registration]]" id="pass-repeat" on-keydown="onkey" label="Password (repeat)" value="{{passrepeat}}"></paper-input>
+            <paper-input label="Password" id="passwordinput" on-keydown="onkey" value="{{password}}" type="password"></paper-input>
+            <paper-input hidden$="[[!registration]]" id="pass-repeat" on-keydown="onkey"
+                         label="Password (repeat)" value="{{passrepeat}}" type="password"></paper-input>
 
             <paper-button hidden$="[[registration]]" raised on-tap="call">Authenticate</paper-button>
             <paper-button hidden$="[[!registration]]" raised on-tap="call">Register</paper-button>
-            <paper-button hidden$="[[!registration]]" id="cancel-button" on-tap="setLogin">Cancel</paper-button>
+            <paper-button hidden$="[[!registration]]" class="cancel-button" on-tap="setLogin">Cancel</paper-button>
         </paper-card>
 
         <paper-toast id="toast" text="{{message}}"></paper-toast>
@@ -78,6 +70,7 @@
 
         switch (response.status) {
             case ACCEPTED:
+                this.clear();
                 application.onAuthenticated(response);
                 break;
             case MISSING:
@@ -94,11 +87,13 @@
       }
 
       doRegister(e) {
-        let data = e.detail.response;
+        let response = e.detail.response;
 
-        switch (data.status) {
+        switch (response.status) {
             case ACCEPTED:
-                application.onAuthenticated(data);
+                this.clear();
+                this.setLogin();
+                application.onAuthenticated(response);
                 break;
             case CONFLICT:
                 this.$.userinput.focus();
@@ -107,6 +102,12 @@
             case ERROR:
                 this.showMessage(data.message);
         }
+      }
+
+      clear() {
+        this.password = '';
+        this.passrepeat = '';
+        this.username = '';
       }
 
       onkey(e) {

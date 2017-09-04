@@ -4,6 +4,7 @@ import com.codingchili.core.configuration.BaseConfigurable;
 import com.codingchili.core.files.Configurations;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.core.storage.IndexedMap;
+import com.codingchili.core.storage.IndexedMapPersisted;
 
 import java.util.UUID;
 
@@ -12,8 +13,8 @@ import java.util.UUID;
  */
 public class AppConfig extends BaseConfigurable {
     private static final String APPLICATION_JSON = "application.json";
-    private String secret = UUID.randomUUID().toString();
-    private String storage = IndexedMap.class.getName();
+    private static String secret = UUID.randomUUID().toString();
+    private String storage = IndexedMapPersisted.class.getName();
     private String database = "flashcards";
 
     @Override
@@ -26,7 +27,7 @@ public class AppConfig extends BaseConfigurable {
     }
 
     public void setSecret(String secret) {
-        this.secret = secret;
+        AppConfig.secret = secret;
     }
 
     public String getStorage() {

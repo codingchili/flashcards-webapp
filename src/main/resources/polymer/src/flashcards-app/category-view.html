@@ -1,0 +1,148 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+<dom-module id="category-view">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #create-dialog {
+        width: 354px;
+        height: 332px;
+      }
+      #create-button {
+        width: 100%;
+      }
+      #button-group {
+        display: block;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        right: 0px;
+        bottom: 0px;
+        position: absolute;
+      }
+      .cancel-button {
+        margin-top: 16px;
+      }
+      paper-checkbox {
+        margin-top: 16px;
+      }
+      #place-holder {
+        width: 232px;
+        height: 232px;
+        margin: auto;
+      }
+      #box {
+        text-align: center;
+        width: 100%;
+      }
+      .notification {
+        color: rgba(0, 0, 0, 0.4);
+        font-size: 18px;
+        display: block;
+      }
+    </style>
+        <paper-card id="box" elevation="3">
+            <div hidden$="empty">
+                <iron-icon id="place-holder" icon="social:sentiment-neutral"></iron-icon>
+                <span class="notification">YOU HAVE NOT CREATED ANY CATEGORIES YET.</span>
+            </div>
+
+            <ul>
+            <template is="dom-repeat" items="{{categories}}">
+                <li>[[item.name]] [[item.owner]] [[item.users]] [[item.created]] [[item.shared]]</li>
+            </template>
+            </ul>
+
+            <paper-button id="create-button" on-tap="dialog" raised autofocus>Create new</paper-button>
+        </paper-card>
+
+        <paper-dialog id="create-dialog" modal>
+            <h2>New category</h2>
+        <div style="margin-top:0px;">
+            <paper-input label="Name" on-keydown="onkey" value="{{category}}" autofocus></paper-input>
+            <paper-input label="Users" on-keydown="onkey" value="{{users}}"></paper-input>
+            <paper-checkbox checked="[[public]]">Public</paper-checkbox>
+        </div>
+        <div class="buttons" id="button-group">
+            <paper-button on-click="create" dialog-confirm raised autofocus>Add</paper-button>
+            <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
+        </div>
+        </paper-dialog>
+
+        <iron-ajax id="createjax" url="[[api]]" method="post" body='[[request]]'
+                   handle-as="json" on-response="onCreate">
+        </iron-ajax>
+        <iron-ajax id="listjax" url="[[api]]" method="post" body='[[request]]'
+                   handle-as="json" on-response="onList">
+        </iron-ajax>
+    </template>
+
+</dom-module>
+
+<script>
+    class CategoryView extends Polymer.Element {
+      static get is() { return 'category-view'; }
+
+      constructor() {
+        super();
+        this.api = application.api();
+        this.empty = true;
+
+        application.subscribe('authenticated', () => this.list());
+      }
+
+      dialog() {
+        this.$['create-dialog'].open();
+      }
+
+      create() {
+       let json = {'token':application.token, 'target':'categories', 'route':'create',
+                    'name': this.category, 'users': [this.users], 'public': this.public};
+        this.request = JSON.stringify(json);
+        this.$.createjax.generateRequest();
+      }
+
+      onCreate(e) {
+         let json = e.detail.response;
+         console.log(json);
+         this.list();
+      }
+
+      list() {
+         let json = {'token': application.token, 'target': 'categories', 'route':'list'}
+         this.request = JSON.stringify(json);
+         this.$.listjax.generateRequest();
+      }
+
+      onList(e) {
+        let json = e.detail.response;
+        console.log(json);
+        this.categories = json.collection;
+
+        console.log(this.categories.length);
+        if (this.categories.length > 0) {
+            this.empty = false;
+        }
+      }
+
+      onkey(e) {
+        if (e.keyCode == 13) {
+            this.create();
+            this.$['create-dialog'].close();
+        }
+      }
+    }
+    window.customElements.define(CategoryView.is, CategoryView);
+  </script>

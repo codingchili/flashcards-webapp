@@ -14,6 +14,7 @@ import com.codingchili.flashcards.model.FlashCategory;
 import com.codingchili.flashcards.request.CategoryRequest;
 import com.codingchili.flashcards.response.SizeResponse;
 
+import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
 
 import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
@@ -36,6 +37,7 @@ public class CategoryHandler implements CoreHandler {
     public void create(CategoryRequest request) {
         FlashCategory category = request.category();
         category.setOwner(request.sender());
+        category.setCreated(ZonedDateTime.now());
         categories.save(category).setHandler(request::result);
     }
 

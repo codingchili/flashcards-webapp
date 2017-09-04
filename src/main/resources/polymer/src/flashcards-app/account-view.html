@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+<dom-module id="account-view">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+      :host {
+        display: flex;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+
+        your account..
+
+        <iron-ajax id="loginjax" url="[[api]]" method="post"
+                   body='{"target":"accounts", "route":"authenticate", "username": "[[username]]", "password":"[[password]]"}'
+                   handle-as="json" on-response="doLogin">
+        </iron-ajax>
+    </template>
+
+</dom-module>
+
+<script>
+    class AccountView extends Polymer.Element {
+      static get is() { return 'account-view'; }
+
+      constructor() {
+        super();
+        this.api = application.api();
+      }
+    }
+    window.customElements.define(AccountView.is, AccountView);
+  </script>
