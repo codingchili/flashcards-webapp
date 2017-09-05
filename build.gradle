@@ -14,15 +14,13 @@ tasks.withType(JavaCompile) {
 }
 
 repositories {
-    maven { url 'http://repo.maven.apache.org/maven2' }
-
-    flatDir {
-        dirs 'libs'
-    }
+    mavenLocal()
+    maven { url 'https://jitpack.io' }
+    mavenCentral()
 }
 
 dependencies {
-    compile name: 'core-1.0.3-SNAPSHOT'
+    compile 'com.github.codingchili:chili-core:1.0.4'
 }
 
 test {
