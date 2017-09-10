@@ -10,15 +10,20 @@ import java.util.stream.Collectors;
  * A set of flash cards that can be shared.
  */
 public class FlashCategory implements Storable {
-    static final String ID_SHARED = "shared";
+    public static final String ID_COST = "cost";
+    public static final String ID_SHARED = "shared";
     public static final String ID_USERS = "users";
     private static final int MAX_SCORE_HISTORY = 10;
+    private List<FlashScore> highscores = new ArrayList<>();
+    private Set<String> users = new HashSet<>();
+    private String id = UUID.randomUUID().toString();
+    private ZonedDateTime created;
     private boolean shared = false;
     private String owner;
+    private int cost = 0;
     private String name;
-    private Set<String> users = new HashSet<>();
-    private List<FlashScore> highscores = new ArrayList<>();
-    private ZonedDateTime created;
+    private String color = "var(--paper-pink-200)";
+    private String icon = "apps";
 
     public String getOwner() {
         return owner;
@@ -38,16 +43,6 @@ public class FlashCategory implements Storable {
         return this;
     }
 
-    public FlashCategory shareWith(Collection<String> users) {
-        this.users.addAll(users);
-        return this;
-    }
-
-    public FlashCategory unauthorize(String user) {
-        users.remove(user);
-        return this;
-    }
-
     public boolean isShared() {
         return shared;
     }
@@ -64,6 +59,38 @@ public class FlashCategory implements Storable {
     public FlashCategory setName(String name) {
         this.name = name;
         return this;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 
     public List<FlashScore> getHighscores() {
@@ -90,12 +117,17 @@ public class FlashCategory implements Storable {
 
     @Override
     public String id() {
-        return owner + "_" + name;
+        return owner + "_" + id;
     }
 
     @Override
     public int hashCode() {
         return id().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this.compareTo(other) == 0;
     }
 
     public void setCreated(ZonedDateTime created) {

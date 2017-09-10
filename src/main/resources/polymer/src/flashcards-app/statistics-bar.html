@@ -31,7 +31,7 @@
         left: 8px;
         font-size: 28px;
         margin-top: 28px;
-        color: rgba(0,0,0,0.4);
+        color: var(--faint-text-color);
       }
       iron-icon {
         position: absolute;
@@ -43,7 +43,6 @@
             width: 152px;
             height: 64px;
             user-select: none;
-            cursor: pointer;
           }
         </style>
 
@@ -55,7 +54,7 @@
                            handle-as="json" method="post" last-response="{{item.query}}">
                 </iron-ajax>
 
-                <paper-card on-click="clicked" elevation="1">
+                <paper-card elevation="1">
                     <div class="header">[[item.description]]</div>
                     <div class="value">[[item.query.size]]</div>
                     <iron-icon icon="[[item.icon]]"></iron-icon>
@@ -86,9 +85,6 @@
                 this.shadowRoot.querySelector('#' + item.name).generateRequest();
             }
         }, 5000);
-      }
-      clicked(event) {
-        application.publish('searchType', event.model.item);
       }
     }
 

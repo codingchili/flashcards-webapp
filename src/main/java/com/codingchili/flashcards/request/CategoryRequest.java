@@ -6,7 +6,9 @@ import com.codingchili.core.protocol.Serializer;
 import com.codingchili.flashcards.model.FlashCategory;
 
 import java.util.List;
+import java.util.Optional;
 
+import static com.codingchili.core.configuration.CoreStrings.ID_TOKEN;
 import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
 import static com.codingchili.flashcards.model.FlashCategory.ID_USERS;
 

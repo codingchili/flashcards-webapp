@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
 
 <dom-module id="account-view">
     <template>
@@ -10,14 +12,34 @@
         width: 100%;
         height: 100%;
       }
-    </style>
 
-        your account..
+    .info {
+        width: 446px;
+        margin:auto;
+        margin-top: 64px;
+    }
+    .details {
+         padding: 16px;
+     }
+     .special {
+        color: var(--secondary-color);
+     }
+     .large {
+        font-size: 32px;
+     }
+     .medium {
+        font-size: 13px;
+     }
+        </style>
 
-        <iron-ajax id="loginjax" url="[[api]]" method="post"
-                   body='{"target":"accounts", "route":"authenticate", "username": "[[username]]", "password":"[[password]]"}'
-                   handle-as="json" on-response="doLogin">
-        </iron-ajax>
+        <paper-card elevation="3" class="info">
+            <div class="details">
+                You are logged in as <br><span class="special large">[[token.domain]]</span><br><br>
+                Token is valid until<br> <span class="special medium">[[date(token.expiry)]]</span><br><br>
+                The following properties are set<br>
+                <pre><span class="special medium">[[stringify(token.properties)]]</span></pre>
+            </div>
+        </paper-card>
     </template>
 
 </dom-module>
@@ -29,7 +51,23 @@
       constructor() {
         super();
         this.api = application.api();
+        this.token = application.token;
+
+        application.subscribe('authenticated', (token) => {
+            this.token = token;
+        });
+      }
+
+      stringify(json) {
+        return JSON.stringify(json, null, 2);
+      }
+
+      date(epoch) {
+        return new Date(epoch * 1000);
       }
     }
     window.customElements.define(AccountView.is, AccountView);
-  </script>
+
+
+
+</script>

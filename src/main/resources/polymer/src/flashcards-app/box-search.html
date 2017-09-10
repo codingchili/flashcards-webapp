@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
+<link rel="import" href="/src/flashcards-app/category-list.html">
 
 
 <dom-module id="box-search">
@@ -19,12 +20,6 @@
         margin-left: auto;
         margin-right: auto;
       }
-      #search-hit {
-        width: 128px;
-        height: 32px;
-        font-size: 18px;
-        color: rgba(0, 0, 0, 0.4);
-      }
       #box {
         width: 100%;
         min-height: 524px;
@@ -32,17 +27,13 @@
         </style>
 
         <paper-card id="box" elevation="3">
-            <paper-input label="[[name]]" id="search" on-keydown="search" value="{{text}}" autofocus>
-                <iron-icon icon="[[icon]]" slot="prefix"></iron-icon>
+            <paper-input label="categories" id="search" on-keydown="search" value="{{text}}" autofocus>
+                <iron-icon icon="apps" slot="prefix"></iron-icon>
                 <div slot="suffix"></div>
             </paper-input>
 
             <div id="hits">
-                <template is="dom-repeat" items="{{result.collection}}">
-                    <paper-card id="search-hit" elevation="1">
-                        [[item.username]]<br>
-                    </paper-card>
-                </template>
+                <category-list id="categories"></category-list>
             </div>
         </paper-card>
 
@@ -58,15 +49,7 @@
       constructor() {
         super();
         this.api = application.api();
-        this.icon = 'apps';
-        this.name = 'categories';
         this.text = '';
-
-        application.subscribe('searchType', (event) => {
-            this.icon = event.icon;
-            this.name = event.name;
-            this.$.search.focus();
-        });
 
         application.subscribe('onSearchPage', () => {
             this.$.search.focus();
@@ -74,13 +57,9 @@
       }
 
       search(e) {
-          let search = {
-            token: application.token,
-            username: this.text,
-            target: this.name,
-            route: 'search'
-          };
-
+          let search = api.request('categories', 'search');
+          search.username = this.text;
+          search.category = this.text;
           this.json = JSON.stringify(search);
 
           if (this.text.length > 2) {
@@ -92,11 +71,10 @@
       }
 
       response(e) {
-        console.log(e.detail.response);
-        this.result = e.detail.response;
+        this.categories = e.detail.response.collection;
+        this.$.categories.setList(this.categories);
       }
     }
     window.customElements.define(BoxSearch.is, BoxSearch);
-
     </script>
 </dom-module>

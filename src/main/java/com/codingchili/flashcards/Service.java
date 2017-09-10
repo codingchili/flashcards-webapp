@@ -19,7 +19,6 @@ import io.vertx.core.Future;
  * Application launcher, entry point.
  */
 public class Service implements CoreService {
-    private static final String FLASHCARDS = "flashcards";
     private CoreContext core;
 
     public static void main(String[] args) {

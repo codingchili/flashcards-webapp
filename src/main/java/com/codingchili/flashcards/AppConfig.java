@@ -3,17 +3,14 @@ package com.codingchili.flashcards;
 import com.codingchili.core.configuration.BaseConfigurable;
 import com.codingchili.core.files.Configurations;
 import com.codingchili.core.security.TokenFactory;
-import com.codingchili.core.storage.IndexedMap;
 import com.codingchili.core.storage.IndexedMapPersisted;
-
-import java.util.UUID;
 
 /**
  * Stores flashcard application configuration.
  */
 public class AppConfig extends BaseConfigurable {
     private static final String APPLICATION_JSON = "application.json";
-    private static String secret = UUID.randomUUID().toString();
+    private static String secret = System.getProperty("secret");
     private String storage = IndexedMapPersisted.class.getName();
     private String database = "flashcards";
 
@@ -51,7 +48,7 @@ public class AppConfig extends BaseConfigurable {
     }
 
     public static TokenFactory factory() {
-        return new TokenFactory(settings().secret.getBytes());
+        return new TokenFactory(secret.getBytes());
     }
 
     public static Class storage() {

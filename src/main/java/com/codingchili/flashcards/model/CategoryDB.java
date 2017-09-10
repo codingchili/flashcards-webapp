@@ -12,6 +12,7 @@ import java.util.Collection;
 
 import static com.codingchili.core.configuration.CoreStrings.ID_NAME;
 import static com.codingchili.flashcards.model.FlashCard.ID_OWNER;
+import static com.codingchili.flashcards.model.FlashCategory.ID_COST;
 import static com.codingchili.flashcards.model.FlashCategory.ID_SHARED;
 import static com.codingchili.flashcards.model.FlashCategory.ID_USERS;
 import static java.util.stream.Collectors.toList;
@@ -21,7 +22,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class CategoryDB implements AsyncCategoryStore {
     private static final String ARRAY = "[]";
-    private static final int MAX_PUBLIC_RESULTS = 24;
     private AsyncStorage<FlashCategory> categories;
 
     public CategoryDB(CoreContext core) {
@@ -54,22 +54,20 @@ public class CategoryDB implements AsyncCategoryStore {
     }
 
     @Override
-    public void shared(Handler<AsyncResult<Collection<FlashCategory>>> handler, String name) {
-        categories.query(ID_SHARED)
-                .equalTo(true)
-                .and(ID_NAME)
-                .startsWith(name)
-                .pageSize(MAX_PUBLIC_RESULTS)
-                .execute(handler);
+    public Future<Collection<FlashCategory>> list(String username) {
+        Future<Collection<FlashCategory>> future = Future.future();
+        categories.query(ID_OWNER).equalTo(username).execute(future);
+        return future;
     }
 
     @Override
-    public Future<Collection<FlashCategory>> available(String username) {
+    public Future<Collection<FlashCategory>> search(String query, String username) {
         Future<Collection<FlashCategory>> future = Future.future();
-        categories.query(ID_OWNER)
-                .equalTo(username)
-                .or(ID_USERS + ARRAY)
-                .equalTo(username)
+        categories
+                .query(ID_OWNER).equalTo(username).and(ID_NAME).like(query)
+                .or(ID_USERS + ARRAY).equalTo(username).and(ID_NAME).like(query)
+                .or(ID_SHARED).equalTo(true).and(ID_NAME).like(query)
+                .or(ID_COST).between(1L, Long.MAX_VALUE).and(ID_NAME).like(query)
                 .execute(categories -> {
                     if (categories.succeeded()) {
                         future.complete(categories.result().stream()
@@ -79,6 +77,13 @@ public class CategoryDB implements AsyncCategoryStore {
                         future.fail(categories.cause());
                     }
                 });
+        return future;
+    }
+
+    @Override
+    public Future<Collection<FlashCategory>> search(String query) {
+        Future<Collection<FlashCategory>> future = Future.future();
+        categories.query(ID_SHARED).equalTo(true).execute(future);
         return future;
     }
 

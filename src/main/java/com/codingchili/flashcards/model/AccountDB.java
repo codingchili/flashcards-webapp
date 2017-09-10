@@ -10,7 +10,10 @@ import com.codingchili.core.storage.StorageLoader;
 import com.codingchili.flashcards.AppConfig;
 import io.vertx.core.Future;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static com.codingchili.core.configuration.CoreStrings.ID_USERNAME;
@@ -39,7 +42,7 @@ public class AccountDB implements AsyncAccountStore {
             if (account.succeeded()) {
                 hasher.verify(verification -> {
                     if (verification.succeeded()) {
-                        future.complete(new Token(factory, username));
+                        sendToken(future, account.result());
                     } else {
                         future.fail(verification.cause());
                     }
@@ -56,15 +59,26 @@ public class AccountDB implements AsyncAccountStore {
         Future<Token> future = Future.future();
         hasher.hash(done -> {
             account.setPassword(done.result());
+            account.addProperty("roles", Collections.singletonList("user"));
+            account.addProperty("created", Instant.now().getEpochSecond());
             accounts.putIfAbsent(account, result -> {
                 if (result.succeeded()) {
-                    future.complete(new Token(factory, account.getUsername()));
+                    sendToken(future, account);
                 } else {
                     future.fail(result.cause());
                 }
             });
         }, account.getPassword());
         return future;
+    }
+
+    private void sendToken(Future<Token> future, Account account) {
+        Token token = new Token();
+        token.setDomain(account.getUsername());
+        token.setProperties(account.getProperties());
+        token.addProperty("issued", Instant.now().getEpochSecond());
+        factory.sign(token);
+        future.complete(token);
     }
 
     @Override

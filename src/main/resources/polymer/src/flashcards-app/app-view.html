@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -21,7 +22,7 @@
 <dom-module id="app-view">
     <template>
         <style include="shared-styles"></style>
-        <style>
+        <style is="custom-style">
           :host {
             display: block;
           }
@@ -30,7 +31,7 @@
           }
           #about {
             width: 426px;
-            height: 502px;
+            height: 508px;
           }
           #about-buttons {
             position: absolute;
@@ -52,7 +53,7 @@
 
         <app-toolbar>
             <paper-icon-button icon="menu" on-click="drawer"></paper-icon-button>
-            <div main-title>Flashcards</div>
+            <div main-title>[[title]]</div>
             <paper-icon-button icon="search" on-click="search"></paper-icon-button>
         </app-toolbar>
 
@@ -70,6 +71,8 @@
                 <paper-item on-click="about">About</paper-item>
             </paper-menu>
         </app-drawer>
+
+        <paper-toast id="toast" text="{{message}}"></paper-toast>
 
         <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
             <index-view name="" route="{{subroute}}"></index-view>
@@ -108,7 +111,7 @@
                     <li><a href="https://github.com/npgall/cqengine" target="_blank">CQEngine</a></li>
                     <li><a href="https://github.com/mongodb/mongo" target="_blank">MongoDB</a></li>
                 </ul>
-                Sources for flashcards-webapp and chili-core available on <a href="https://github.com/codingchili/">GitHub</a>.
+                Sources for flashcards-webapp and chili-core available on <a href="https://github.com/codingchili/" target="_blank">GitHub</a>.
                 Author of the app is Robin Duda &copy;2017
             </paper-dialog-scrollable>
             <div class="buttons" id="about-buttons">
@@ -126,16 +129,30 @@
 
       constructor() {
         super();
-        this.authenticated = false;
+        this.authenticated = application.authenticated;
+        this.title = 'Flashcards';
 
         application.subscribe('authenticated', (token) => {
             this.authenticated = true;
             this.set('route.path', '/');
             application.publish('onSearchPage');
         });
+
+        application.subscribe('toast', (message) => {
+            this.message = message;
+            this.$.toast.open();
+        });
+
         application.subscribe('logout', () => {
             this.authenticated = false;
         });
+      }
+
+      ready() {
+        super.ready();
+        if (!this.authenticated) {
+            this.set('route.path', '/login');
+        }
       }
 
       drawer() {
@@ -145,22 +162,26 @@
 
       categories() {
         this.set('route.path', '/categories');
+        this.title = 'Categories';
         this.$.drawer.close();
       }
 
       search() {
         this.set('route.path', '/')
+        this.title = 'Flashcards';
         application.publish('onSearchPage');
         this.$.drawer.close();
       }
 
     account() {
         this.set('route.path', '/account')
+        this.title = 'Account';
         this.$.drawer.close();
       }
 
     settings() {
         this.set('route.path', '/settings')
+        this.title = 'Settings';
         this.$.drawer.close();
       }
 
@@ -177,6 +198,7 @@
 
       logout() {
         application.onLogout();
+        this.title = 'Flashcards';
         this.login();
       }
     }

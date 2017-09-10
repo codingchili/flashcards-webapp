@@ -1,0 +1,194 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+<dom-module id="category-list">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .category-box {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        top: 12px;
+      }
+      .category {
+        margin-left: 32px;
+        margin-top: 16px;
+        width: 164px;
+        cursor: pointer;
+        height: 102px;
+      }
+      .icon-category {
+        min-height: 80%;
+        min-width: 40%;
+        position: absolute;
+        left: 0px;
+        top: 12px;
+      }
+      .icon-access {
+        color: var(--primary-color);
+        position: absolute;
+        right: 4px;
+        top: 4px;
+        width: 16px;
+        height: 16px;
+      }
+      .name-box {
+        height: 100%;
+        line-height: 425%;
+        left: -8px;
+        display: inline-block;
+        width: 100%;
+        margin-top: 18px;
+      }
+      .name {
+        font-size: 14px;
+        line-height: 115%;
+        vertical-align: middle;
+        word-wrap: break-word;
+        width: 100%;
+        text-align: left;
+        max-width: 100px;
+        margin-left: 60px;
+        display: inline-block;
+      }
+      .created {
+        position: absolute;
+        font-size: 9px;
+        bottom: 4px;
+        right: 4px;
+      }
+        .price {
+          position: absolute;
+          left: 10px;
+          color: var(--error-color);
+          font-weight: 200;
+          bottom: 4px;
+          display: block;
+        }
+        .owner-text {
+            left: 0px;
+            margin-left: 8px;
+            top: 8px;
+            font-size: 9px;
+            position: absolute;
+        }
+        .owner-box {
+            position: absolute;
+            width: 100%;
+            left: 4px;
+        }
+        .top-bar {
+            position: absolute;
+            width: 100%;
+            top: 0px;
+            height: 24px;
+        }
+
+        </style>
+        <template is="dom-repeat" items="{{categories}}">
+            <paper-card class="category" on-click="edit" elevation="1">
+                <iron-icon class="icon-category" icon="[[item.icon]]" style$="color:[[item.color]];">
+                </iron-icon>
+                <div class="owner-box" hidden$="[[isOwner(item)]]">
+                    <span class="owner-text">[[item.owner]]</span>
+                </div>
+                <div class="name-box">
+                    <span class="name">[[item.name]]</span>
+                </div>
+                <span class="created">
+                            [[item.created.year]] [[item.created.month]]
+                        </span>
+                <div hidden$="[[!isPurchaseable(item)]]">
+                    <span class="price">[[item.cost]]&nbsp;&Xi;</span>
+                </div>
+                <div class="top-bar">
+                    <iron-icon hidden$="[[item.shared]]" class="icon-access" icon="[[iconStyle(item)]]"
+                               style$="color:[[iconColor(item)]];"></iron-icon>
+                    <paper-tooltip animation-delay="0" position="bottom">[[availability(item)]]</paper-tooltip>
+                </div>
+            </paper-card>
+        </template>
+    </template>
+
+</dom-module>
+
+<script>
+    class CategoryList extends Polymer.Element {
+      static get is() { return 'category-list'; }
+
+      constructor() {
+        super();
+        this.categories = [];
+      }
+
+      iconColor(category) {
+        return this.icon(category).color;
+      }
+
+      iconStyle(category) {
+        return this.icon(category).style;
+      }
+
+      availability(category) {
+        if (this.isOwner(category)) {
+          return "Requires access.";
+        }
+        if (this.isMember(category)) {
+          return "Shared with you.";
+        }
+        if (this.isPurchaseable(category)) {
+          return "May be purchased.";
+        }
+      }
+
+      isPurchaseable(category) {
+        return !category.shared && !this.isMember(category) && category.cost != 0;
+      }
+
+      isOwner(category) {
+        return category.owner == application.token.domain;
+      }
+
+      isMember(category) {
+        return category.users.indexOf(application.token.domain) != -1;
+      }
+
+      icon (category) {
+        let icon = {'style': 'euro-symbol', 'color': 'var(--error-color)'};
+
+        if (this.isOwner(category)) {
+            icon.style = 'lock-outline';
+            icon.color = 'var(--primary-color)';
+        }
+        if (this.isMember(category)) {
+            icon.style = 'file-download'
+            icon.color = 'var(--primary-color)';
+        }
+        return icon;
+      }
+
+      edit(e) {
+        this.handler(e.model.item);
+      }
+
+      onClickHandler(handler) {
+        this.handler = handler;
+      }
+
+      setList(categories) {
+        this.categories = categories;
+      }
+    }
+    window.customElements.define(CategoryList.is, CategoryList);
+
+</script>

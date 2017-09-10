@@ -4,8 +4,12 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
+<link rel="import" href="/src/flashcards-app/category-list.html">
 
 <dom-module id="category-view">
     <template>
@@ -18,7 +22,6 @@
       }
       #create-dialog {
         width: 354px;
-        height: 332px;
       }
       #create-button {
         width: 100%;
@@ -47,38 +50,63 @@
         text-align: center;
         width: 100%;
       }
-      .notification {
-        color: rgba(0, 0, 0, 0.4);
-        font-size: 18px;
-        display: block;
+      .category-box {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        top: 12px;
       }
-    </style>
+      .color-picker {
+        float: right;
+        margin-top: -4px;
+      }
+      .public-checkbox {
+        margin-top: 16px;
+        display: inline-block;
+        padding-bottom: 104px;
+        height: 32px;
+        margin-left: 16px;
+      }
+      .cash-icon {
+        width: 16px;
+        height: 16px;
+      }
+        </style>
         <paper-card id="box" elevation="3">
-            <div hidden$="empty">
+            <div hidden$="[[populated]]">
                 <iron-icon id="place-holder" icon="social:sentiment-neutral"></iron-icon>
                 <span class="notification">YOU HAVE NOT CREATED ANY CATEGORIES YET.</span>
             </div>
 
-            <ul>
-            <template is="dom-repeat" items="{{categories}}">
-                <li>[[item.name]] [[item.owner]] [[item.users]] [[item.created]] [[item.shared]]</li>
-            </template>
-            </ul>
+            <category-list id="categories"></category-list>
 
             <paper-button id="create-button" on-tap="dialog" raised autofocus>Create new</paper-button>
         </paper-card>
 
         <paper-dialog id="create-dialog" modal>
-            <h2>New category</h2>
-        <div style="margin-top:0px;">
-            <paper-input label="Name" on-keydown="onkey" value="{{category}}" autofocus></paper-input>
-            <paper-input label="Users" on-keydown="onkey" value="{{users}}"></paper-input>
-            <paper-checkbox checked="[[public]]">Public</paper-checkbox>
-        </div>
-        <div class="buttons" id="button-group">
-            <paper-button on-click="create" dialog-confirm raised autofocus>Add</paper-button>
-            <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
-        </div>
+            <h2>Category options</h2>
+            <div style="margin-top:0px;">
+                <paper-input label="Name" char-counter maxlength="32" on-keydown="onkey" value="{{category.name}}"
+                             autofocus></paper-input>
+                <paper-input label="Users" on-keydown="onkey" value="{{category.users}}"></paper-input>
+                <paper-input label="Cost" hidden="[[category.shared]]" on-keydown="onkey" value="{{category.cost}}">
+                    <div slot="suffix">
+                        <iron-icon class="cash-icon" icon="euro-symbol">
+                        </iron-icon>
+                        <paper-tooltip animation-delay="0" position="bottom">
+                            Allow users to buy access, 0 = disabled.
+                        </paper-tooltip>
+                    </div>
+                </paper-input>
+                <paper-checkbox checked="{{category.shared}}" class="public-checkbox">Public</paper-checkbox>
+                <paper-swatch-picker color="{{category.color}}" class="color-picker" column-count="7"
+                                     color-list="[[colors]]">Color
+                </paper-swatch-picker>
+            </div>
+            <div class="buttons" id="button-group">
+                <paper-button on-click="create" dialog-confirm raised autofocus>Save</paper-button>
+                <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
+            </div>
         </paper-dialog>
 
         <iron-ajax id="createjax" url="[[api]]" method="post" body='[[request]]'
@@ -98,9 +126,26 @@
       constructor() {
         super();
         this.api = application.api();
-        this.empty = true;
+        this.populated = false;
+        this.colors = application.colors;
+        this.clear();
 
         application.subscribe('authenticated', () => this.list());
+      }
+
+      ready() {
+        super.ready();
+        this.$.categories.onClickHandler((category) => {
+            this.category = category;
+            this.dialog();
+        });
+      }
+
+      clear() {
+        this.category = {};
+        this.category.color = 'var(--secondary-color)';
+        this.category.users = [];
+        this.category.cost = 0;
       }
 
       dialog() {
@@ -108,8 +153,19 @@
       }
 
       create() {
-       let json = {'token':application.token, 'target':'categories', 'route':'create',
-                    'name': this.category, 'users': [this.users], 'public': this.public};
+       let json = api.request('categories', 'save');
+        json.color = this.category.color;
+        if (Array.isArray(this.category.users)) {
+            json.users = this.category.users;
+        } else { // todo tag picker
+            json.users = [this.category.users];
+        }
+        json.shared = this.category.shared;
+        json.name = this.category.name;
+        json.cost = this.category.cost;
+        json.id = this.category.id;
+
+        this.clear();
         this.request = JSON.stringify(json);
         this.$.createjax.generateRequest();
       }
@@ -120,8 +176,13 @@
          this.list();
       }
 
+      edit(e) {
+        this.category = e.model.item;
+        this.dialog();
+      }
+
       list() {
-         let json = {'token': application.token, 'target': 'categories', 'route':'list'}
+         let json = api.request('categories', 'list');
          this.request = JSON.stringify(json);
          this.$.listjax.generateRequest();
       }
@@ -130,10 +191,12 @@
         let json = e.detail.response;
         console.log(json);
         this.categories = json.collection;
+        this.$.categories.setList(json.collection);
 
-        console.log(this.categories.length);
         if (this.categories.length > 0) {
-            this.empty = false;
+            this.populated = true;
+        } else {
+            this.populated = false;
         }
       }
 
@@ -145,4 +208,4 @@
       }
     }
     window.customElements.define(CategoryView.is, CategoryView);
-  </script>
+</script>

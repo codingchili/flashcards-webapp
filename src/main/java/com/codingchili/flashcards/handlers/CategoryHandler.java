@@ -1,11 +1,10 @@
 package com.codingchili.flashcards.handlers;
 
 import com.codingchili.core.context.CoreContext;
-import com.codingchili.core.context.CoreRuntimeException;
 import com.codingchili.core.listener.CoreHandler;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.protocol.*;
-import com.codingchili.core.security.Token;
+import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.flashcards.AppConfig;
 import com.codingchili.flashcards.model.AsyncCategoryStore;
@@ -15,9 +14,8 @@ import com.codingchili.flashcards.request.CategoryRequest;
 import com.codingchili.flashcards.response.SizeResponse;
 
 import java.time.ZonedDateTime;
-import java.util.stream.Collectors;
 
-import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
+import static com.codingchili.core.configuration.CoreStrings.ANY;
 
 /**
  * Handler controller for categories.
@@ -33,69 +31,27 @@ public class CategoryHandler implements CoreHandler {
         this.categories = new CategoryDB(core);
     }
 
-    @Private("create")
-    public void create(CategoryRequest request) {
+    @Private("save")
+    public void save(CategoryRequest request) {
         FlashCategory category = request.category();
         category.setOwner(request.sender());
         category.setCreated(ZonedDateTime.now());
         categories.save(category).setHandler(request::result);
     }
 
-    @Private("authorize")
-    public void authorize(CategoryRequest request) {
-        categories.get(request.categoryName(), request.sender()).setHandler(query -> {
-            if (query.succeeded()) {
-                FlashCategory category = query.result();
-                category.shareWith(request.users());
-                categories.save(category).setHandler(request::result);
-            } else {
-                request.error(query.cause());
-        }
-    });
-}
-
-    @Public("public")
-    public void publicCategories(CategoryRequest request) {
-        categories.shared(request::result, request.categoryName());
-    }
-
-    @Private("share")
-    public void share(CategoryRequest request) {
-        categories.get(request.categoryName(), request.sender())
-                .setHandler(query -> {
-                    if (query.succeeded()) {
-                        FlashCategory category = query.result();
-                        if (category.getOwner().equals(request.sender())) {
-                            category.setShared(true);
-                            categories.save(category).setHandler(request::result);
-                        } else {
-                            request.error(new CoreRuntimeException("Not owner of category."));
-                        }
-                    } else {
-                        request.error(query.cause());
-                    }
-                });
-    }
-
-    @Private("refresh")
-    public void refresh(CategoryRequest request) {
-        categories.available(request.sender()).setHandler(done -> {
-            if (done.succeeded()) {
-                Token token = request.token();
-                token.addProperty(ID_CATEGORY, done.result().stream()
-                        .map(FlashCategory::id)
-                        .collect(Collectors.toList()));
-                tokenFactory.sign(token);
-                request.write(token);
-            } else {
-                request.write(done.cause());
-            }
-        });
-    }
-
     @Private("list")
     public void list(CategoryRequest request) {
-        categories.available(request.sender()).setHandler(request::result);
+        categories.list(request.sender()).setHandler(request::result);
+    }
+
+    @Private("search")
+    public void search(CategoryRequest request) {
+        categories.search(request.categoryName(), request.sender()).setHandler(request::result);
+    }
+
+    @Public("search")
+    public void shared(CategoryRequest request) {
+        categories.search(request.categoryName()).setHandler(request::result);
     }
 
     @Public("size")

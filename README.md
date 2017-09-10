@@ -4,7 +4,11 @@ An open source web application to help with managing flashcards. Built as micros
 
 ## Build & run
 
-Build the jar
+Run from chili-core
+
+``` gradle install -x test ``` 
+
+Build the flashcards jar
 
 ``` gradle jar ``` 
 

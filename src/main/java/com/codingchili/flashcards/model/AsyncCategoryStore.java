@@ -1,8 +1,6 @@
 package com.codingchili.flashcards.model;
 
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 
 import java.util.Collection;
 
@@ -26,20 +24,28 @@ public interface AsyncCategoryStore {
     Future<Void> save(FlashCategory category);
 
     /**
-     * Lists all categories publicly available.
-     *
-     * @return callback
-     */
-    void shared(Handler<AsyncResult<Collection<FlashCategory>>> handler, String request);
-
-    /**
      * Lists all categories either owned or shared with the given user.
      *
      * @param username limits the results to categories available
      *                 to the given user.
      * @return callback
      */
-    Future<Collection<FlashCategory>> available(String username);
+    Future<Collection<FlashCategory>> search(String query, String username);
+
+    /**
+     * Performs a search without using a user context, returns public results only.
+     *
+     * @return callback
+     */
+    Future<Collection<FlashCategory>> search(String query);
+
+    /**
+     * Lists categories owned by the given username.
+     * @param username the username of the owner.
+     *
+     * @return callback
+     */
+    Future<Collection<FlashCategory>> list(String username);
 
     /**
      * Lists the number of categories in the database.

@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 <dom-module id="login-view">
@@ -36,20 +35,18 @@
             <paper-button hidden$="[[!registration]]" class="cancel-button" on-tap="setLogin">Cancel</paper-button>
         </paper-card>
 
-        <paper-toast id="toast" text="{{message}}"></paper-toast>
-
         <iron-ajax id="registerjax" url="[[api]]"
-                   body='{"target":"accounts", "route":"register", "username":"[[username]]", "password": "[[password]]"}'
+                   body='[[request]]'
                    handle-as="json" method="post" on-response="doRegister">
         </iron-ajax>
 
         <iron-ajax id="loginjax" url="[[api]]" method="post"
-                   body='{"target":"accounts", "route":"authenticate", "username": "[[username]]", "password":"[[password]]"}'
-                   handle-as="json" on-response="doLogin">
+                   body='[[request]]' handle-as="json" on-response="doLogin">
         </iron-ajax>
     </template>
 
 </dom-module>
+
 
 <script>
     class LoginView extends Polymer.Element {
@@ -71,6 +68,7 @@
         switch (response.status) {
             case ACCEPTED:
                 this.clear();
+                delete response.status;
                 application.onAuthenticated(response);
                 break;
             case MISSING:
@@ -93,6 +91,7 @@
             case ACCEPTED:
                 this.clear();
                 this.setLogin();
+                delete response.status;
                 application.onAuthenticated(response);
                 break;
             case CONFLICT:
@@ -117,13 +116,20 @@
       }
 
       call() {
+         this.request = api.request('accounts', ((this.registration) ? 'register' : 'authenticate'));
+         this.request.username = this.username;
+         this.request.password = this.password;
+         this.request = JSON.stringify(this.request);
+
         if (this.registration) {
             if (this.password == this.passrepeat) {
+                application.publish('toast', 'Registering..');
                 this.$.registerjax.generateRequest();
             } else {
                 this.showMessage('Password needs to match.');
             }
         } else {
+            application.publish('toast', 'Logging in..');
             this.$.loginjax.generateRequest();
         }
       }
@@ -139,8 +145,7 @@
       }
 
       showMessage(text) {
-        this.message = text;
-        this.$.toast.open();
+        application.publish('toast', text);
       }
     }
     window.customElements.define(LoginView.is, LoginView);
