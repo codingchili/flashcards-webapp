@@ -13,69 +13,73 @@
           --faint-text-color: rgba(0, 0, 0, 0.3);
 
           app-drawer {
-       /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);*/
-        --app-drawer-content-container: {
-          background-color: var(--primary-background-color);
-          color: var(--primary-text-color);
-        }
-      }
+              /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);*/
+              --app-drawer-content-container: {
+                  background-color: var(--primary-background-color);
+                  color: var(--primary-text-color);
+              }
+          }
 
           paper-input {
-                --paper-input-container-focus-color: var(--primary-color);
-                --paper-input-container-invalid-color: var(--primary-color);
-                --paper-input-container-input-color: var(--primary-text-color);
-            }
-          paper-button {
-            background-color: var(--primary-color);
-            color: #ffffff;
-            width: 100%;
-            margin-top: 32px;
-            margin-left: 0px;
-            margin-right: 0px;
+              --paper-input-container-focus-color: var(--primary-color);
+              --paper-input-container-invalid-color: var(--primary-color);
+              --paper-input-container-input-color: var(--primary-text-color);
           }
-        .cancel-button {
-           background-color: var(--secondary-color);
-           margin-top: 16px;
-        }
-          paper-item {
-            font-weight: bold;
-          }
-          paper-menu > paper-item:hover {
-            background-color: var(--primary-color);
-            color: #ffffff;
-            font-weight: bold;
-            user-select: none;
-            cursor: pointer;
-          }
-          app-toolbar {
-            background-color: var(--primary-color);
-            font-family: 'Roboto', Helvetica, sans-serif;
-            color: white;
-            --app-toolbar-font-size: 24px;
-          }
-        paper-toast {
-            width: 100%;
-            margin: 0px;
-            text-align: center;
-            background-color: var(--secondary-color);
-            color: #ffffff;
-      }
-      paper-input {
-        margin-left: 8px;
-        margin-right: 8px;
-      }
 
-    a:link, a:visited {
-        color: var(--primary-color) !important;
-        text-decoration: none;
-    }
-    a:hover {
-        color: var(--secondary-color) !important;
-        text-decoration: none;
-    }
-    a:active {
-        color: var(--error-color) !important;
-    }
+          paper-button {
+              background-color: var(--primary-color);
+              color: #ffffff;
+              width: 100%;
+              margin-top: 32px;
+              margin-left: 0px;
+              margin-right: 0px;
+          }
+
+          paper-item {
+              font-weight: bold;
+          }
+
+          paper-menu > paper-item:hover {
+              background-color: var(--primary-color);
+              color: #ffffff;
+              font-weight: bold;
+              user-select: none;
+              cursor: pointer;
+          }
+
+          app-toolbar {
+              background-color: var(--primary-color);
+              font-family: 'Roboto', Helvetica, sans-serif;
+              color: white;
+              --app-toolbar-font-size: 24px;
+          }
+
+          paper-toast {
+              width: 100%;
+              margin: 0px;
+              text-align: center;
+              background-color: var(--secondary-color);
+              color: #ffffff;
+          }
+
+          paper-input {
+              margin-left: 8px;
+              margin-right: 8px;
+          }
+
+          a:link, a:visited {
+              color: var(--primary-color) !important;
+              text-decoration: none;
+          }
+
+          a:hover {
+              color: var(--secondary-color) !important;
+              text-decoration: none;
+          }
+
+          a:active {
+              color: var(--error-color) !important;
+          }
 
         </style>
     </template>

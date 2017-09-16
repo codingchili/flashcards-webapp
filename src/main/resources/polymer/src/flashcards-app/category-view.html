@@ -15,62 +15,73 @@
     <template>
         <style include="shared-styles"></style>
         <style>
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-      #create-dialog {
-        width: 354px;
-      }
-      #create-button {
-        width: 100%;
-      }
-      #button-group {
-        display: block;
-        width: 100%;
-        margin: 0px;
-        padding: 0px;
-        right: 0px;
-        bottom: 0px;
-        position: absolute;
-      }
-      .cancel-button {
-        margin-top: 16px;
-      }
-      paper-checkbox {
-        margin-top: 16px;
-      }
-      #place-holder {
-        width: 232px;
-        height: 232px;
-        margin: auto;
-      }
-      #box {
-        text-align: center;
-        width: 100%;
-      }
-      .category-box {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        top: 12px;
-      }
-      .color-picker {
-        float: right;
-        margin-top: -4px;
-      }
-      .public-checkbox {
-        margin-top: 16px;
-        display: inline-block;
-        padding-bottom: 104px;
-        height: 32px;
-        margin-left: 16px;
-      }
-      .cash-icon {
-        width: 16px;
-        height: 16px;
-      }
+            :host {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+            #create-dialog {
+                width: 354px;
+            }
+
+            #create-button {
+                width: 100%;
+            }
+
+            #button-group {
+                display: block;
+                width: 100%;
+                margin: 0px;
+                padding: 0px;
+                right: 0px;
+                bottom: 0px;
+                position: absolute;
+            }
+
+            .cancel-button {
+                margin-top: 16px;
+            }
+
+            paper-checkbox {
+                margin-top: 16px;
+            }
+
+            #place-holder {
+                width: 232px;
+                height: 232px;
+                margin: auto;
+            }
+
+            #box {
+                text-align: center;
+                width: 100%;
+            }
+
+            .category-box {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                top: 12px;
+            }
+
+            .color-picker {
+                float: right;
+                margin-top: -4px;
+            }
+
+            .public-checkbox {
+                margin-top: 16px;
+                display: inline-block;
+                padding-bottom: 104px;
+                height: 32px;
+                margin-left: 16px;
+            }
+
+            .cash-icon {
+                width: 16px;
+                height: 16px;
+            }
         </style>
         <paper-card id="box" elevation="3">
             <div hidden$="[[populated]]">
@@ -121,91 +132,93 @@
 
 <script>
     class CategoryView extends Polymer.Element {
-      static get is() { return 'category-view'; }
-
-      constructor() {
-        super();
-        this.api = application.api();
-        this.populated = false;
-        this.colors = application.colors;
-        this.clear();
-
-        application.subscribe('authenticated', () => this.list());
-      }
-
-      ready() {
-        super.ready();
-        this.$.categories.onClickHandler((category) => {
-            this.category = category;
-            this.dialog();
-        });
-      }
-
-      clear() {
-        this.category = {};
-        this.category.color = 'var(--secondary-color)';
-        this.category.users = [];
-        this.category.cost = 0;
-      }
-
-      dialog() {
-        this.$['create-dialog'].open();
-      }
-
-      create() {
-       let json = api.request('categories', 'save');
-        json.color = this.category.color;
-        if (Array.isArray(this.category.users)) {
-            json.users = this.category.users;
-        } else { // todo tag picker
-            json.users = [this.category.users];
+        static get is() {
+            return 'category-view';
         }
-        json.shared = this.category.shared;
-        json.name = this.category.name;
-        json.cost = this.category.cost;
-        json.id = this.category.id;
 
-        this.clear();
-        this.request = JSON.stringify(json);
-        this.$.createjax.generateRequest();
-      }
-
-      onCreate(e) {
-         let json = e.detail.response;
-         console.log(json);
-         this.list();
-      }
-
-      edit(e) {
-        this.category = e.model.item;
-        this.dialog();
-      }
-
-      list() {
-         let json = api.request('categories', 'list');
-         this.request = JSON.stringify(json);
-         this.$.listjax.generateRequest();
-      }
-
-      onList(e) {
-        let json = e.detail.response;
-        console.log(json);
-        this.categories = json.collection;
-        this.$.categories.setList(json.collection);
-
-        if (this.categories.length > 0) {
-            this.populated = true;
-        } else {
+        created() {
+            super.created();
+            this.api = application.api();
             this.populated = false;
-        }
-      }
+            this.colors = application.colors;
+            this.clear();
 
-      onkey(e) {
-        if (e.keyCode == 13) {
-            this.create();
-            this.$['create-dialog'].close();
+            application.subscribe('authenticated', () => this.list());
         }
-      }
+
+        ready() {
+            super.ready();
+            this.$.categories.onClickHandler((category) => {
+                this.category = category;
+                this.dialog();
+            });
+        }
+
+        clear() {
+            this.category = {};
+            this.category.color = 'var(--secondary-color)';
+            this.category.users = [];
+            this.category.cost = 0;
+        }
+
+        dialog() {
+            this.$['create-dialog'].open();
+        }
+
+        create() {
+            let json = api.request('categories', 'save');
+            json.color = this.category.color;
+            if (Array.isArray(this.category.users)) {
+                json.users = this.category.users;
+            } else { // todo tag picker
+                json.users = [this.category.users];
+            }
+            json.shared = this.category.shared;
+            json.name = this.category.name;
+            json.cost = this.category.cost;
+            json.id = this.category.id;
+
+            this.clear();
+            this.request = JSON.stringify(json);
+            this.$.createjax.generateRequest();
+        }
+
+        onCreate(e) {
+            let json = e.detail.response;
+            console.log(json);
+            this.list();
+        }
+
+        edit(e) {
+            this.category = e.model.item;
+            this.dialog();
+        }
+
+        list() {
+            let json = api.request('categories', 'list');
+            this.request = JSON.stringify(json);
+            this.$.listjax.generateRequest();
+        }
+
+        onList(e) {
+            let json = e.detail.response;
+            console.log(json);
+            this.categories = json.collection;
+            this.$.categories.setList(json.collection);
+
+            if (this.categories.length > 0) {
+                this.populated = true;
+            } else {
+                this.populated = false;
+            }
+        }
+
+        onkey(e) {
+            if (e.keyCode === 13) {
+                this.create();
+                this.$['create-dialog'].close();
+            }
+        }
     }
     window.customElements.define(CategoryView.is, CategoryView);
 </script>

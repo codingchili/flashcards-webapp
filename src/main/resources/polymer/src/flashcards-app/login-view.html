@@ -5,28 +5,32 @@
     <template>
         <style include="shared-styles"></style>
         <style>
-      :host {
-        display: flex;
-        width: 100%;
-        height: 100%;
-      }
-      #box {
-        width: 300px;
-        margin: auto;
-        margin-top: 42px;
-      }
-      .header {
-          margin-bottom: 0px;
-          text-align: center;
-          font-family: 'Roboto', Helvetica, sans-serif;
-      }
-    </style>
+            :host {
+                display: flex;
+                width: 100%;
+                height: 100%;
+            }
+
+            #box {
+                width: 300px;
+                margin: auto;
+                margin-top: 42px;
+            }
+
+            .header {
+                margin-bottom: 0px;
+                text-align: center;
+                font-family: 'Roboto', Helvetica, sans-serif;
+            }
+        </style>
 
         <paper-card id="box" elevation="3">
             <h2 class="header" hidden$="[[registration]]">Authenticate</h2>
             <h2 class="header" hidden$="[[!registration]]">Register</h2>
-            <paper-input label="Username" id="userinput" on-keydown="onkey" value="{{username}}" autofocus></paper-input>
-            <paper-input label="Password" id="passwordinput" on-keydown="onkey" value="{{password}}" type="password"></paper-input>
+            <paper-input label="Username" id="userinput" on-keydown="onkey" value="{{username}}"
+                         autofocus></paper-input>
+            <paper-input label="Password" id="passwordinput" on-keydown="onkey" value="{{password}}"
+                         type="password"></paper-input>
             <paper-input hidden$="[[!registration]]" id="pass-repeat" on-keydown="onkey"
                          label="Password (repeat)" value="{{passrepeat}}" type="password"></paper-input>
 
@@ -50,103 +54,105 @@
 
 <script>
     class LoginView extends Polymer.Element {
-      static get is() { return 'login-view'; }
+        static get is() {
+            return 'login-view';
+        }
 
-      constructor() {
-        super();
-        this.api = application.api();
-        this.registration = false;
+        constructor() {
+            super();
+            this.api = application.api();
+            this.registration = false;
 
-        application.subscribe('onLoginPage', () => {
-            this.$.userinput.focus();
-        });
-      }
-
-      doLogin(e) {
-       let response = e.detail.response;
-
-        switch (response.status) {
-            case ACCEPTED:
-                this.clear();
-                delete response.status;
-                application.onAuthenticated(response);
-                break;
-            case MISSING:
-                this.setRegister();
-                this.showMessage('User does not exist.');
-                break;
-            case ERROR: {
-                this.showMessage(response.message);
-                this.password = '';
+            application.subscribe('onLoginPage', () => {
                 this.$.userinput.focus();
-                this.$.passwordinput.focus();
+            });
+        }
+
+        doLogin(e) {
+            let response = e.detail.response;
+
+            switch (response.status) {
+                case ACCEPTED:
+                    this.clear();
+                    delete response.status;
+                    application.onAuthenticated(response);
+                    break;
+                case MISSING:
+                    this.setRegister();
+                    this.showMessage('User does not exist.');
+                    break;
+                case ERROR: {
+                    this.showMessage(response.message);
+                    this.password = '';
+                    this.$.userinput.focus();
+                    this.$.passwordinput.focus();
+                }
             }
         }
-      }
 
-      doRegister(e) {
-        let response = e.detail.response;
+        doRegister(e) {
+            let response = e.detail.response;
 
-        switch (response.status) {
-            case ACCEPTED:
-                this.clear();
-                this.setLogin();
-                delete response.status;
-                application.onAuthenticated(response);
-                break;
-            case CONFLICT:
-                this.$.userinput.focus();
-                this.showMessage('User already exists.');
-                break;
-            case ERROR:
-                this.showMessage(data.message);
+            switch (response.status) {
+                case ACCEPTED:
+                    this.clear();
+                    this.setLogin();
+                    delete response.status;
+                    application.onAuthenticated(response);
+                    break;
+                case CONFLICT:
+                    this.$.userinput.focus();
+                    this.showMessage('User already exists.');
+                    break;
+                case ERROR:
+                    this.showMessage(data.message);
+            }
         }
-      }
 
-      clear() {
-        this.password = '';
-        this.passrepeat = '';
-        this.username = '';
-      }
-
-      onkey(e) {
-        if (e.keyCode == 13) {
-            this.call();
+        clear() {
+            this.password = '';
+            this.passrepeat = '';
+            this.username = '';
         }
-      }
 
-      call() {
-         this.request = api.request('accounts', ((this.registration) ? 'register' : 'authenticate'));
-         this.request.username = this.username;
-         this.request.password = this.password;
-         this.request = JSON.stringify(this.request);
+        onkey(e) {
+            if (e.keyCode === 13) {
+                this.call();
+            }
+        }
 
-        if (this.registration) {
-            if (this.password == this.passrepeat) {
-                application.publish('toast', 'Registering..');
-                this.$.registerjax.generateRequest();
+        call() {
+            this.request = api.request('accounts', ((this.registration) ? 'register' : 'authenticate'));
+            this.request.username = this.username;
+            this.request.password = this.password;
+            this.request = JSON.stringify(this.request);
+
+            if (this.registration) {
+                if (this.password === this.passrepeat) {
+                    application.publish('toast', 'Registering..');
+                    this.$.registerjax.generateRequest();
+                } else {
+                    this.showMessage('Password needs to match.');
+                }
             } else {
-                this.showMessage('Password needs to match.');
+                application.publish('toast', 'Logging in..');
+                this.$.loginjax.generateRequest();
             }
-        } else {
-            application.publish('toast', 'Logging in..');
-            this.$.loginjax.generateRequest();
         }
-      }
 
-      setRegister() {
-        this.registration = true;
-        this.$['pass-repeat'].focus();
-      }
+        setRegister() {
+            this.registration = true;
+            this.$['pass-repeat'].focus();
+        }
 
-      setLogin() {
-        this.registration = false;
-        this.$.userinput.focus();
-      }
+        setLogin() {
+            this.registration = false;
+            this.$.userinput.focus();
+        }
 
-      showMessage(text) {
-        application.publish('toast', text);
-      }
+        showMessage(text) {
+            application.publish('toast', text);
+        }
     }
     window.customElements.define(LoginView.is, LoginView);
-  </script>
+</script>

@@ -2,34 +2,37 @@
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
-
 <dom-module id="account-view">
     <template>
         <style include="shared-styles"></style>
         <style>
-      :host {
-        display: flex;
-        width: 100%;
-        height: 100%;
-      }
+            :host {
+                display: flex;
+                width: 100%;
+                height: 100%;
+            }
 
-    .info {
-        width: 446px;
-        margin:auto;
-        margin-top: 64px;
-    }
-    .details {
-         padding: 16px;
-     }
-     .special {
-        color: var(--secondary-color);
-     }
-     .large {
-        font-size: 32px;
-     }
-     .medium {
-        font-size: 13px;
-     }
+            .info {
+                width: 446px;
+                margin: auto;
+                margin-top: 64px;
+            }
+
+            .details {
+                padding: 16px;
+            }
+
+            .special {
+                color: var(--secondary-color);
+            }
+
+            .large {
+                font-size: 32px;
+            }
+
+            .medium {
+                font-size: 13px;
+            }
         </style>
 
         <paper-card elevation="3" class="info">
@@ -46,28 +49,27 @@
 
 <script>
     class AccountView extends Polymer.Element {
-      static get is() { return 'account-view'; }
+        static get is() {
+            return 'account-view';
+        }
 
-      constructor() {
-        super();
-        this.api = application.api();
-        this.token = application.token;
+        constructor() {
+            super();
+            this.api = application.api();
+            this.token = application.token;
 
-        application.subscribe('authenticated', (token) => {
-            this.token = token;
-        });
-      }
+            application.subscribe('authenticated', (token) => {
+                this.token = token;
+            });
+        }
 
-      stringify(json) {
-        return JSON.stringify(json, null, 2);
-      }
+        stringify(json) {
+            return JSON.stringify(json, null, 2);
+        }
 
-      date(epoch) {
-        return new Date(epoch * 1000);
-      }
+        date(epoch) {
+            return new Date(epoch * 1000);
+        }
     }
     window.customElements.define(AccountView.is, AccountView);
-
-
-
 </script>

@@ -4,46 +4,50 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
-
 <dom-module id="statistics-bar">
     <template>
         <style include="shared-styles"></style>
         <style>
-      :host {
-        display: block;
-      }
-      #box {
-        height: 324px;
-        margin-top: 32px;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        justify-content: space-around;
-      }
-      .header {
-        font-size: 14px;
-        position: absolute;
-        top: 6px;
-        left: 4px;
-      }
-      .value {
-        position: absolute;
-        left: 8px;
-        font-size: 28px;
-        margin-top: 28px;
-        color: var(--faint-text-color);
-      }
-      iron-icon {
-        position: absolute;
-        top: 4px;
-        right: 8px;
-      }
-        paper-card {
-            margin: auto;
-            width: 152px;
-            height: 64px;
-            user-select: none;
-          }
+            :host {
+                display: block;
+            }
+
+            #box {
+                height: 324px;
+                margin-top: 32px;
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                justify-content: space-around;
+            }
+
+            .header {
+                font-size: 14px;
+                position: absolute;
+                top: 6px;
+                left: 4px;
+            }
+
+            .value {
+                position: absolute;
+                left: 8px;
+                font-size: 28px;
+                margin-top: 28px;
+                color: var(--faint-text-color);
+            }
+
+            iron-icon {
+                position: absolute;
+                top: 4px;
+                right: 8px;
+            }
+
+            paper-card {
+                margin: auto;
+                width: 152px;
+                height: 64px;
+                user-select: none;
+            }
         </style>
 
         <div id="box">
@@ -61,34 +65,30 @@
                 </paper-card>
             </template>
         </div>
-
     </template>
 
     <script>
-    /**
-     * @customElement
-     * @polymer
-     */
-    class StatisticsBar extends Polymer.Element {
-      static get is() { return 'statistics-bar'; }
-      constructor() {
-        super();
-        this.api = application.api();
-        this.statistics = [
-            {"description":"Registered users", "icon": "account-circle", "name":"accounts"},
-            {"description":"Total categories", "icon": "apps", "name":"categories"},
-            {"description":"Created cards", "icon": "credit-card", "name":"cards"}
-          ];
-
-        setInterval(() => {
-            for (let item of this.statistics) {
-                this.shadowRoot.querySelector('#' + item.name).generateRequest();
+        class StatisticsBar extends Polymer.Element {
+            static get is() {
+                return 'statistics-bar';
             }
-        }, 5000);
-      }
-    }
 
-    window.customElements.define(StatisticsBar.is, StatisticsBar);
+            created() {
+                super.created();
+                this.api = application.api();
+                this.statistics = [
+                    {"description": "Registered users", "icon": "account-circle", "name": "accounts"},
+                    {"description": "Total categories", "icon": "apps", "name": "categories"},
+                    {"description": "Created cards", "icon": "credit-card", "name": "cards"}
+                ];
 
+                setInterval(() => {
+                    for (let item of this.statistics) {
+                        this.shadowRoot.querySelector('#' + item.name).generateRequest();
+                    }
+                }, 5000);
+            }
+        }
+        window.customElements.define(StatisticsBar.is, StatisticsBar);
     </script>
 </dom-module>

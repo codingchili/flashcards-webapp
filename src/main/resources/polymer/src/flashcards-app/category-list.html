@@ -9,90 +9,94 @@
     <template>
         <style include="shared-styles"></style>
         <style>
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-      .category-box {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        top: 12px;
-      }
-      .category {
-        margin-left: 32px;
-        margin-top: 16px;
-        width: 164px;
-        cursor: pointer;
-        height: 102px;
-      }
-      .icon-category {
-        min-height: 80%;
-        min-width: 40%;
-        position: absolute;
-        left: 0px;
-        top: 12px;
-      }
-      .icon-access {
-        color: var(--primary-color);
-        position: absolute;
-        right: 4px;
-        top: 4px;
-        width: 16px;
-        height: 16px;
-      }
-      .name-box {
-        height: 100%;
-        line-height: 425%;
-        left: -8px;
-        display: inline-block;
-        width: 100%;
-        margin-top: 18px;
-      }
-      .name {
-        font-size: 14px;
-        line-height: 115%;
-        vertical-align: middle;
-        word-wrap: break-word;
-        width: 100%;
-        text-align: left;
-        max-width: 100px;
-        margin-left: 60px;
-        display: inline-block;
-      }
-      .created {
-        position: absolute;
-        font-size: 9px;
-        bottom: 4px;
-        right: 4px;
-      }
-        .price {
-          position: absolute;
-          left: 10px;
-          color: var(--error-color);
-          font-weight: 200;
-          bottom: 4px;
-          display: block;
-        }
-        .owner-text {
-            left: 0px;
-            margin-left: 8px;
-            top: 8px;
-            font-size: 9px;
-            position: absolute;
-        }
-        .owner-box {
-            position: absolute;
-            width: 100%;
-            left: 4px;
-        }
-        .top-bar {
-            position: absolute;
-            width: 100%;
-            top: 0px;
-            height: 24px;
-        }
+            :host {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+            .category {
+                margin-left: 32px;
+                margin-top: 16px;
+                width: 164px;
+                cursor: pointer;
+                height: 102px;
+            }
+
+            .icon-category {
+                min-height: 80%;
+                min-width: 40%;
+                position: absolute;
+                left: 0px;
+                top: 12px;
+            }
+
+            .icon-access {
+                color: var(--primary-color);
+                position: absolute;
+                right: 4px;
+                top: 4px;
+                width: 16px;
+                height: 16px;
+            }
+
+            .name-box {
+                height: 100%;
+                line-height: 425%;
+                left: -8px;
+                display: inline-block;
+                width: 100%;
+                margin-top: 18px;
+            }
+
+            .name {
+                font-size: 14px;
+                line-height: 115%;
+                vertical-align: middle;
+                word-wrap: break-word;
+                width: 100%;
+                text-align: left;
+                max-width: 100px;
+                margin-left: 60px;
+                display: inline-block;
+            }
+
+            .created {
+                position: absolute;
+                font-size: 9px;
+                bottom: 4px;
+                right: 4px;
+            }
+
+            .price {
+                position: absolute;
+                left: 10px;
+                color: var(--error-color);
+                font-weight: 200;
+                bottom: 4px;
+                display: block;
+            }
+
+            .owner-text {
+                left: 0px;
+                margin-left: 8px;
+                top: 8px;
+                font-size: 9px;
+                position: absolute;
+            }
+
+            .owner-box {
+                position: absolute;
+                width: 100%;
+                left: 4px;
+            }
+
+            .top-bar {
+                position: absolute;
+                width: 100%;
+                top: 0px;
+                height: 24px;
+            }
 
         </style>
         <template is="dom-repeat" items="{{categories}}">
@@ -109,10 +113,10 @@
                             [[item.created.year]] [[item.created.month]]
                         </span>
                 <div hidden$="[[!isPurchaseable(item)]]">
-                    <span class="price">[[item.cost]]&nbsp;&Xi;</span>
+                    <span class="price">[[item.cost]]&nbsp;&xi;</span>
                 </div>
-                <div class="top-bar">
-                    <iron-icon hidden$="[[item.shared]]" class="icon-access" icon="[[iconStyle(item)]]"
+                <div class="top-bar" hidden$="[[item.shared]]">
+                    <iron-icon class="icon-access" icon="[[iconStyle(item)]]"
                                style$="color:[[iconColor(item)]];"></iron-icon>
                     <paper-tooltip animation-delay="0" position="bottom">[[availability(item)]]</paper-tooltip>
                 </div>
@@ -124,71 +128,71 @@
 
 <script>
     class CategoryList extends Polymer.Element {
-      static get is() { return 'category-list'; }
-
-      constructor() {
-        super();
-        this.categories = [];
-      }
-
-      iconColor(category) {
-        return this.icon(category).color;
-      }
-
-      iconStyle(category) {
-        return this.icon(category).style;
-      }
-
-      availability(category) {
-        if (this.isOwner(category)) {
-          return "Requires access.";
+        static get is() {
+            return 'category-list';
         }
-        if (this.isMember(category)) {
-          return "Shared with you.";
+
+        created() {
+            this.categories = [];
         }
-        if (this.isPurchaseable(category)) {
-          return "May be purchased.";
+
+        iconColor(category) {
+            return this.icon(category).color;
         }
-      }
 
-      isPurchaseable(category) {
-        return !category.shared && !this.isMember(category) && category.cost != 0;
-      }
-
-      isOwner(category) {
-        return category.owner == application.token.domain;
-      }
-
-      isMember(category) {
-        return category.users.indexOf(application.token.domain) != -1;
-      }
-
-      icon (category) {
-        let icon = {'style': 'euro-symbol', 'color': 'var(--error-color)'};
-
-        if (this.isOwner(category)) {
-            icon.style = 'lock-outline';
-            icon.color = 'var(--primary-color)';
+        iconStyle(category) {
+            return this.icon(category).style;
         }
-        if (this.isMember(category)) {
-            icon.style = 'file-download'
-            icon.color = 'var(--primary-color)';
+
+        availability(category) {
+            if (this.isOwner(category)) {
+                return "Requires access.";
+            }
+            if (this.isMember(category)) {
+                return "Shared with you.";
+            }
+            if (this.isPurchaseable(category)) {
+                return "May be purchased.";
+            }
         }
-        return icon;
-      }
 
-      edit(e) {
-        this.handler(e.model.item);
-      }
+        isPurchaseable(category) {
+            return !category.shared && !this.isMember(category) && category.cost !== 0;
+        }
 
-      onClickHandler(handler) {
-        this.handler = handler;
-      }
+        isOwner(category) {
+            return category.owner === application.token.domain;
+        }
 
-      setList(categories) {
-        this.categories = categories;
-      }
+        isMember(category) {
+            return category.users.indexOf(application.token.domain) !== -1;
+        }
+
+        icon(category) {
+            let icon = {'style': 'euro-symbol', 'color': 'var(--error-color)'};
+
+            if (this.isOwner(category)) {
+                icon.style = 'lock-outline';
+                icon.color = 'var(--primary-color)';
+            }
+            if (this.isMember(category)) {
+                icon.style = 'file-download';
+                icon.color = 'var(--primary-color)';
+            }
+            return icon;
+        }
+
+        edit(e) {
+            this.handler(e.model.item);
+        }
+
+        onClickHandler(handler) {
+            this.handler = handler;
+        }
+
+        setList(categories) {
+            this.categories = categories;
+        }
     }
     window.customElements.define(CategoryList.is, CategoryList);
-
 </script>

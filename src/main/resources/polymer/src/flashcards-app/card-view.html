@@ -3,26 +3,28 @@
 <dom-module id="card-view">
     <template>
         <style>
-      :host {
-        display: block;
-      }
-    </style>
+            :host {
+                display: block;
+            }
+        </style>
         <h2>Hello [[prop1]]!</h2>
     </template>
 
     <script>
-    class CardView extends Polymer.Element {
-      static get is() { return 'card-view'; }
-      static get properties() {
-        return {
-          prop1: {
-            type: String,
-            value: 'card-view'
-          }
-        };
-      }
-    }
+        class CardView extends Polymer.Element {
+            static get is() {
+                return 'card-view';
+            }
 
-    window.customElements.define(CardView.is, CardView);
-  </script>
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'card-view'
+                    }
+                };
+            }
+        }
+        window.customElements.define(CardView.is, CardView);
+    </script>
 </dom-module>

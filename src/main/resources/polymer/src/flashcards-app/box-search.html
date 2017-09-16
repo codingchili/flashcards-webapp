@@ -5,25 +5,26 @@
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 <link rel="import" href="/src/flashcards-app/category-list.html">
 
-
 <dom-module id="box-search">
     <template>
         <style include="shared-styles"></style>
         <style>
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-      #search {
-        width: 324px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      #box {
-        width: 100%;
-        min-height: 524px;
-      }
+            :host {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+            #search {
+                width: 324px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #box {
+                width: 100%;
+                min-height: 524px;
+            }
         </style>
 
         <paper-card id="box" elevation="3">
@@ -44,37 +45,40 @@
 
     </template>
     <script>
-    class BoxSearch extends Polymer.Element {
-      static get is() { return 'box-search'; }
-      constructor() {
-        super();
-        this.api = application.api();
-        this.text = '';
-
-        application.subscribe('onSearchPage', () => {
-            this.$.search.focus();
-        });
-      }
-
-      search(e) {
-          let search = api.request('categories', 'search');
-          search.username = this.text;
-          search.category = this.text;
-          this.json = JSON.stringify(search);
-
-          if (this.text.length > 2) {
-            this.$.ajax.generateRequest();
-            if (e.keyCode == 13) {
-                this.text = '';
+        class BoxSearch extends Polymer.Element {
+            static get is() {
+                return 'box-search';
             }
-          }
-      }
 
-      response(e) {
-        this.categories = e.detail.response.collection;
-        this.$.categories.setList(this.categories);
-      }
-    }
-    window.customElements.define(BoxSearch.is, BoxSearch);
+            constructor() {
+                super();
+                this.api = application.api();
+                this.text = '';
+
+                application.subscribe('onSearchPage', () => {
+                    this.$.search.focus();
+                });
+            }
+
+            search(e) {
+                let search = api.request('categories', 'search');
+                search.username = this.text;
+                search.category = this.text;
+                this.json = JSON.stringify(search);
+
+                if (this.text.length > 2) {
+                    this.$.ajax.generateRequest();
+                    if (e.keyCode === 13) {
+                        this.text = '';
+                    }
+                }
+            }
+
+            response(e) {
+                this.categories = e.detail.response.collection;
+                this.$.categories.setList(this.categories);
+            }
+        }
+        window.customElements.define(BoxSearch.is, BoxSearch);
     </script>
 </dom-module>

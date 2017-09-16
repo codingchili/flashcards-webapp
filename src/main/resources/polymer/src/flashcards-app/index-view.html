@@ -10,6 +10,7 @@
             :host {
                 display: block;
             }
+
             .page {
                 display: flex;
                 align-items: stretch;
@@ -23,12 +24,15 @@
     </template>
 
     <script>
-    class IndexView extends Polymer.Element {
-      static get is() { return 'index-view'; }
-      constructor() {
-        super();
-      }
-    }
-    window.customElements.define(IndexView.is, IndexView);
+        class IndexView extends Polymer.Element {
+            static get is() {
+                return 'index-view';
+            }
+
+            constructor() {
+                super();
+            }
+        }
+        window.customElements.define(IndexView.is, IndexView);
     </script>
 </dom-module>

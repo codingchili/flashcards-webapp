@@ -10,29 +10,32 @@
     <template>
         <style include="shared-styles"></style>
         <style>
-      :host {
-        display: flex;
-        width: 100%;
-        height: 100%;
-      }
-        #settings {
-            width: 300px;
-            margin: auto;
-            margin-top: 64px;
-        }
-        .picker {
-            margin: auto;
-        }
-        .picker-box {
-            display: flex;
-        }
-        .title {
-            text-align: center;
-            width: 100%;
-            display: block;
-            margin-top: 16px;
-        }
+            :host {
+                display: flex;
+                width: 100%;
+                height: 100%;
+            }
 
+            #settings {
+                width: 300px;
+                margin: auto;
+                margin-top: 64px;
+            }
+
+            .picker {
+                margin: auto;
+            }
+
+            .picker-box {
+                display: flex;
+            }
+
+            .title {
+                text-align: center;
+                width: 100%;
+                display: block;
+                margin-top: 16px;
+            }
 
 
         </style>
@@ -67,73 +70,71 @@
 
 <script>
     class SettingsView extends Polymer.Element {
-      static get is() { return 'settings-view'; }
-
-      setProperty(name, value) {
-        document.documentElement.style.setProperty(name, value);
-      }
-
-      constructor() {
-        super();
-        this.api = application.api();
-        this.primary = localStorage.getItem('style.primary-color');
-        this.secondary = localStorage.getItem('style.secondary-color');
-        this.style = localStorage.getItem('style.theme');
-        this.colors = application.colors;
-        this.remember = (localStorage.getItem('token') != null);
-
-        if (this.primary == null) {
-            this.primary = 'var(--paper-pink-400)';
-            this.secondary = 'var(--paper-indigo-300)';
-            this.style = 'light';
+        static get is() {
+            return 'settings-view';
         }
 
-        application.subscribe('authenticated', () => {
-            localStorage.setItem('token', null);
-            this.remember = false;
-        });
-
-        application.subscribe('logout', () => {
-            localStorage.setItem('token', null);
-        });
-
-        this.save();
-      }
-
-      save() {
-        localStorage.setItem('style.primary-color', this.primary);
-        localStorage.setItem('style.secondary-color', this.secondary);
-        localStorage.setItem('style.theme', this.style);
-
-        if (this.remember) {
-            localStorage.setItem('token', JSON.stringify(application.token));
-        } else {
-            localStorage.setItem('token', null);
+        setProperty(name, value) {
+            document.documentElement.style.setProperty(name, value);
         }
 
-           this.setProperty('--primary-color', this.primary);
-           this.setProperty('--secondary-color', this.secondary);
+        constructor() {
+            super();
+            this.api = application.api();
+            this.primary = localStorage.getItem('style.primary-color');
+            this.secondary = localStorage.getItem('style.secondary-color');
+            this.style = localStorage.getItem('style.theme');
+            this.colors = application.colors;
+            this.remember = (localStorage.getItem('token') !== null);
 
-            if (this.style == 'light') {
-               this.setProperty('--primary-text-color', 'var(--light-theme-text-color');
-               this.setProperty('--primary-background-color', 'var(--light-theme-background-color)');
-               this.setProperty('--secondary-text-color', 'var(--light-theme-secondary-color)');
-               this.setProperty('--disabled-text-color', 'var(--light-theme-disabled-color)');
-               this.setProperty('--divider-color', 'var(--light-theme-divider-color)');
-               this.setProperty('--paper-input-container-input-color', 'var(--light-theme-text-color)');
-           } else {
-               this.setProperty('--paper-input-container-input-color', 'var(--dark-theme-text-color)');
-               this.setProperty('--primary-text-color', 'var(--dark-theme-text-color');
-               this.setProperty('--primary-background-color', 'var(--dark-theme-background-color)');
-               this.setProperty('--secondary-text-color', 'var(--dark-theme-secondary-color)');
-               this.setProperty('--disabled-text-color', 'var(--dark-theme-disabled-color)');
-               this.setProperty('--divider-color', 'var(--dark-theme-divider-color)');
-           }
-      }
+            if (this.primary === null) {
+                this.primary = 'var(--paper-pink-400)';
+                this.secondary = 'var(--paper-indigo-300)';
+                this.style = 'light';
+            }
+
+            application.subscribe('authenticated', () => {
+                localStorage.setItem('token', null);
+                this.remember = false;
+            });
+
+            application.subscribe('logout', () => {
+                localStorage.setItem('token', null);
+            });
+
+            this.save();
+        }
+
+        save() {
+            localStorage.setItem('style.primary-color', this.primary);
+            localStorage.setItem('style.secondary-color', this.secondary);
+            localStorage.setItem('style.theme', this.style);
+
+            if (this.remember) {
+                localStorage.setItem('token', JSON.stringify(application.token));
+            } else {
+                localStorage.setItem('token', null);
+            }
+
+            this.setProperty('--primary-color', this.primary);
+            this.setProperty('--secondary-color', this.secondary);
+
+            if (this.style === 'light') {
+                this.setProperty('--primary-text-color', 'var(--light-theme-text-color');
+                this.setProperty('--primary-background-color', 'var(--light-theme-background-color)');
+                this.setProperty('--secondary-text-color', 'var(--light-theme-secondary-color)');
+                this.setProperty('--disabled-text-color', 'var(--light-theme-disabled-color)');
+                this.setProperty('--divider-color', 'var(--light-theme-divider-color)');
+                this.setProperty('--paper-input-container-input-color', 'var(--light-theme-text-color)');
+            } else {
+                this.setProperty('--paper-input-container-input-color', 'var(--dark-theme-text-color)');
+                this.setProperty('--primary-text-color', 'var(--dark-theme-text-color');
+                this.setProperty('--primary-background-color', 'var(--dark-theme-background-color)');
+                this.setProperty('--secondary-text-color', 'var(--dark-theme-secondary-color)');
+                this.setProperty('--disabled-text-color', 'var(--dark-theme-disabled-color)');
+                this.setProperty('--divider-color', 'var(--dark-theme-divider-color)');
+            }
+        }
     }
     window.customElements.define(SettingsView.is, SettingsView);
-
-
-
-
 </script>

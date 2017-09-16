@@ -10,8 +10,8 @@ var ACCEPTED = "ACCEPTED";
 
 var api = {
     request: function (target, route) {
-        let request = {'target': target, 'route':route};
-        if (application.token != null) {
+        let request = {'target': target, 'route': route};
+        if (application.token !== null) {
             request.token = application.token;
         }
         return request;
@@ -44,7 +44,7 @@ var application = {
         'var(--paper-blue-grey-500)'
     ],
 
-    api: function() {
+    api: function () {
         return location.origin + ":8080";
     },
 
@@ -61,7 +61,7 @@ var application = {
     },
 
     subscribe: function (event, callback) {
-        if (this.handlers[event] == null)
+        if (this.handlers[event] === null)
             this.handlers[event] = [];
 
         this.handlers[event].push(callback);
@@ -69,11 +69,11 @@ var application = {
 
     publish: function (event, data) {
         if (this.handlers[event])
-            for (var subscriber = 0; subscriber < this.handlers[event].length; subscriber++)
+            for (let subscriber = 0; subscriber < this.handlers[event].length; subscriber++)
                 this.handlers[event][subscriber](data);
     }
 };
 
 // token can be saved in the settings view.
 application.token = JSON.parse(localStorage.getItem('token'));
-application.authenticated = (application.token != null);
+application.authenticated = (application.token !== null);
