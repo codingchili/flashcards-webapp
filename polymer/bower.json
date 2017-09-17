@@ -20,7 +20,8 @@
     "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.1",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#^2.0.1",
     "paper-radio-button": "PolymerElements/paper-radio-button#^2.0.0",
-    "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0"
+    "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0",
+    "neon-animation": "PolymerElements/neon-animation#^2.0.1"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",

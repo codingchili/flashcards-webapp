@@ -44,6 +44,22 @@
                 margin: 0px;
                 padding: 0px;
             }
+
+            @media screen and (max-width: 475px) {
+                #about {
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    margin: 0;
+                    position: absolute;
+                }
+            }
+
+            #about-content {
+                margin-left: 8px;
+                margin-right: 8px;
+            }
         </style>
         <app-location route="{{route}}"></app-location>
 
@@ -55,23 +71,23 @@
         </app-route>
 
         <app-toolbar>
-            <paper-icon-button icon="menu" on-click="drawer"></paper-icon-button>
+            <paper-icon-button icon="menu" on-tap="drawer"></paper-icon-button>
             <div main-title>[[title]]</div>
-            <paper-icon-button icon="search" on-click="search"></paper-icon-button>
+            <paper-icon-button icon="search" on-tap="search"></paper-icon-button>
         </app-toolbar>
 
         <app-drawer id="drawer">
             <paper-menu selected="0">
                 <!-- if not logged in then go to login view -->
-                <paper-item on-click="login" hidden$="[[authenticated]]">Login</paper-item>
+                <paper-item on-tap="login" hidden$="[[authenticated]]">Login</paper-item>
 
-                <paper-item on-click="categories" hidden$="[[!authenticated]]">My Categories</paper-item>
-                <paper-item on-click="search" hidden$="[[!authenticated]]">Search</paper-item>
-                <paper-item on-click="settings" hidden$="[[!authenticated]]">Settings</paper-item>
-                <paper-item on-click="account" hidden$="[[!authenticated]]">Account</paper-item>
-                <paper-item on-click="logout" hidden$="[[!authenticated]]">Logout</paper-item>
+                <paper-item on-tap="categories" hidden$="[[!authenticated]]">My Categories</paper-item>
+                <paper-item on-tap="search" hidden$="[[!authenticated]]">Search</paper-item>
+                <paper-item on-tap="settings" hidden$="[[!authenticated]]">Settings</paper-item>
+                <paper-item on-tap="account" hidden$="[[!authenticated]]">Account</paper-item>
+                <paper-item on-tap="logout" hidden$="[[!authenticated]]">Logout</paper-item>
 
-                <paper-item on-click="about">About</paper-item>
+                <paper-item on-tap="about">About</paper-item>
             </paper-menu>
         </app-drawer>
 
@@ -94,33 +110,33 @@
                      data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
             <h2>About the app</h2>
-            <paper-dialog-scrollable>
-                A web application for studying with flashcards and to<br> create quizzes.
+            <div id="about-content">
+                    A web application for studying with flashcards and to<br>
+                    create quizzes. Some features of this app is:
+                    <ul>
+                        <li>group flashcards into categories</li>
+                        <li>share categories with friends</li>
+                        <li>make a category public</li>
+                        <li>keep track on users scores per category</li>
+                        <li>allow media content on cards</li>
+                        <li>select answers to cards from a predefined list</li>
+                        <li>hotkeys: Answer, Skip, Delete, Flip, Edit</li>
+                    </ul>
+                    This applications builds on the following libraries
+                    <ul>
+                        <li><a href="https://github.com/Polymer/polymer" target="_blank">Polymer 2.0</a></li>
+                        <li><a href="https://github.com/eclipse/vert.x" target="_blank">Vertx</a></li>
+                        <li><a href="https://github.com/hazelcast/hazelcast" target="_blank">Hazelcast</a></li>
+                        <li><a href="https://github.com/npgall/cqengine" target="_blank">CQEngine</a></li>
+                        <li><a href="https://github.com/mongodb/mongo" target="_blank">MongoDB</a></li>
+                    </ul>
+                    Sources for flashcards-webapp and chili-core available on <a href="https://github.com/codingchili/"
+                                                                                 target="_blank">GitHub</a>.
+                    Author of the app is Robin Duda &copy;2017
 
-                Some features of this app is:
-                <ul>
-                    <li>group flashcards into categories</li>
-                    <li>share categories with friends</li>
-                    <li>make a category public</li>
-                    <li>keep track on users scores per category</li>
-                    <li>allow media content on cards</li>
-                    <li>select answers to cards from a predefined list</li>
-                    <li>hotkeys: Answer, Skip, Delete, Flip, Edit</li>
-                </ul>
-                This applications builds on the following libraries
-                <ul>
-                    <li><a href="https://github.com/Polymer/polymer" target="_blank">Polymer 2.0</a></li>
-                    <li><a href="https://github.com/eclipse/vert.x" target="_blank">Vertx</a></li>
-                    <li><a href="https://github.com/hazelcast/hazelcast" target="_blank">Hazelcast</a></li>
-                    <li><a href="https://github.com/npgall/cqengine" target="_blank">CQEngine</a></li>
-                    <li><a href="https://github.com/mongodb/mongo" target="_blank">MongoDB</a></li>
-                </ul>
-                Sources for flashcards-webapp and chili-core available on <a href="https://github.com/codingchili/"
-                                                                             target="_blank">GitHub</a>.
-                Author of the app is Robin Duda &copy;2017
-            </paper-dialog-scrollable>
-            <div class="buttons" id="about-buttons">
-                <paper-button dialog-confirm raised autofocus>Close</paper-button>
+                <div class="buttons" id="about-buttons">
+                    <paper-button dialog-confirm raised autofocus>Close</paper-button>
+                </div>
             </div>
         </paper-dialog>
 
@@ -134,8 +150,8 @@
             return 'app-view';
         }
 
-        created() {
-            super.created();
+        constructor() {
+            super();
             this.authenticated = application.authenticated;
             this.title = 'Flashcards';
 

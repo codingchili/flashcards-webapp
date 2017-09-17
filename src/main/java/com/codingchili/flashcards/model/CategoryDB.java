@@ -1,12 +1,11 @@
 package com.codingchili.flashcards.model;
 
 import com.codingchili.core.context.CoreContext;
+import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
 import com.codingchili.core.storage.AsyncStorage;
 import com.codingchili.core.storage.StorageLoader;
 import com.codingchili.flashcards.AppConfig;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 
 import java.util.Collection;
 
@@ -33,17 +32,10 @@ public class CategoryDB implements AsyncCategoryStore {
     }
 
     @Override
-    public Future<FlashCategory> get(String category, String username) {
+    public Future<FlashCategory> get(String id) {
         Future<FlashCategory> future = Future.future();
-        categories.get(getId(category, username), future);
+        categories.get(id, future);
         return future;
-    }
-
-    private String getId(String category, String username) {
-        return new FlashCategory()
-                .setName(category)
-                .setOwner(username)
-                .id();
     }
 
     @Override
@@ -61,7 +53,7 @@ public class CategoryDB implements AsyncCategoryStore {
     }
 
     @Override
-    public Future<Collection<FlashCategory>> search(String query, String username) {
+    public Future<Collection<FlashCategory>> search(String username, String query) {
         Future<Collection<FlashCategory>> future = Future.future();
         categories
                 .query(ID_OWNER).equalTo(username).and(ID_NAME).like(query)
@@ -91,6 +83,25 @@ public class CategoryDB implements AsyncCategoryStore {
     public Future<Integer> size() {
         Future<Integer> future = Future.future();
         categories.size(future);
+        return future;
+    }
+
+    @Override
+    public Future<Void> remove(String username, String categoryId) {
+        Future<Void> future = Future.future();
+        categories.get(categoryId, get -> {
+            FlashCategory category = get.result();
+
+            if (get.succeeded()) {
+                if (category.getOwner().equals(username)) {
+                    categories.remove(categoryId, future);
+                } else {
+                    future.fail(new AuthorizationRequiredException());
+                }
+            } else {
+                future.fail(get.cause());
+            }
+        });
         return future;
     }
 

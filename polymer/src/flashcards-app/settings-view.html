@@ -1,10 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="/src/flashcards-app/shared-styles.html">
 <link rel="import" href="../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 <dom-module id="settings-view">
     <template>
@@ -26,6 +26,11 @@
                 margin: auto;
             }
 
+            .color-picker {
+                margin: auto;
+                display: inline-block;
+            }
+
             .picker-box {
                 display: flex;
             }
@@ -36,17 +41,15 @@
                 display: block;
                 margin-top: 16px;
             }
-
-
         </style>
 
         <paper-card id="settings" elevation="3">
             <label class="title">Theme colors</label>
             <div class="picker-box">
-                <paper-swatch-picker color="{{primary}}" class="picker" column-count="7" color-list="[[colors]]">
+                <paper-swatch-picker color="{{primary}}" class="color-picker" column-count="7" color-list="[[colors]]">
                 </paper-swatch-picker>
 
-                <paper-swatch-picker color="{{secondary}}" class="picker" column-count="7" color-list="[[colors]]">
+                <paper-swatch-picker color="{{secondary}}" class="color-picker" column-count="7" color-list="[[colors]]">
                 </paper-swatch-picker>
             </div>
 
@@ -61,7 +64,7 @@
                 <paper-checkbox checked="{{remember}}" class="picker">Remember me</paper-checkbox>
             </div>
 
-            <paper-button on-click="save" raised autofocus>Apply</paper-button>
+            <paper-button on-tap="save" raised autofocus>Apply</paper-button>
         </paper-card>
     </template>
 
@@ -72,10 +75,6 @@
     class SettingsView extends Polymer.Element {
         static get is() {
             return 'settings-view';
-        }
-
-        setProperty(name, value) {
-            document.documentElement.style.setProperty(name, value);
         }
 
         constructor() {
@@ -105,6 +104,10 @@
             this.save();
         }
 
+        setProperty(name, value) {
+            document.documentElement.style.setProperty(name, value);
+        }
+
         save() {
             localStorage.setItem('style.primary-color', this.primary);
             localStorage.setItem('style.secondary-color', this.secondary);
@@ -126,6 +129,7 @@
                 this.setProperty('--disabled-text-color', 'var(--light-theme-disabled-color)');
                 this.setProperty('--divider-color', 'var(--light-theme-divider-color)');
                 this.setProperty('--paper-input-container-input-color', 'var(--light-theme-text-color)');
+                this.setProperty('--faint-text-color', 'rgba(0, 0, 0, 0.5)');
             } else {
                 this.setProperty('--paper-input-container-input-color', 'var(--dark-theme-text-color)');
                 this.setProperty('--primary-text-color', 'var(--dark-theme-text-color');
@@ -133,6 +137,7 @@
                 this.setProperty('--secondary-text-color', 'var(--dark-theme-secondary-color)');
                 this.setProperty('--disabled-text-color', 'var(--dark-theme-disabled-color)');
                 this.setProperty('--divider-color', 'var(--dark-theme-divider-color)');
+                this.setProperty('--faint-text-color', 'rgba(255, 255, 255, 0.5)');
             }
         }
     }

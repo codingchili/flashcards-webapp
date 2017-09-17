@@ -2,15 +2,15 @@
 <dom-module id="shared-styles">
     <template>
         <style>
-          --primary-color: var(--paper-pink-400)
-          --secondary-color: var(--paper-indigo-300)
+          --primary-color: var(--paper-pink-400);
+          --secondary-color: var(--paper-indigo-300);
           --primary-text-color: var(--light-theme-text-color);
           --primary-background-color: var(--light-theme-background-color);
           --secondary-text-color: var(--light-theme-secondary-color);
           --disabled-text-color: var(--light-theme-disabled-color);
           --divider-color: var(--light-theme-divider-color);
           --error-color: var(--paper-deep-orange-a700);
-          --faint-text-color: rgba(0, 0, 0, 0.3);
+          --faint-text-color: rgba(255, 0, 0, 0.3);
 
           app-drawer {
               /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);*/
@@ -33,6 +33,16 @@
               margin-top: 32px;
               margin-left: 0px;
               margin-right: 0px;
+          }
+
+          .cancel-button {
+              background-color: var(--secondary-color);
+              margin-top: 16px;
+          }
+
+          #button-group {
+            padding: 0;
+            width: 100%;
           }
 
           paper-item {

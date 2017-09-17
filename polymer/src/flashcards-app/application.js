@@ -61,7 +61,7 @@ var application = {
     },
 
     subscribe: function (event, callback) {
-        if (this.handlers[event] === null)
+        if (this.handlers[event] == null)
             this.handlers[event] = [];
 
         this.handlers[event].push(callback);

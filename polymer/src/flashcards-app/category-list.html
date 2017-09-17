@@ -1,8 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 <dom-module id="category-list">
@@ -23,6 +25,13 @@
                 height: 102px;
             }
 
+            @media screen and (max-width: 675px) {
+                .category {
+                    margin: 0px;
+                    margin-top: 4px;
+                }
+            }
+
             .icon-category {
                 min-height: 80%;
                 min-width: 40%;
@@ -31,9 +40,8 @@
                 top: 12px;
             }
 
-            .icon-access {
+            .icon-item {
                 color: var(--primary-color);
-                position: absolute;
                 right: 4px;
                 top: 4px;
                 width: 16px;
@@ -91,34 +99,41 @@
                 left: 4px;
             }
 
-            .top-bar {
+            .icon-list {
                 position: absolute;
                 width: 100%;
                 top: 0px;
                 height: 24px;
+                display: flex;
+                justify-content: flex-end;
             }
-
         </style>
-        <template is="dom-repeat" items="{{categories}}">
-            <paper-card class="category" on-click="edit" elevation="1">
-                <iron-icon class="icon-category" icon="[[item.icon]]" style$="color:[[item.color]];">
+        <template is="dom-repeat" items="{{categories}}" as="category">
+            <paper-card class="category" elevation="1" on-tap="clicked" >
+                <iron-icon class="icon-category" icon="[[category.icon]]" style$="color:[[category.color]];">
                 </iron-icon>
-                <div class="owner-box" hidden$="[[isOwner(item)]]">
-                    <span class="owner-text">[[item.owner]]</span>
+                <div class="owner-box" hidden$="[[isOwner(category)]]">
+                    <span class="owner-text">[[category.owner]]</span>
                 </div>
                 <div class="name-box">
-                    <span class="name">[[item.name]]</span>
+                    <span class="name">[[category.name]]</span>
                 </div>
                 <span class="created">
-                            [[item.created.year]] [[item.created.month]]
+                            [[category.created.year]] [[category.created.month]]
                         </span>
-                <div hidden$="[[!isPurchaseable(item)]]">
-                    <span class="price">[[item.cost]]&nbsp;&xi;</span>
+                <div hidden$="[[!isPurchaseable(category)]]">
+                    <span class="price">[[category.cost]]&nbsp;&xi;</span>
                 </div>
-                <div class="top-bar" hidden$="[[item.shared]]">
-                    <iron-icon class="icon-access" icon="[[iconStyle(item)]]"
-                               style$="color:[[iconColor(item)]];"></iron-icon>
-                    <paper-tooltip animation-delay="0" position="bottom">[[availability(item)]]</paper-tooltip>
+
+                <div class="icon-list">
+                    <template is="dom-repeat" items="[[icons(category)]]" as="icon">
+                        <template is="dom-if" if="[[!icon.menu]]">
+                            <div>
+                                <iron-icon class="icon-item" icon="[[icon.id]]"></iron-icon>
+                                <paper-tooltip animation-delay="0" position="bottom">[[icon.text]]</paper-tooltip>
+                            </div>
+                        </template>
+                    </template>
                 </div>
             </paper-card>
         </template>
@@ -127,33 +142,41 @@
 </dom-module>
 
 <script>
+    class Icon {
+        constructor(id, text, menu) {
+            this.id = id;
+            this.text = text;
+            this.menu = menu;
+        }
+    }
+
     class CategoryList extends Polymer.Element {
         static get is() {
             return 'category-list';
         }
 
-        created() {
+        constructor() {
+            super();
             this.categories = [];
         }
 
-        iconColor(category) {
-            return this.icon(category).color;
-        }
+        icons(category) {
+            let icons = [];
 
-        iconStyle(category) {
-            return this.icon(category).style;
-        }
-
-        availability(category) {
-            if (this.isOwner(category)) {
-                return "Requires access.";
+            if (this.isOwner(category) || this.isMember(category)) {
+                icons.push(new Icon('open-in-new', 'open', true));
+            }
+            if (!category.shared) {
+                icons.push(new Icon('lock-outline', 'private'));
             }
             if (this.isMember(category)) {
-                return "Shared with you.";
+                icons.push(new Icon('file-download', 'member'));
             }
-            if (this.isPurchaseable(category)) {
-                return "May be purchased.";
+            if (this.isOwner(category)) {
+                icons.push(new Icon('editor:mode-edit', 'edit', true));
+                icons.push(new Icon('remove', 'remove', true));
             }
+            return icons;
         }
 
         isPurchaseable(category) {
@@ -168,22 +191,8 @@
             return category.users.indexOf(application.token.domain) !== -1;
         }
 
-        icon(category) {
-            let icon = {'style': 'euro-symbol', 'color': 'var(--error-color)'};
-
-            if (this.isOwner(category)) {
-                icon.style = 'lock-outline';
-                icon.color = 'var(--primary-color)';
-            }
-            if (this.isMember(category)) {
-                icon.style = 'file-download';
-                icon.color = 'var(--primary-color)';
-            }
-            return icon;
-        }
-
-        edit(e) {
-            this.handler(e.model.item);
+        clicked(e) {
+            this.handler(e.model.category);
         }
 
         onClickHandler(handler) {

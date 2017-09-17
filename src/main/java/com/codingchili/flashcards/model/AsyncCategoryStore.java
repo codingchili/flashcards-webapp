@@ -10,10 +10,11 @@ import java.util.Collection;
 public interface AsyncCategoryStore {
     /**
      * Retrieves the category by its name.
-     * @param category name of the category to retrieve.
+     *
+     * @param id of the category to retrieve.
      * @return callback
      */
-    Future<FlashCategory> get(String category, String username);
+    Future<FlashCategory> get(String id);
 
     /**
      * Adds a category to the database or updates if existing.
@@ -30,7 +31,7 @@ public interface AsyncCategoryStore {
      *                 to the given user.
      * @return callback
      */
-    Future<Collection<FlashCategory>> search(String query, String username);
+    Future<Collection<FlashCategory>> search(String username, String query);
 
     /**
      * Performs a search without using a user context, returns public results only.
@@ -41,8 +42,8 @@ public interface AsyncCategoryStore {
 
     /**
      * Lists categories owned by the given username.
-     * @param username the username of the owner.
      *
+     * @param username the username of the owner.
      * @return callback
      */
     Future<Collection<FlashCategory>> list(String username);
@@ -53,4 +54,13 @@ public interface AsyncCategoryStore {
      * @return callback
      */
     Future<Integer> size();
+
+    /**
+     * Removes a category from the database.
+     *
+     * @param username   the owner of the category to remove
+     * @param categoryId the id of the category to remove
+     * @return callback
+     */
+    Future<Void> remove(String username, String categoryId);
 }

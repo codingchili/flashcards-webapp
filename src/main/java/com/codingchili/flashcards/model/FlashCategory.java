@@ -117,12 +117,12 @@ public class FlashCategory implements Storable {
 
     @Override
     public String id() {
-        return owner + "_" + id;
+        return id;
     }
 
     @Override
     public int hashCode() {
-        return id().hashCode();
+        return id.hashCode();
     }
 
     @Override

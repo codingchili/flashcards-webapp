@@ -8,6 +8,7 @@ import com.codingchili.flashcards.model.FlashCategory;
 import java.util.List;
 import java.util.Optional;
 
+import static com.codingchili.core.configuration.CoreStrings.ID_NAME;
 import static com.codingchili.core.configuration.CoreStrings.ID_TOKEN;
 import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
 import static com.codingchili.flashcards.model.FlashCategory.ID_USERS;
@@ -23,6 +24,10 @@ public class CategoryRequest extends RequestWrapper {
 
     public String categoryName() {
         return data().getString(ID_CATEGORY);
+    }
+
+    public String categoryId() {
+        return data().getString("id");
     }
 
     public FlashCategory category() {

@@ -4,7 +4,6 @@ import com.codingchili.core.context.CoreContext;
 import com.codingchili.core.listener.CoreHandler;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.protocol.*;
-import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.flashcards.AppConfig;
 import com.codingchili.flashcards.model.AsyncCategoryStore;
@@ -14,8 +13,6 @@ import com.codingchili.flashcards.request.CategoryRequest;
 import com.codingchili.flashcards.response.SizeResponse;
 
 import java.time.ZonedDateTime;
-
-import static com.codingchili.core.configuration.CoreStrings.ANY;
 
 /**
  * Handler controller for categories.
@@ -39,6 +36,12 @@ public class CategoryHandler implements CoreHandler {
         categories.save(category).setHandler(request::result);
     }
 
+    @Private("remove")
+    public void remove(CategoryRequest request) {
+        categories.remove(request.sender(), request.categoryId())
+                .setHandler(request::result);
+    }
+
     @Private("list")
     public void list(CategoryRequest request) {
         categories.list(request.sender()).setHandler(request::result);
@@ -46,7 +49,7 @@ public class CategoryHandler implements CoreHandler {
 
     @Private("search")
     public void search(CategoryRequest request) {
-        categories.search(request.categoryName(), request.sender()).setHandler(request::result);
+        categories.search(request.sender(), request.categoryName()).setHandler(request::result);
     }
 
     @Public("search")

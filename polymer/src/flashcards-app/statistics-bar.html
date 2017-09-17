@@ -73,8 +73,8 @@
                 return 'statistics-bar';
             }
 
-            created() {
-                super.created();
+            constructor() {
+                super();
                 this.api = application.api();
                 this.statistics = [
                     {"description": "Registered users", "icon": "account-circle", "name": "accounts"},
