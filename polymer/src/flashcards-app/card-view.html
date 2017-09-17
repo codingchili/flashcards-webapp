@@ -1,13 +1,79 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
 
 <dom-module id="card-view">
     <template>
+        <style include="shared-styles"></style>
         <style>
             :host {
                 display: block;
             }
+            #create-dialog {
+                min-width: 376px;
+            }
         </style>
-        <h2>Hello [[prop1]]!</h2>
+
+        <app-location route="{{route}}"></app-location>
+        <app-route route="{{route}}" pattern="/:view/:category" data="{{page}}"></app-route>
+
+        <div id="toolbar">
+            <div class="toolbar-item" on-tap="list">
+                <paper-tooltip animation-delay="0" position="bottom">refresh</paper-tooltip>
+                <iron-icon icon="refresh"></iron-icon>
+            </div>
+            <div class="toolbar-item" on-tap="create">
+                <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
+                <iron-icon icon="add"></iron-icon>
+            </div>
+        </div>
+
+        <h2>[[page.view]]</h2>
+
+            <template is="dom-repeat" items="[[cards]]" as="card">
+                <pre on-tap="edit">
+                    Owner: [[card.owner]]
+                    Id: [[card.id]]
+                    Category: [[card.category]]
+                    Content: [[card.content]]
+                    Back: [[card.back]]
+                    Answer: [[card.answer]]
+                    Alternatives: [[card.alternatives]]
+                </pre>
+                <paper-button raised on-tap="remove">REMOVE</paper-button>
+            </template>
+
+        <paper-dialog id="create-dialog" modal>
+            <h2>Card options</h2>
+            <div style="margin-top:0px;">
+                <paper-input label="Content" char-counter maxlength="128" on-keydown="onkey" value="{{card.content}}" autofocus></paper-input>
+                <paper-input label="Back" on-keydown="onkey" value="{{card.back}}"></paper-input>
+                <paper-input label="Alternatives" on-keydown="onkey" value="{{card.alternatives}}"></paper-input>
+                <paper-input label="Answer" on-keydown="onkey" value="{{card.answer}}"></paper-input>
+                <!-- todo options as tagsinput -->
+                <!-- todo select correct answer in dropdown, values from tagsinput -->
+            </div>
+            <div class="buttons button-group">
+                <paper-button on-tap="save" dialog-confirm raised autofocus>Save</paper-button>
+                <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
+            </div>
+        </paper-dialog>
+
+        <iron-ajax id="listjax" url="[[api]]" method="post" body="[[request]]"
+                   handle-as="json" on-response="onCards">
+        </iron-ajax>
+        <iron-ajax id="createjax" url="[[api]]" method="post" body="[[request]]"
+                   handle-as="json" on-response="onCreate">
+        </iron-ajax>
+        <iron-ajax id="removejax" url="[[api]]" method="post" body="[[request]]"
+                   handle-as="json" on-response="onRemove">
+        </iron-ajax>
     </template>
 
     <script>
@@ -16,13 +82,77 @@
                 return 'card-view';
             }
 
-            static get properties() {
-                return {
-                    prop1: {
-                        type: String,
-                        value: 'card-view'
-                    }
-                };
+            constructor() {
+                super();
+                this.api = application.api();
+                this.cards = [];
+            }
+
+            ready() {
+                super.ready();
+                this.list();
+            }
+
+            edit(e) {
+                this.card = e.model.card;
+                this.dialog();
+            }
+
+            create() {
+                this.card = {};
+                this.dialog();
+            }
+
+            dialog() {
+                this.$['create-dialog'].open();
+            }
+
+            remove(e) {
+                let card = e.model.card;
+                let json = api.request('cards', 'remove');
+                json.id = card.id;
+                json.category = this.page.category;
+                this.request = JSON.stringify(json);
+                this.$.removejax.generateRequest();
+            }
+
+            onRemove(e) {
+                console.log(e.detail.response);
+                this.list();
+            }
+
+            save() {
+                let json = api.request('cards', 'create');
+
+                if (this.card.id) {
+                    json.id = this.card.id;
+                }
+                json.category = this.page.category;
+                json.content = this.card.content;
+                json.back = this.card.back;
+                json.alternatives = [this.card.alternatives];
+                json.answer = this.card.answer;
+                this.request = JSON.stringify(json);
+                this.$.createjax.generateRequest();
+            }
+
+            onCreate(e) {
+                console.log(e.detail.response);
+                this.list();
+            }
+
+            list() {
+                let json = api.request('cards', 'list');
+                let card = {};
+                json.category = this.page.category;
+                this.request = JSON.stringify(json);
+                this.$.listjax.generateRequest();
+            }
+
+            onCards(e) {
+                let cards = e.detail.response.collection;
+                console.log(e.detail.response);
+                this.cards = cards;
             }
         }
         window.customElements.define(CardView.is, CardView);

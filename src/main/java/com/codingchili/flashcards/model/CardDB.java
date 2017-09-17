@@ -9,6 +9,7 @@ import io.vertx.core.Future;
 import java.util.Collection;
 
 import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
+import static com.codingchili.flashcards.model.FlashCard.ID_OWNER;
 
 /**
  * Manages stored cards.
@@ -43,10 +44,12 @@ public class CardDB implements AsyncCardStore {
     }
 
     @Override
-    public Future<Collection<FlashCard>> get(String category) {
+    public Future<Collection<FlashCard>> get(String username, FlashCategory category) {
         Future<Collection<FlashCard>> future = Future.future();
-        cards.query(ID_CATEGORY)
-                .equalTo(category)
+        // returns cards that are created by the category owner or the current user
+        // this allows users to add cards to categories they are not the owner of.
+        // other users or the owner of the category cannot see these cards in this search.
+        cards.query(ID_CATEGORY).equalTo(category.id())
                 .execute(search -> {
                     if (search.succeeded()) {
                         future.complete(search.result());

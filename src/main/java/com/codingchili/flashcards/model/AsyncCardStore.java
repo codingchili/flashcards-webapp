@@ -27,7 +27,7 @@ public interface AsyncCardStore {
      *
      * @param category the category to list cards from.
      */
-    Future<Collection<FlashCard>> get(String category);
+    Future<Collection<FlashCard>> get(String username, FlashCategory category);
 
     /**
      * Calculates the number of cards in the database.

@@ -3,18 +3,43 @@ package com.codingchili.flashcards.request;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.listener.RequestWrapper;
 import com.codingchili.core.protocol.Serializer;
+import com.codingchili.core.storage.Storable;
 import com.codingchili.flashcards.model.FlashCard;
+import com.codingchili.flashcards.model.FlashCategory;
+
+import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
 
 /**
- *
+ * Request for cards.
  */
 public class CardRequest extends RequestWrapper {
+    private FlashCategory category;
 
     public CardRequest(Request request) {
         super(request);
     }
 
-    public FlashCard getCard() {
+    public String sender() {
+        return super.token().getDomain();
+    }
+
+    public FlashCard card() {
         return Serializer.unpack(data(), FlashCard.class);
+    }
+
+    public void setCategory(FlashCategory category) {
+        this.category = category;
+    }
+
+    public FlashCategory category() {
+        return category;
+    }
+
+    public boolean categoryOwned() {
+        return category().getOwner().equals(sender());
+    }
+
+    public boolean categorySharedWith() {
+        return category().getUsers().contains(sender());
     }
 }

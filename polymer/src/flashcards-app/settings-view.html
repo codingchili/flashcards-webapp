@@ -46,10 +46,10 @@
         <paper-card id="settings" elevation="3">
             <label class="title">Theme colors</label>
             <div class="picker-box">
-                <paper-swatch-picker color="{{primary}}" class="color-picker" column-count="7" color-list="[[colors]]">
+                <paper-swatch-picker color="{{primary}}" class="color-picker">
                 </paper-swatch-picker>
 
-                <paper-swatch-picker color="{{secondary}}" class="color-picker" column-count="7" color-list="[[colors]]">
+                <paper-swatch-picker color="{{secondary}}" class="color-picker">
                 </paper-swatch-picker>
             </div>
 
@@ -83,7 +83,6 @@
             this.primary = localStorage.getItem('style.primary-color');
             this.secondary = localStorage.getItem('style.secondary-color');
             this.style = localStorage.getItem('style.theme');
-            this.colors = application.colors;
             this.remember = (localStorage.getItem('token') !== null);
 
             if (this.primary === null) {

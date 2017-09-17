@@ -21,21 +21,8 @@
                 height: 100%;
             }
 
-            #create-dialog {
-                width: 354px;
-            }
-
             #create-button {
                 width: 100%;
-            }
-
-            .button-group {
-                display: block;
-                width: 100%;
-                margin: 0px;
-                padding: 0px;
-                right: 0px;
-                bottom: 0px;
             }
 
             .cancel-button {
@@ -119,9 +106,23 @@
                 <span class="notification">YOU HAVE NOT CREATED ANY CATEGORIES YET.</span>
             </div>
 
-            <category-list id="categories"></category-list>
+            <div id="toolbar">
+                <div class="toolbar-item" on-tap="list">
+                    <paper-tooltip animation-delay="0" position="bottom">refresh</paper-tooltip>
+                    <iron-icon icon="refresh"></iron-icon>
+                </div>
+                <div class="toolbar-item" on-tap="createnew">
+                    <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
+                    <iron-icon icon="add"></iron-icon>
+                </div>
 
-            <paper-button id="create-button" on-tap="createnew" raised autofocus>Create new</paper-button>
+                <div class="toolbar-item" on-tap="search">
+                    <paper-tooltip animation-delay="0" position="bottom">search</paper-tooltip>
+                    <iron-icon icon="search"></iron-icon>
+                </div>
+            </div>
+
+            <category-list id="categories"></category-list>
         </paper-card>
 
         <paper-dialog id="create-dialog" modal>
@@ -140,8 +141,7 @@
                     </div>
                 </paper-input>
                 <paper-checkbox checked="{{category.shared}}" class="public-checkbox">Public</paper-checkbox>
-                <paper-swatch-picker color="{{category.color}}" class="color-picker" column-count="7"
-                                     color-list="[[colors]]">Color
+                <paper-swatch-picker color="{{category.color}}" class="color-picker">Color
                 </paper-swatch-picker>
             </div>
             <div class="buttons button-group">
@@ -191,7 +191,6 @@
             super();
             this.api = application.api();
             this.populated = false;
-            this.colors = application.colors;
             this.clear();
 
             application.subscribe('authenticated', () => this.list());
@@ -221,6 +220,7 @@
                     this.edit();
                     break;
                 case 'open-in-new':
+                    application.publish('openCategory', this.category);
                     break;
             }
         }
@@ -297,6 +297,10 @@
                 this.create();
                 this.$['create-dialog'].close();
             }
+        }
+
+        search() {
+            application.publish('route', '/');
         }
     }
     window.customElements.define(CategoryView.is, CategoryView);

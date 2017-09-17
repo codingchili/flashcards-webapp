@@ -32,7 +32,6 @@
             }
 
             #about {
-                width: 426px;
                 height: 508px;
             }
 
@@ -45,20 +44,17 @@
                 padding: 0px;
             }
 
-            @media screen and (max-width: 475px) {
-                #about {
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    margin: 0;
-                    position: absolute;
-                }
-            }
-
             #about-content {
                 margin-left: 8px;
                 margin-right: 8px;
+            }
+
+            .fixed {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0px;
+                z-index: 100;
             }
         </style>
         <app-location route="{{route}}"></app-location>
@@ -70,11 +66,21 @@
                 tail="{{subroute}}">
         </app-route>
 
-        <app-toolbar>
+        <app-toolbar class="fixed">
             <paper-icon-button icon="menu" on-tap="drawer"></paper-icon-button>
-            <div main-title>[[title]]</div>
-            <paper-icon-button icon="search" on-tap="search"></paper-icon-button>
+            <div main-title>Flashcards</div>
         </app-toolbar>
+
+        <div style="width:100%;height:64px;"></div>
+
+        <iron-pages selected="[[routeData.view]]" attr-for-selected="name" id="content">
+            <index-view name="" route="{{subroute}}"></index-view>
+            <login-view name="login" route="{{subroute}}"></login-view>
+            <card-view name="cards" route="{{subroute}}"></card-view>
+            <category-view name="categories" route="{{subroute}}"></category-view>
+            <account-view name="account" route="{{subroute}}"></account-view>
+            <settings-view name="settings" route="{{subroute}}"></settings-view>
+        </iron-pages>
 
         <app-drawer id="drawer">
             <paper-menu selected="0">
@@ -92,15 +98,6 @@
         </app-drawer>
 
         <paper-toast id="toast" text="{{message}}"></paper-toast>
-
-        <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
-            <index-view name="" route="{{subroute}}"></index-view>
-            <login-view name="login" route="{{subroute}}"></login-view>
-            <card-view name="cards" route="{{subroute}}"></card-view>
-            <category-view name="categories" route="{{subroute}}"></category-view>
-            <account-view name="account" route="{{subroute}}"></account-view>
-            <settings-view name="settings" route="{{subroute}}"></settings-view>
-        </iron-pages>
 
         <paper-dialog id="about" modal>
             <a href="https://github.com/codingchili/flashcards-webapp" target="_blank">
@@ -159,6 +156,16 @@
                 this.authenticated = true;
                 this.set('route.path', '/');
                 application.publish('onSearchPage');
+            });
+
+            application.subscribe('route', (route) => {
+                switch (route) {
+                    case '/': this.search();
+                }
+            });
+
+            application.subscribe('openCategory', (category) => {
+                this.set('route.path', '/cards/' + category.id);
             });
 
             application.subscribe('toast', (message) => {

@@ -4,16 +4,15 @@ import com.codingchili.core.context.CoreContext;
 import com.codingchili.core.listener.CoreHandler;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.protocol.*;
+import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.flashcards.AppConfig;
-import com.codingchili.flashcards.model.CardDB;
-import com.codingchili.flashcards.model.FlashCard;
+import com.codingchili.flashcards.model.*;
 import com.codingchili.flashcards.request.CardRequest;
 import com.codingchili.flashcards.response.SizeResponse;
 
-import java.util.Collection;
-
-import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
+import static com.codingchili.core.protocol.Access.AUTHORIZED;
+import static com.codingchili.core.protocol.Access.PUBLIC;
 
 /**
  * Handler controller for cards.
@@ -22,35 +21,41 @@ import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
 public class CardHandler implements CoreHandler {
     private Protocol<RequestHandler<Request>> protocol = new Protocol<>(this);
     private TokenFactory factory = AppConfig.factory();
-    private CardDB cards;
+    private AsyncCardStore cards;
+    private AsyncCategoryStore categories;
 
     @Override
     public void init(CoreContext core) {
         this.cards = new CardDB(core);
+        this.categories = new CategoryDB(core);
     }
 
-    // todo ask category access on bus or check token?
-
-    @Private("add")
-    public void add(CardRequest request) {
-        // todo check category in token properties
-        cards.add(request.getCard().setOwner(request.token().getDomain()))
-                .setHandler(request::result);
+    @Private("create")
+    public void create(CardRequest request) {
+        if (request.categoryOwned()) {
+            cards.add(request.card().setOwner(request.token().getDomain()))
+                    .setHandler(request::result);
+        } else {
+            request.error(new AuthorizationRequiredException());
+        }
     }
 
     @Private("remove")
     public void remove(CardRequest request) {
-        // todo check category in token properties
-        cards.remove(request.getCard().getId())
-                .setHandler(request::result);
+        if (request.categoryOwned()) {
+            cards.remove(request.card().getId()).setHandler(request::result);
+        } else {
+            request.error(new AuthorizationRequiredException());
+        }
     }
 
-    @Private("get")
-    public void cards(CardRequest request) {
-        // todo check category in token properties
-        // todo or if category is public
-        cards.get(request.getCard().getCategory())
-                .setHandler(request::result);
+    @Private("list")
+    public void list(CardRequest request) {
+        if (request.categorySharedWith() || request.categoryOwned()) {
+            cards.get(request.sender(), request.category()).setHandler(request::result);
+        } else {
+            request.error(new AuthorizationRequiredException());
+        }
     }
 
     @Public("size")
@@ -63,20 +68,19 @@ public class CardHandler implements CoreHandler {
     @Override
     public void handle(Request req) {
         CardRequest request = new CardRequest(req);
-        protocol.get(access(request), request.route())
-                .handle(request);
+
+        if (factory.verifyToken(request.token())) {
+            FlashCard card = request.card();
+            categories.get(card.getCategory()).setHandler(get -> {
+                request.setCategory(get.result());
+                handle(AUTHORIZED, request);
+            });
+        } else {
+            handle(PUBLIC, request);
+        }
     }
 
-    private Access access(CardRequest request) {
-        if (factory.verifyToken(request.token())) {
-            FlashCard card = request.getCard();
-            Collection<String> categories = request.token().getProperty(ID_CATEGORY);
-
-            // require the token to contain the requested category.
-            if (categories != null && categories.contains(card.getCategory())) {
-                return Access.AUTHORIZED;
-            }
-        }
-        return Access.PUBLIC;
+    private void handle(Access access, CardRequest request) {
+        protocol.get(access, request.route()).handle(request);
     }
 }

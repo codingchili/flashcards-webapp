@@ -40,10 +40,14 @@
               margin-top: 16px;
           }
 
-          #button-group {
-            padding: 0;
-            width: 100%;
-          }
+          .button-group {
+                display: block;
+                width: 100%;
+                margin: 0px;
+                padding: 0px;
+                right: 0px;
+                bottom: 0px;
+            }
 
           paper-item {
               font-weight: bold;
@@ -91,6 +95,46 @@
               color: var(--error-color) !important;
           }
 
+            #toolbar {
+                display: flex;
+                z-index: 100;
+                position: fixed;
+                top: 0px;
+                right: 0;
+                height: 64px;
+            }
+
+            .toolbar-item {
+                margin: auto;
+                color: #ffffff;
+                min-width: 64px;
+                min-height: 64px;
+                display: flex;
+                cursor: pointer;
+            }
+
+            .toolbar-item > paper-swatch-picker {
+                margin-top: 4px;
+            }
+
+            .toolbar-item > iron-icon {
+                margin: auto;
+            }
+
+              @media screen and (max-width: 475px) {
+                paper-dialog {
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    margin: 0;
+                    position: absolute;
+                }
+            }
+
+            paper-swatch-picker.color-picker {
+              --paper-swatch-picker-color-size: 10px;
+            }
         </style>
     </template>
 </dom-module>

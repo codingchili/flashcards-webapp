@@ -19,6 +19,7 @@ public class FlashCard implements Storable {
     private String owner;
     private String category;
     private String content;
+    private String back;
     private String answer;
 
     public String getId() {
@@ -71,6 +72,15 @@ public class FlashCard implements Storable {
 
     public FlashCard setOwner(String owner) {
         this.owner = owner;
+        return this;
+    }
+
+    public String getBack() {
+        return back;
+    }
+
+    public FlashCard setBack(String back) {
+        this.back = back;
         return this;
     }
 
