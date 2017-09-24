@@ -9,7 +9,6 @@ import io.vertx.core.Future;
 import java.util.Collection;
 
 import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
-import static com.codingchili.flashcards.model.FlashCard.ID_OWNER;
 
 /**
  * Manages stored cards.

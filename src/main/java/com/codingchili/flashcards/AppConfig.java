@@ -14,6 +14,26 @@ public class AppConfig extends BaseConfigurable {
     private String storage = IndexedMapPersisted.class.getName();
     private String database = "flashcards";
 
+    public static String db() {
+        return settings().database;
+    }
+
+    public static TokenFactory factory() {
+        return new TokenFactory(secret.getBytes());
+    }
+
+    public static Class storage() {
+        try {
+            return Class.forName(settings().getStorage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static AppConfig settings() {
+        return Configurations.get(APPLICATION_JSON, AppConfig.class);
+    }
+
     @Override
     public String getPath() {
         return APPLICATION_JSON;
@@ -41,25 +61,5 @@ public class AppConfig extends BaseConfigurable {
 
     public void setDatabase(String database) {
         this.database = database;
-    }
-
-    public static String db() {
-        return settings().database;
-    }
-
-    public static TokenFactory factory() {
-        return new TokenFactory(secret.getBytes());
-    }
-
-    public static Class storage() {
-        try {
-            return Class.forName(settings().getStorage());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static AppConfig settings() {
-        return Configurations.get(APPLICATION_JSON, AppConfig.class);
     }
 }

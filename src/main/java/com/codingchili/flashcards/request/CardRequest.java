@@ -3,11 +3,8 @@ package com.codingchili.flashcards.request;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.listener.RequestWrapper;
 import com.codingchili.core.protocol.Serializer;
-import com.codingchili.core.storage.Storable;
 import com.codingchili.flashcards.model.FlashCard;
 import com.codingchili.flashcards.model.FlashCategory;
-
-import static com.codingchili.flashcards.model.FlashCard.ID_CATEGORY;
 
 /**
  * Request for cards.

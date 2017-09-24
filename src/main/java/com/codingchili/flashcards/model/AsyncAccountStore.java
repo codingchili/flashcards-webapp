@@ -29,6 +29,7 @@ public interface AsyncAccountStore {
 
     /**
      * Searches for users, useful when sharing categories.
+     *
      * @param username the query string, must match the beginning.
      * @return a collection of users with an username that resembles the given
      */
@@ -36,6 +37,7 @@ public interface AsyncAccountStore {
 
     /**
      * Gets the number of accounts in the system.
+     *
      * @return callback
      */
     Future<Integer> size();

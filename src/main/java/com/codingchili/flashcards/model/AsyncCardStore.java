@@ -31,6 +31,7 @@ public interface AsyncCardStore {
 
     /**
      * Calculates the number of cards in the database.
+     *
      * @return callback
      */
     Future<Integer> size();

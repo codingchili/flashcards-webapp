@@ -11,7 +11,6 @@ import com.codingchili.flashcards.AppConfig;
 import io.vertx.core.Future;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;

@@ -11,9 +11,7 @@ import java.util.Collection;
 
 import static com.codingchili.core.configuration.CoreStrings.ID_NAME;
 import static com.codingchili.flashcards.model.FlashCard.ID_OWNER;
-import static com.codingchili.flashcards.model.FlashCategory.ID_COST;
-import static com.codingchili.flashcards.model.FlashCategory.ID_SHARED;
-import static com.codingchili.flashcards.model.FlashCategory.ID_USERS;
+import static com.codingchili.flashcards.model.FlashCategory.*;
 import static java.util.stream.Collectors.toList;
 
 /**

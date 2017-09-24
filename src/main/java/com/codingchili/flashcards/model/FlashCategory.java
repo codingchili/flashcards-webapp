@@ -103,10 +103,10 @@ public class FlashCategory implements Storable {
 
     public FlashCategory score(String user, int correct, int misses, int seconds) {
         highscores.add(new FlashScore()
-            .setUser(user)
-            .setCorrect(correct)
-            .setMisses(misses)
-            .setSeconds(seconds));
+                .setUser(user)
+                .setCorrect(correct)
+                .setMisses(misses)
+                .setSeconds(seconds));
 
         highscores = highscores.stream()
                 .sorted(Storable::compareTo)
@@ -130,11 +130,11 @@ public class FlashCategory implements Storable {
         return this.compareTo(other) == 0;
     }
 
-    public void setCreated(ZonedDateTime created) {
-        this.created = created;
-    }
-
     public ZonedDateTime getCreated() {
         return created;
+    }
+
+    public void setCreated(ZonedDateTime created) {
+        this.created = created;
     }
 }

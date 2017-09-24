@@ -14,12 +14,16 @@ import com.codingchili.flashcards.response.SizeResponse;
 
 import java.time.ZonedDateTime;
 
+import static com.codingchili.core.protocol.RoleMap.PUBLIC;
+import static com.codingchili.core.protocol.RoleMap.USER;
+
 /**
  * Handler controller for categories.
  */
+@Roles(USER)
 @Address("categories")
 public class CategoryHandler implements CoreHandler {
-    private Protocol<RequestHandler<Request>> protocol = new Protocol<>(this);
+    private Protocol<Request> protocol = new Protocol<>(this);
     private TokenFactory tokenFactory = AppConfig.factory();
     private AsyncCategoryStore categories;
 
@@ -28,7 +32,7 @@ public class CategoryHandler implements CoreHandler {
         this.categories = new CategoryDB(core);
     }
 
-    @Private("save")
+    @Api
     public void save(CategoryRequest request) {
         FlashCategory category = request.category();
         category.setOwner(request.sender());
@@ -36,28 +40,28 @@ public class CategoryHandler implements CoreHandler {
         categories.save(category).setHandler(request::result);
     }
 
-    @Private("remove")
+    @Api
     public void remove(CategoryRequest request) {
         categories.remove(request.sender(), request.categoryId())
                 .setHandler(request::result);
     }
 
-    @Private("list")
+    @Api
     public void list(CategoryRequest request) {
         categories.list(request.sender()).setHandler(request::result);
     }
 
-    @Private("search")
+    @Api(route = "search")
     public void search(CategoryRequest request) {
         categories.search(request.sender(), request.categoryName()).setHandler(request::result);
     }
 
-    @Public("search")
+    @Api(value = PUBLIC, route = "search")
     public void shared(CategoryRequest request) {
         categories.search(request.categoryName()).setHandler(request::result);
     }
 
-    @Public("size")
+    @Api(PUBLIC)
     public void size(CategoryRequest request) {
         categories.size().setHandler(count -> {
             if (count.succeeded()) {
@@ -70,15 +74,15 @@ public class CategoryHandler implements CoreHandler {
 
     @Override
     public void handle(Request request) {
-        protocol.get(access(request), request.route())
+        protocol.get(request.route(), access(request))
                 .handle(new CategoryRequest(request));
     }
 
-    private Access access(Request request) {
+    private Role access(Request request) {
         if (tokenFactory.verifyToken(request.token())) {
-            return Access.AUTHORIZED;
+            return Role.USER;
         } else {
-            return Access.PUBLIC;
+            return Role.PUBLIC;
         }
     }
 }

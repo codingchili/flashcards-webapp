@@ -32,6 +32,10 @@
                 <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
                 <iron-icon icon="add"></iron-icon>
             </div>
+            <div class="toolbar-item" on-tap="start">
+                <paper-tooltip animation-delay="0" position="bottom">start</paper-tooltip>
+                <iron-icon icon="send"></iron-icon>
+            </div>
         </div>
 
         <h2>[[page.view]]</h2>
@@ -153,6 +157,10 @@
                 let cards = e.detail.response.collection;
                 console.log(e.detail.response);
                 this.cards = cards;
+            }
+
+            start() {
+                console.log('show cards one at a time...');
             }
         }
         window.customElements.define(CardView.is, CardView);
