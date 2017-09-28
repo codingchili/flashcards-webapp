@@ -45,7 +45,7 @@ public class Service implements CoreService {
                 core.handler(CategoryHandler::new),
                 core.service(Webserver::new),
                 core.listener(() -> new RestListener()
-                        .settings(() -> new ListenerSettings()
+                        .settings(() -> new ListenerSettings().setPort(8180)
                                 .setMaxRequestBytes(512))
                         .handler(new BusRouter()))
         ).setHandler(start);

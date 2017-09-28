@@ -47,6 +47,11 @@ public class CategoryHandler implements CoreHandler {
     }
 
     @Api
+    public void get(CategoryRequest request) {
+        categories.get(request.categoryId()).setHandler(request::result);
+    }
+
+    @Api
     public void list(CategoryRequest request) {
         categories.list(request.sender()).setHandler(request::result);
     }

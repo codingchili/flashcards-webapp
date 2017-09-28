@@ -24,7 +24,7 @@ var application = {
     authenticated: false,
 
     api: function () {
-        return location.origin + ":8080";
+        return location.origin + ":8180";
     },
 
     onAuthenticated: function (token) {

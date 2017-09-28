@@ -74,7 +74,7 @@
 
         <app-toolbar class="fixed">
             <paper-icon-button icon="menu" on-tap="drawer"></paper-icon-button>
-            <div class="title" main-title>Flashcards</div>
+            <div class="title">[[titletext]]</div>
         </app-toolbar>
 
         <div style="width:100%;height:64px;"></div>
@@ -156,7 +156,7 @@
         constructor() {
             super();
             this.authenticated = application.authenticated;
-            this.title = 'Flashcards';
+            this.titletext = 'Flashcards';
 
             application.subscribe('authenticated', () => {
                 this.authenticated = true;
@@ -198,26 +198,26 @@
 
         categories() {
             this.set('route.path', '/categories');
-            this.title = 'Categories';
+            this.titletext = 'Categories';
             this.$.drawer.close();
         }
 
         search() {
             this.set('route.path', '/')
-            this.title = 'Flashcards';
+            this.titletext = 'Flashcards';
             application.publish('onSearchPage');
             this.$.drawer.close();
         }
 
         account() {
             this.set('route.path', '/account')
-            this.title = 'Account';
+            this.titletext = 'Account';
             this.$.drawer.close();
         }
 
         settings() {
             this.set('route.path', '/settings')
-            this.title = 'Settings';
+            this.titletext = 'Settings';
             this.$.drawer.close();
         }
 
@@ -234,7 +234,7 @@
 
         logout() {
             application.onLogout();
-            this.title = 'Flashcards';
+            this.titletext = 'Flashcards';
             this.login();
         }
     }

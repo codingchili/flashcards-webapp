@@ -1,0 +1,116 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+
+<dom-module id="card-player">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+            }
+            #cardbox {
+                margin: auto;
+            }
+        </style>
+
+        <div hidden="[[!playing]]">
+            <paper-card id="cardbox">
+                [[card.mediacontent]]
+                [[card.content]]
+                [[card.back]]
+                <template is="dom-repeat" items="[[card.alternatives]]" as="option">
+                    <paper-button on-tap="guess">[[option]]</paper-button>
+                </template>
+                <!-- todo replace with skip/alternative buttons -->
+                <paper-button on-tap="next" raised primary>next</paper-button>
+            </paper-card>
+        </div>
+
+        <!-- template for inserting images -->
+        <div hidden="hidden">
+            <img id="img" src="" alt=""/>
+        </div>
+    </template>
+
+</dom-module>
+<script>
+        class CardPlayer extends Polymer.Element {
+            static get is() {
+                return 'card-player';
+            }
+
+            // todo implement hotkeys.
+
+            constructor() {
+                super();
+                this.cardIndex = 0;
+                this.cards = [];
+                this.card = {};
+                this.playing = true;
+            }
+
+            next() {
+                if (this.cardIndex < this.cards.length) {
+                    this.card = this.cards[this.cardIndex];
+                    let content = this.card.content;
+                    this.set('card.mediacontent', this.getMediaContent(content));
+                    console.log(this.$.img);
+                } else {
+                    this.score();
+                }
+                this.cardIndex++;
+            }
+
+            getMediaContent(content) {
+                let matches = content.match(/(:img:.+?(\.png|\.jpg))/mgi);
+
+                for (let i = 0; i < matches.length; i++) {
+                    let url = matches[i].replace(/\:img\:/mgi, 'https://i.imgur.com/');
+                    this.$.img.src = url;
+                    this.$.img.alt = url;
+                    this.$.cardbox.prepend(this.$.img);
+                }
+                return content;
+            }
+
+            guess(e) {
+                console.log(e.model.option + ' ?= ' + this.card.answer);
+                if (e.model.option == this.card.answer) {
+                    // play some animation here..
+                    // se button to green etc..
+                    console.log('answer!')
+                    setTimeout(() => {
+                        this.next();
+                    }, 2450);
+                } else {
+                    // play another animation here.
+                    // set button color to red etc..
+                    console.log('not the answer');
+                }
+            }
+
+            // todo add ui to call this early.
+            score() {
+                console.log('score');
+            }
+
+            back() {
+                console.log('go back')
+            }
+
+            start(cards) {
+                // todo shuffle cards
+                this.cards = cards;
+                this.cardIndex = 0;
+                this.next();
+            }
+        }
+
+        window.customElements.define(CardPlayer.is, CardPlayer);
+
+</script>

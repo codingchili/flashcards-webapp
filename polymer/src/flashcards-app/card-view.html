@@ -5,6 +5,8 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/src/flashcards-app/card-player.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 
@@ -15,8 +17,37 @@
             :host {
                 display: block;
             }
-            #create-dialog {
-                min-width: 376px;
+            #card-container {
+                display: flex:
+                width: 100%;
+            }
+            .card {
+                margin: auto;
+                width: 128px;
+                height: 128px;
+                font-size: 11px;
+                cursor: pointer;
+            }
+            .text {
+                left: 4px;
+                right: 4px;
+                overflow: hidden;
+                top: 24px;
+                bottom: 12px;
+                position: absolute;
+            }
+            .remove-icon:hover {
+                color: var(--secondary-color);
+            }
+            .remove-icon {
+                color: var(--primary-color);
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                cursor: pointer;
+            }
+            card-player {
+                z-index: 50;
             }
         </style>
 
@@ -38,20 +69,16 @@
             </div>
         </div>
 
-        <h2>[[page.view]]</h2>
+        <h2>[[category.name]]</h2>
 
+        <div id="card-container" hidden="[[playing]]">
             <template is="dom-repeat" items="[[cards]]" as="card">
-                <pre on-tap="edit">
-                    Owner: [[card.owner]]
-                    Id: [[card.id]]
-                    Category: [[card.category]]
-                    Content: [[card.content]]
-                    Back: [[card.back]]
-                    Answer: [[card.answer]]
-                    Alternatives: [[card.alternatives]]
-                </pre>
-                <paper-button raised on-tap="remove">REMOVE</paper-button>
+                <paper-card class="card">
+                    <div class="text" on-tap="edit">[[card.content]]</div>
+                    <iron-icon class="remove-icon" icon="clear" on-tap="remove"></iron-icon>
+                </paper-card>
             </template>
+        </div>
 
         <paper-dialog id="create-dialog" modal>
             <h2>Card options</h2>
@@ -69,6 +96,10 @@
             </div>
         </paper-dialog>
 
+        <div hidden="[[!playing]]">
+            <card-player id="cardplayer"></card-player>
+        </div>
+
         <iron-ajax id="listjax" url="[[api]]" method="post" body="[[request]]"
                    handle-as="json" on-response="onCards">
         </iron-ajax>
@@ -78,9 +109,13 @@
         <iron-ajax id="removejax" url="[[api]]" method="post" body="[[request]]"
                    handle-as="json" on-response="onRemove">
         </iron-ajax>
+        <iron-ajax id="getcategoryjax" url="[[api]]" method="post" body="[[request]]"
+                   handle-as="json" on-response="onCategory">
+        </iron-ajax>
     </template>
 
-    <script>
+</dom-module>
+<script>
         class CardView extends Polymer.Element {
             static get is() {
                 return 'card-view';
@@ -90,11 +125,19 @@
                 super();
                 this.api = application.api();
                 this.cards = [];
+                this.playing = false;
+
+                application.subscribe('openCategory', category => {
+                   this.category = category;
+                   this.list();
+                });
             }
 
             ready() {
                 super.ready();
                 this.list();
+                this.category = this.page.category;
+                this.loadCategory();
             }
 
             edit(e) {
@@ -125,6 +168,13 @@
                 this.list();
             }
 
+            onkey(e) {
+                if (e.keyCode == 13) {
+                    this.save();
+                    this.$['create-dialog'].close();
+                }
+            }
+
             save() {
                 let json = api.request('cards', 'create');
 
@@ -145,6 +195,18 @@
                 this.list();
             }
 
+            onCategory(e) {
+                console.log(e.detail.response);
+                this.category = e.detail.response;
+            }
+
+            loadCategory(categoryId) {
+                let json = api.request('categories', 'get');
+                json.id = this.page.category;
+                this.request = JSON.stringify(json);
+                this.$.getcategoryjax.generateRequest();
+            }
+
             list() {
                 let json = api.request('cards', 'list');
                 let card = {};
@@ -160,9 +222,10 @@
             }
 
             start() {
-                console.log('show cards one at a time...');
+                console.log('start!');
+                this.$.cardplayer.start(this.cards);
+                this.playing = true;
             }
         }
         window.customElements.define(CardView.is, CardView);
     </script>
-</dom-module>
