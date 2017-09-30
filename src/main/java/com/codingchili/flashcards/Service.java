@@ -26,6 +26,8 @@ public class Service implements CoreService {
                 .setHandlers(1)
                 .setListeners(1);
 
+        Configurations.storage().setMaxResults(8);
+
         Configurations.launcher()
                 .deployable(Service.class)
                 .setClustered(false);

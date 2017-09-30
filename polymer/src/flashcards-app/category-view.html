@@ -267,11 +267,12 @@
             let json = api.request('categories', 'list');
             this.request = JSON.stringify(json);
             this.$.listjax.generateRequest();
+            application.publish(LOADING, true);
         }
 
         onList(e) {
             let json = e.detail.response;
-            console.log(json);
+            application.publish(LOADING, false);
             this.categories = json.collection;
             this.$.categories.setList(json.collection);
 

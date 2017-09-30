@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 <dom-module id="statistics-bar">
@@ -10,6 +10,7 @@
         <style>
             :host {
                 display: block;
+                margin-right: 8px;
             }
 
             #box {
@@ -50,24 +51,33 @@
             }
         </style>
 
+        <api-request id="api" volatile></api-request>
+
         <div id="box">
-            <template is="dom-repeat" items="{{statistics}}">
-
-                <iron-ajax auto id$="{{item.name}}" url="[[api]]"
-                           body='{"target":"[[item.name]]", "route":"size"}'
-                           handle-as="json" method="post" last-response="{{item.query}}">
-                </iron-ajax>
-
+            <template is="dom-repeat" items="[[statistics]]">
                 <paper-card elevation="1">
                     <div class="header">[[item.description]]</div>
-                    <div class="value">[[item.query.size]]</div>
+                    <div class="value">[[item.metric]]</div>
                     <iron-icon icon="[[item.icon]]"></iron-icon>
                 </paper-card>
             </template>
+            <paper-card elevation="1">
+                <div class="header">[[latency.name]]</div>
+                <div class="value">[[latency.metric]] ms</div>
+            </paper-card>
         </div>
     </template>
 
     <script>
+        class StatisticsItem {
+            constructor(name, icon, description) {
+                this.name = name;
+                this.icon = icon;
+                this.description = description;
+                this.metric = 0;
+            }
+        }
+
         class StatisticsBar extends Polymer.Element {
             static get is() {
                 return 'statistics-bar';
@@ -75,18 +85,37 @@
 
             constructor() {
                 super();
-                this.api = application.api();
-                this.statistics = [
-                    {"description": "Registered users", "icon": "account-circle", "name": "accounts"},
-                    {"description": "Total categories", "icon": "apps", "name": "categories"},
-                    {"description": "Created cards", "icon": "credit-card", "name": "cards"}
-                ];
-
+                this.statistics = [];
+                this.latency = new StatisticsItem('API Latency');
+                this.statistics.push(new StatisticsItem('accounts', 'account-circle', 'Registered users'));
+                this.statistics.push(new StatisticsItem('categories', 'apps', 'Total categories'));
+                this.statistics.push(new StatisticsItem('cards', 'credit-card', 'Created cards'));
                 setInterval(() => {
-                    for (let item of this.statistics) {
-                        this.shadowRoot.querySelector('#' + item.name).generateRequest();
-                    }
+                    if (!(this.offsetParent === null))
+                        this.retrieve();
                 }, 5000);
+            }
+
+            ready() {
+                super.ready();
+                this.retrieve();
+            }
+
+            retrieve() {
+                let start = performance.now();
+                let latch = this.statistics.length;
+                let sum = 0;
+                for (let i = 0; i < this.statistics.length; i++) {
+                    this.$.api[this.statistics[i].name]('size', (response) => {
+                        this.set('statistics.' + i + '.metric', response.size);
+
+                        latch--;
+                        sum += performance.now() - start;
+                        if (latch === 0) {
+                            this.set('latency.metric', Math.round(sum / this.statistics.length));
+                        }
+                    });
+                }
             }
         }
         window.customElements.define(StatisticsBar.is, StatisticsBar);

@@ -1,0 +1,144 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+<dom-module id="api-request">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+                position: fixed;
+                z-index: 333;
+            }
+        </style>
+        <iron-ajax id="jax" url="[[api]]" method="post" body="[[requestData]]"
+                   handle-as="json" request-id="[[requestId]]" on-response="pending[requestId].handler"
+                   on-error="error">
+        </iron-ajax>
+    </template>
+    <script>
+        class ApiRequest extends Polymer.Element {
+            static get is() {
+                return 'api-request';
+            }
+
+            static get properties() {
+                return {
+                    // indicates if the LOADING event should be emitted when loading.
+                    spinner: {
+                        type: Boolean,
+                        value: false
+                    },
+                    // indicates if the services requested could fail transparently,
+                    // without propagating an error to the user.
+                    volatile: {
+                        type: Boolean,
+                        value: false
+                    }
+                }
+            }
+
+            constructor() {
+                super();
+                this.api = application.api();
+                this.queueSize = 0;
+                this.pending = {};
+                window.requestfilter = {'all': true};
+                window.debugs = {};
+            }
+
+            accounts(route, handler, json) {
+                this.submit('accounts', route, handler, json);
+            }
+
+            categories(route, handler, json) {
+                this.submit('categories', route, handler, json);
+            }
+
+            cards(route, handler, json) {
+                this.submit('cards', route, handler, json);
+            }
+
+            submit(target, route, handler, json) {
+                let request = api.request(target, route, json);
+
+                if (this.isFiltered(request)) {
+                    this.send(request, handler);
+                    this.log(request);
+                }
+            }
+
+            send(request, handler) {
+                let id = this.createRequestId(request);
+                let xhr = new XMLHttpRequest();
+                let start = performance.now();
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        let response = JSON.parse(xhr.responseText);
+                        this.requestCompleted(id);
+
+                        if (response.status === ERROR) {
+                            this.submitError(request, response.message);
+                        } else {
+                            handler(response);
+                            this.log(response);
+                        }
+                    } else if (xhr.readyState === 4) {
+                        this.submitError(request, "failed to connect");
+                    }
+                    this.latency = performance.now() - start;
+                };
+                xhr.open("POST", application.api(), true);
+                xhr.send(JSON.stringify(request));
+            }
+
+            submitError(request, reason) {
+                if (!this.volatile) {
+                    application.publish(TOAST_ERROR, reason);
+                }
+                let message = reason + ': processing request to \'' + request.target +
+                    '\' with route \'' + request.route + '\'.';
+                console.log(message);
+            }
+
+            createRequestId(request) {
+                let id = Math.random().toString(36).substring(7);
+                this.pending[id] = {};
+                setTimeout(() => {
+                    if (this.pending[id]) {
+                        this.submitError(request, "timed out after 5s");
+                        this.requestCompleted(id);
+                    }
+                }, 5000);
+                this.updateStatus();
+                return id;
+            }
+
+            requestCompleted(requestId) {
+                delete this.pending[requestId];
+                this.updateStatus();
+            }
+
+            updateStatus() {
+                this.queueSize = Object.keys(this.pending).length;
+                if (this.spinner) {
+                    application.publish(LOADING, this.queueSize !== 0);
+                }
+            }
+
+            isFiltered(request) {
+                let filter = window.requestfilter;
+                return (filter[request.route] || filter[request.target] || filter['all']);
+            }
+
+            log(json) {
+                let debug = window.debugs;
+                if (debug[json.target] || debug[json.route] || debug['all']) {
+                    console.log(json);
+                }
+            }
+        }
+        window.customElements.define(ApiRequest.is, ApiRequest);
+    </script>
+</dom-module>

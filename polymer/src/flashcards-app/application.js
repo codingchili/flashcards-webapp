@@ -3,22 +3,29 @@
  *
  * Used to pass application-level events between components.
  */
-var MISSING = "MISSING";
-var CONFLICT = "CONFLICT";
-var ERROR = "ERROR";
-var ACCEPTED = "ACCEPTED";
+const MISSING = 'MISSING';
+const CONFLICT = 'CONFLICT';
+const ERROR = 'ERROR';
+const ACCEPTED = 'ACCEPTED';
+const TOAST_ERROR = 'toast_error';
+const TOAST = 'toast';
+const LOADING = 'loading';
 
-var api = {
-    request: function (target, route) {
-        let request = {'target': target, 'route': route};
-        if (application.token !== null) {
-            request.token = application.token;
+const api = {
+    request: function (target, route, json) {
+        if (!json) {
+            json = {};
         }
-        return request;
+        json.target = target;
+        json.route = route;
+        if (application.token != null) {
+            json.token = application.token;
+        }
+        return json;
     }
-}
+};
 
-var application = {
+const application = {
     handlers: [],
     token: null,
     authenticated: false,

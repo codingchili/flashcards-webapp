@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 <dom-module id="login-view">
@@ -39,14 +40,7 @@
             <paper-button hidden$="[[!registration]]" class="cancel-button" on-tap="setLogin">Cancel</paper-button>
         </paper-card>
 
-        <iron-ajax id="registerjax" url="[[api]]"
-                   body='[[request]]'
-                   handle-as="json" method="post" on-response="doRegister">
-        </iron-ajax>
-
-        <iron-ajax id="loginjax" url="[[api]]" method="post"
-                   body='[[request]]' handle-as="json" on-response="doLogin">
-        </iron-ajax>
+        <api-request id="api" spinner></api-request>
     </template>
 
 </dom-module>
@@ -62,15 +56,15 @@
             super();
             this.api = application.api();
             this.registration = false;
+            this.clear();
 
             application.subscribe('onLoginPage', () => {
                 this.$.userinput.focus();
             });
         }
 
-        doLogin(e) {
-            let response = e.detail.response;
-
+        doLogin(response) {
+            console.log(response);
             switch (response.status) {
                 case ACCEPTED:
                     this.clear();
@@ -82,7 +76,7 @@
                     this.showMessage('User does not exist.');
                     break;
                 case ERROR: {
-                    this.showMessage(response.message);
+                    this.showError(response.message);
                     this.password = '';
                     this.$.userinput.focus();
                     this.$.passwordinput.focus();
@@ -90,9 +84,7 @@
             }
         }
 
-        doRegister(e) {
-            let response = e.detail.response;
-
+        doRegister(response) {
             switch (response.status) {
                 case ACCEPTED:
                     this.clear();
@@ -122,21 +114,18 @@
         }
 
         call() {
-            this.request = api.request('accounts', ((this.registration) ? 'register' : 'authenticate'));
-            this.request.username = this.username;
-            this.request.password = this.password;
-            this.request = JSON.stringify(this.request);
+            let request = api.request('accounts', ((this.registration) ? 'register' : 'authenticate'));
+            request.username = this.username;
+            request.password = this.password;
 
             if (this.registration) {
                 if (this.password === this.passrepeat) {
-                    application.publish('toast', 'Registering..');
-                    this.$.registerjax.generateRequest();
+                    this.$.api.accounts('register', (e) => this.doRegister(e), request);
                 } else {
                     this.showMessage('Password needs to match.');
                 }
             } else {
-                application.publish('toast', 'Logging in..');
-                this.$.loginjax.generateRequest();
+                this.$.api.accounts('authenticate', (e) => this.doLogin(e), request);
             }
         }
 
@@ -151,7 +140,11 @@
         }
 
         showMessage(text) {
-            application.publish('toast', text);
+            application.publish(TOAST, text);
+        }
+
+        showError(text) {
+            application.publish(TOAST_ERROR, text);
         }
     }
     window.customElements.define(LoginView.is, LoginView);

@@ -1,0 +1,62 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+<dom-module id="loading-spinner">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+            }
+            #spinner {
+                opacity: 1;
+                z-index: 201;
+                position: fixed;
+                left: 50%;
+                transform: translate(-50%, 0);
+            }
+
+            #spinner.fade {
+                opacity: 0;
+                transition: opacity 2s;
+            }
+        </style>
+        <paper-spinner id="spinner" class$="{{getLoadingAnimation(loading)}}"
+                       active="[[loading]]">
+        </paper-spinner>
+    </template>
+    <script>
+        class LoadingSpinner extends Polymer.Element {
+            static get is() {
+                return 'loading-spinner';
+            }
+
+            constructor() {
+                super();
+                this.loading = false;
+                application.subscribe(LOADING, (is) => {
+                    this.loading = is;
+
+                    if (is) {
+                        this.toggled = false;
+                        setTimeout(() => {
+                            // if the spinner has not been toggled in the last 5
+                            // seconds, consider the loading to have timed out.
+                            if (!this.toggled) {
+                                this.loading = false;
+                            }
+                        }, 5000);
+                    } else {
+                        this.toggled = true;
+                    }
+                });
+            }
+
+            getLoadingAnimation() {
+                return (this.loading) ? '' : 'fade';
+            }
+        }
+        window.customElements.define(LoadingSpinner.is, LoadingSpinner);
+    </script>
+</dom-module>

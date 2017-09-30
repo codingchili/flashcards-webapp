@@ -21,7 +21,8 @@
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#^2.0.1",
     "paper-radio-button": "PolymerElements/paper-radio-button#^2.0.0",
     "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0",
-    "neon-animation": "PolymerElements/neon-animation#^2.0.1"
+    "neon-animation": "PolymerElements/neon-animation#^2.0.1",
+    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",

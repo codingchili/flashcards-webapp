@@ -20,11 +20,14 @@
 
         <div hidden="[[!playing]]">
             <paper-card id="cardbox">
-                [[card.mediacontent]]
-                [[card.content]]
-                [[card.back]]
-                <template is="dom-repeat" items="[[card.alternatives]]" as="option">
-                    <paper-button on-tap="guess">[[option]]</paper-button>
+                <template is="dom-if" if="[[card.flipped]]">
+                    [[card.back]]
+                </template>
+                <template is="dom-if" if="[[!card.flipped]]">
+                    [[card.mediacontent]]
+                    <template is="dom-repeat" items="[[card.alternatives]]" as="option">
+                        <paper-button on-tap="guess">[[option]]</paper-button>
+                    </template>
                 </template>
                 <!-- todo replace with skip/alternative buttons -->
                 <paper-button on-tap="next" raised primary>next</paper-button>
@@ -69,21 +72,23 @@
             getMediaContent(content) {
                 let matches = content.match(/(:img:.+?(\.png|\.jpg))/mgi);
 
-                for (let i = 0; i < matches.length; i++) {
-                    let url = matches[i].replace(/\:img\:/mgi, 'https://i.imgur.com/');
-                    this.$.img.src = url;
-                    this.$.img.alt = url;
-                    this.$.cardbox.prepend(this.$.img);
+                if (matches) {
+                    for (let i = 0; i < matches.length; i++) {
+                        let url = matches[i].replace(/\:img\:/mgi, 'https://i.imgur.com/');
+                        this.$.img.src = url;
+                        this.$.img.alt = url;
+                        this.$.cardbox.prepend(this.$.img);
+                    }
                 }
                 return content;
             }
 
             guess(e) {
                 console.log(e.model.option + ' ?= ' + this.card.answer);
-                if (e.model.option == this.card.answer) {
+                if (e.model.option === this.card.answer) {
                     // play some animation here..
                     // se button to green etc..
-                    console.log('answer!')
+                    console.log('answer!');
                     setTimeout(() => {
                         this.next();
                     }, 2450);
@@ -105,9 +110,14 @@
 
             start(cards) {
                 // todo shuffle cards
+                this.playing = true;
                 this.cards = cards;
                 this.cardIndex = 0;
                 this.next();
+            }
+
+            stop() {
+                this.playing = false;
             }
         }
 

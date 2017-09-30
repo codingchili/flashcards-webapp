@@ -2,6 +2,11 @@
 <dom-module id="shared-styles">
     <template>
         <style>
+        body {
+                background-color: var(--primary-background-color);
+                color: var(--primary-text-color);
+        }
+
           --primary-color: var(--paper-pink-400);
           --secondary-color: var(--paper-indigo-300);
           --primary-text-color: var(--light-theme-text-color);
@@ -11,6 +16,13 @@
           --divider-color: var(--light-theme-divider-color);
           --error-color: var(--paper-deep-orange-a700);
           --faint-text-color: rgba(255, 0, 0, 0.3);
+
+          paper-spinner {
+              --paper-spinner-layer-1-color: var(--secondary-color);
+              --paper-spinner-layer-2-color: var(--primary-color);
+              --paper-spinner-layer-3-color: var(--secondary-color);
+              --paper-spinner-layer-4-color: var(--primary-color);
+          }
 
           app-drawer {
               /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);*/
@@ -75,6 +87,10 @@
               background-color: var(--secondary-color);
               color: #ffffff;
           }
+
+        paper-toast.error {
+            background-color: var(--error-color);
+        }
 
           paper-input {
               margin-left: 8px;

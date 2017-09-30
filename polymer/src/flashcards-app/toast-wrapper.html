@@ -1,0 +1,38 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+<dom-module id="toast-wrapper">
+    <template>
+        <style include="shared-styles"></style>
+        <style is="custom-style">
+            :host {
+                display: block;
+            }
+        </style>
+
+        <paper-toast id="toast_error" class="error" text="{{message}}"></paper-toast>
+        <paper-toast id="toast" text="{{message}}"></paper-toast>
+    </template>
+
+</dom-module>
+<script>
+    class ToastWrapper extends Polymer.Element {
+        static get is() {
+            return 'toast-wrapper';
+        }
+
+        constructor() {
+            super();
+            application.subscribe(TOAST_ERROR, (message) => {
+                this.message = message;
+                this.$[TOAST_ERROR].open();
+            });
+            application.subscribe(TOAST, (message) => {
+                this.message = message;
+                this.$[TOAST].open();
+            });
+        }
+    }
+    window.customElements.define(ToastWrapper.is, ToastWrapper);
+</script>

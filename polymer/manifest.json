@@ -1,7 +1,9 @@
 {
-  "name": "flashcards",
-  "short_name": "flashcards",
+  "name": "Flashcards",
+  "short_name": "Flashcards",
   "description": "Flashcard repository",
   "start_url": "/",
-  "display": "standalone"
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff"
 }

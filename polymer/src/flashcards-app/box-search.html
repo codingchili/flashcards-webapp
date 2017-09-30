@@ -28,7 +28,7 @@
         </style>
 
         <paper-card id="box" elevation="3">
-            <paper-input label="categories" id="search" on-keydown="search" value="{{text}}" autofocus>
+            <paper-input label="categories" id="search" on-keyup="search" value="{{text}}" autofocus>
                 <iron-icon icon="apps" slot="prefix"></iron-icon>
                 <div slot="suffix"></div>
             </paper-input>
@@ -66,17 +66,19 @@
                 search.category = this.text;
                 this.json = JSON.stringify(search);
 
-                if (this.text.length > 2) {
+                if (e.keyCode === 13 || this.text.length > 2) {
                     this.$.ajax.generateRequest();
                     if (e.keyCode === 13) {
                         this.text = '';
                     }
+                    application.publish(LOADING, true);
                 }
             }
 
             response(e) {
                 this.categories = e.detail.response.collection;
                 this.$.categories.setList(this.categories);
+                application.publish(LOADING, false);
             }
         }
         window.customElements.define(BoxSearch.is, BoxSearch);

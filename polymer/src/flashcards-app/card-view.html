@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/card-player.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
@@ -18,12 +19,14 @@
                 display: block;
             }
             #card-container {
-                display: flex:
+                display: flex;
+                flex-flow: wrap;
+                justify-content: center;
                 width: 100%;
             }
             .card {
-                margin: auto;
-                width: 128px;
+                margin: 8px;
+                min-width: 128px;
                 height: 128px;
                 font-size: 11px;
                 cursor: pointer;
@@ -55,18 +58,27 @@
         <app-route route="{{route}}" pattern="/:view/:category" data="{{page}}"></app-route>
 
         <div id="toolbar">
-            <div class="toolbar-item" on-tap="list">
-                <paper-tooltip animation-delay="0" position="bottom">refresh</paper-tooltip>
-                <iron-icon icon="refresh"></iron-icon>
-            </div>
-            <div class="toolbar-item" on-tap="create">
-                <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
-                <iron-icon icon="add"></iron-icon>
-            </div>
-            <div class="toolbar-item" on-tap="start">
-                <paper-tooltip animation-delay="0" position="bottom">start</paper-tooltip>
-                <iron-icon icon="send"></iron-icon>
-            </div>
+            <template is="dom-if" if="[[!playing]]">
+                <div class="toolbar-item" on-tap="list">
+                    <paper-tooltip animation-delay="0" position="bottom">refresh</paper-tooltip>
+                    <iron-icon icon="refresh"></iron-icon>
+                </div>
+                <div class="toolbar-item" on-tap="create">
+                    <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
+                    <iron-icon icon="add"></iron-icon>
+                </div>
+                <div class="toolbar-item" on-tap="start">
+                    <paper-tooltip animation-delay="0" position="bottom">start</paper-tooltip>
+                    <iron-icon icon="send"></iron-icon>
+                </div>
+            </template>
+
+            <template is="dom-if" if="[[playing]]">
+                <div class="toolbar-item" on-tap="stop">
+                    <paper-tooltip animation-delay="0" position="bottom">stop</paper-tooltip>
+                    <iron-icon icon="clear"></iron-icon>
+                </div>
+            </template>
         </div>
 
         <h2>[[category.name]]</h2>
@@ -83,7 +95,8 @@
         <paper-dialog id="create-dialog" modal>
             <h2>Card options</h2>
             <div style="margin-top:0px;">
-                <paper-input label="Content" char-counter maxlength="128" on-keydown="onkey" value="{{card.content}}" autofocus></paper-input>
+                <paper-input label="Content" char-counter maxlength="128" on-keydown="onkey" value="{{card.content}}"
+                             autofocus></paper-input>
                 <paper-input label="Back" on-keydown="onkey" value="{{card.back}}"></paper-input>
                 <paper-input label="Alternatives" on-keydown="onkey" value="{{card.alternatives}}"></paper-input>
                 <paper-input label="Answer" on-keydown="onkey" value="{{card.answer}}"></paper-input>
@@ -100,18 +113,7 @@
             <card-player id="cardplayer"></card-player>
         </div>
 
-        <iron-ajax id="listjax" url="[[api]]" method="post" body="[[request]]"
-                   handle-as="json" on-response="onCards">
-        </iron-ajax>
-        <iron-ajax id="createjax" url="[[api]]" method="post" body="[[request]]"
-                   handle-as="json" on-response="onCreate">
-        </iron-ajax>
-        <iron-ajax id="removejax" url="[[api]]" method="post" body="[[request]]"
-                   handle-as="json" on-response="onRemove">
-        </iron-ajax>
-        <iron-ajax id="getcategoryjax" url="[[api]]" method="post" body="[[request]]"
-                   handle-as="json" on-response="onCategory">
-        </iron-ajax>
+        <api-request id="api" spinner></api-request>
     </template>
 
 </dom-module>
@@ -128,6 +130,7 @@
                 this.playing = false;
 
                 application.subscribe('openCategory', category => {
+                   this.$.cardplayer.stop();
                    this.category = category;
                    this.list();
                 });
@@ -135,9 +138,11 @@
 
             ready() {
                 super.ready();
-                this.list();
-                this.category = this.page.category;
-                this.loadCategory();
+                if (this.page.category) {
+                    this.list();
+                    this.category = this.page.category;
+                    this.loadCategory(this.category);
+                }
             }
 
             edit(e) {
@@ -156,28 +161,21 @@
 
             remove(e) {
                 let card = e.model.card;
-                let json = api.request('cards', 'remove');
+                let json = {};
                 json.id = card.id;
                 json.category = this.page.category;
-                this.request = JSON.stringify(json);
-                this.$.removejax.generateRequest();
-            }
-
-            onRemove(e) {
-                console.log(e.detail.response);
-                this.list();
+                this.$.api.cards('remove', () => this.list(), json);
             }
 
             onkey(e) {
-                if (e.keyCode == 13) {
+                if (e.keyCode === 13) {
                     this.save();
                     this.$['create-dialog'].close();
                 }
             }
 
             save() {
-                let json = api.request('cards', 'create');
-
+                let json = {};
                 if (this.card.id) {
                     json.id = this.card.id;
                 }
@@ -186,46 +184,29 @@
                 json.back = this.card.back;
                 json.alternatives = [this.card.alternatives];
                 json.answer = this.card.answer;
-                this.request = JSON.stringify(json);
-                this.$.createjax.generateRequest();
-            }
-
-            onCreate(e) {
-                console.log(e.detail.response);
-                this.list();
-            }
-
-            onCategory(e) {
-                console.log(e.detail.response);
-                this.category = e.detail.response;
+                this.$.api.cards('create', () => this.list(), json);
             }
 
             loadCategory(categoryId) {
-                let json = api.request('categories', 'get');
+                let json = {'id': this.page.category};
                 json.id = this.page.category;
-                this.request = JSON.stringify(json);
-                this.$.getcategoryjax.generateRequest();
+                this.$.api.categories('get', (e) => this.category = e, json);
             }
 
             list() {
-                let json = api.request('cards', 'list');
-                let card = {};
-                json.category = this.page.category;
-                this.request = JSON.stringify(json);
-                this.$.listjax.generateRequest();
-            }
-
-            onCards(e) {
-                let cards = e.detail.response.collection;
-                console.log(e.detail.response);
-                this.cards = cards;
+                let json = {'category': this.page.category};
+                this.$.api.cards('list', (response) => this.cards = response.collection, json);
             }
 
             start() {
-                console.log('start!');
                 this.$.cardplayer.start(this.cards);
                 this.playing = true;
             }
+
+            stop() {
+                this.$.cardplayer.stop();
+                this.playing = false;
+            }
         }
         window.customElements.define(CardView.is, CardView);
-    </script>
+</script>

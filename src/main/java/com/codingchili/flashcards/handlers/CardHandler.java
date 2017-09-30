@@ -73,10 +73,14 @@ public class CardHandler implements CoreHandler {
 
         if (factory.verifyToken(request.token())) {
             FlashCard card = request.card();
-            categories.get(card.getCategory()).setHandler(get -> {
-                request.setCategory(get.result());
+            if (card.getCategory() != null) {
+                categories.get(card.getCategory()).setHandler(get -> {
+                    request.setCategory(get.result());
+                    handle(Role.USER, request);
+                });
+            } else {
                 handle(Role.USER, request);
-            });
+            }
         } else {
             handle(Role.PUBLIC, request);
         }
