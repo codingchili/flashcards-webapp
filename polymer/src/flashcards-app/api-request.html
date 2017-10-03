@@ -79,13 +79,13 @@
                         this.requestCompleted(id);
 
                         if (response.status === ERROR) {
-                            this.submitError(request, response.message);
+                            this.submitError(request, id, response.message);
                         } else {
                             handler(response);
                             this.log(response);
                         }
                     } else if (xhr.readyState === 4) {
-                        this.submitError(request, "failed to connect");
+                        this.submitError(request, id, "failed to connect");
                     }
                     this.latency = performance.now() - start;
                 };
@@ -93,12 +93,13 @@
                 xhr.send(JSON.stringify(request));
             }
 
-            submitError(request, reason) {
+            submitError(request, requestId, reason) {
                 if (!this.volatile) {
                     application.publish(TOAST_ERROR, reason);
                 }
-                let message = reason + ': processing request to \'' + request.target +
+                let message = reason + ': processing request ' + requestId + ' to \'' + request.target +
                     '\' with route \'' + request.route + '\'.';
+                this.requestCompleted(requestId);
                 console.log(message);
             }
 

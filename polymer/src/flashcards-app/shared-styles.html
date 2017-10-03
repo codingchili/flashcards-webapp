@@ -2,57 +2,74 @@
 <dom-module id="shared-styles">
     <template>
         <style>
-        body {
+            body {
                 background-color: var(--primary-background-color);
                 color: var(--primary-text-color);
-        }
+            }
 
-          --primary-color: var(--paper-pink-400);
-          --secondary-color: var(--paper-indigo-300);
-          --primary-text-color: var(--light-theme-text-color);
-          --primary-background-color: var(--light-theme-background-color);
-          --secondary-text-color: var(--light-theme-secondary-color);
-          --disabled-text-color: var(--light-theme-disabled-color);
-          --divider-color: var(--light-theme-divider-color);
-          --error-color: var(--paper-deep-orange-a700);
-          --faint-text-color: rgba(255, 0, 0, 0.3);
+            html {
+                --primary-color: var(--paper-pink-400);
+                --secondary-color: var(--paper-indigo-300);
+                --primary-text-color: var(--light-theme-text-color);
+                --primary-background-color: var(--light-theme-background-color);
+                --secondary-text-color: var(--light-theme-secondary-color);
+                --disabled-text-color: var(--light-theme-disabled-color);
+                --divider-color: var(--light-theme-divider-color);
+                --error-color: var(--paper-deep-orange-a700);
+                --faint-text-color: rgba(255, 0, 0, 0.3);
+            }
 
-          paper-spinner {
-              --paper-spinner-layer-1-color: var(--secondary-color);
-              --paper-spinner-layer-2-color: var(--primary-color);
-              --paper-spinner-layer-3-color: var(--secondary-color);
-              --paper-spinner-layer-4-color: var(--primary-color);
-          }
+            paper-spinner {
+                --paper-spinner-layer-1-color: var(--secondary-color);
+                --paper-spinner-layer-2-color: var(--primary-color);
+                --paper-spinner-layer-3-color: var(--secondary-color);
+                --paper-spinner-layer-4-color: var(--primary-color);
+            }
 
-          app-drawer {
-              /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);*/
-              --app-drawer-content-container: {
-                  background-color: var(--primary-background-color);
-                  color: var(--primary-text-color);
-              }
-          }
+            app-drawer {
+                /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);*/
+                --app-drawer-content-container: {
+                    background-color: var(--primary-background-color);
+                    color: var(--primary-text-color);
+                }
+            }
 
-          paper-input {
-              --paper-input-container-focus-color: var(--primary-color);
-              --paper-input-container-invalid-color: var(--primary-color);
-              --paper-input-container-input-color: var(--primary-text-color);
-          }
+            paper-chip {
+                margin: -6px;
+                --paper-chip-label-color: var(--secondary-color);
+                --paper-chip-active-background-color: var(--primary-background-color);
+                --paper-chip-background-color: var(--primary-background-color);
+                --paper-chip-close-color: var(--error-color);
+                --paper-chip-font-size: 10px;
+            }
 
-          paper-button {
-              background-color: var(--primary-color);
-              color: #ffffff;
-              width: 100%;
-              margin-top: 32px;
-              margin-left: 0px;
-              margin-right: 0px;
-          }
+            paper-chip:hover {
+                --paper-chip-label-color: var(--primary-color);
+                transition: --paper-chip-label-color 2s;
+            }
 
-          .cancel-button {
-              background-color: var(--secondary-color);
-              margin-top: 16px;
-          }
+            paper-input {
+                --paper-input-container-focus-color: var(--primary-color);
+                --paper-input-container-invalid-color: var(--primary-color);
+                --paper-input-container-input-color: var(--primary-text-color);
+            }
 
-          .button-group {
+            paper-button {
+                background-color: var(--primary-color);
+                color: #ffffff;
+                width: 100%;
+                margin-top: 32px;
+                margin-left: 0px;
+                margin-right: 0px;
+            }
+
+            .cancel-button {
+                background-color: var(--secondary-color);
+                margin-top: 16px;
+                opacity: 0.6;
+            }
+
+            .button-group {
                 display: block;
                 width: 100%;
                 margin: 0px;
@@ -61,55 +78,55 @@
                 bottom: 0px;
             }
 
-          paper-item {
-              font-weight: bold;
-          }
+            paper-item {
+                font-weight: bold;
+            }
 
-          paper-menu > paper-item:hover {
-              background-color: var(--primary-color);
-              color: #ffffff;
-              font-weight: bold;
-              user-select: none;
-              cursor: pointer;
-          }
+            paper-menu > paper-item:hover {
+                background-color: var(--primary-color);
+                color: #ffffff;
+                font-weight: bold;
+                user-select: none;
+                cursor: pointer;
+            }
 
-          app-toolbar {
-              background-color: var(--primary-color);
-              font-family: 'Roboto', Helvetica, sans-serif;
-              color: white;
-              --app-toolbar-font-size: 24px;
-          }
+            app-toolbar {
+                background-color: var(--primary-color);
+                font-family: 'Roboto', Helvetica, sans-serif;
+                color: white;
+                --app-toolbar-font-size: 24px;
+            }
 
-          paper-toast {
-              width: 100%;
-              margin: 0px;
-              text-align: center;
-              background-color: var(--secondary-color);
-              color: #ffffff;
-          }
+            paper-toast {
+                width: 100%;
+                margin: 0px;
+                text-align: center;
+                background-color: var(--secondary-color);
+                color: #ffffff;
+            }
 
-        paper-toast.error {
-            background-color: var(--error-color);
-        }
+            paper-toast.error {
+                background-color: var(--error-color);
+            }
 
-          paper-input {
-              margin-left: 8px;
-              margin-right: 8px;
-          }
+            paper-input {
+                margin-left: 8px;
+                margin-right: 8px;
+            }
 
-          a:link, a:visited {
-              color: var(--primary-color) !important;
-              text-decoration: none;
-          }
+            a:link, a:visited {
+                color: var(--secondary-color) !important;
+                text-decoration: none;
+            }
 
-          a:hover {
-              color: var(--secondary-color) !important;
-              text-decoration: none;
-          }
+            a:hover {
+                color: var(--primary-color) !important;
+                text-decoration: none;
+            }
 
-          a:active {
-              color: var(--error-color) !important;
-          }
+            a:active {
+                color: var(--error-color) !important;
+            }
 
             #toolbar {
                 display: flex;
@@ -137,14 +154,19 @@
                 margin: auto;
             }
 
-              @media screen and (max-width: 475px) {
+            .toolbar-item > iron-icon:hover {
+                color: var(--secondary-color);
+            }
+
+            @media screen and (max-width: 475px) {
                 paper-dialog {
                     top: 0;
                     left: 0;
                     width: 100%;
                     height: 100%;
                     margin: 0;
-                    position: absolute;
+                    bottom: 0px;
+                    position: fixed;
                 }
             }
 
@@ -153,7 +175,7 @@
             }
 
             paper-swatch-picker.color-picker {
-              --paper-swatch-picker-color-size: 10px;
+                --paper-swatch-picker-color-size: 10px;
             }
         </style>
     </template>

@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 <link rel="import" href="/src/flashcards-app/category-list.html">
 
@@ -23,7 +24,7 @@
 
             #box {
                 width: 100%;
-                min-height: 524px;
+                margin-bottom: 64px;
             }
         </style>
 
@@ -38,11 +39,7 @@
             </div>
         </paper-card>
 
-        <iron-ajax id="ajax" url="[[api]]" method="post"
-                   body='{{json}}' debounce-duration="0"
-                   handle-as="json" on-response="response">
-        </iron-ajax>
-
+        <api-request id="api" spinner></api-request>
     </template>
     <script>
         class BoxSearch extends Polymer.Element {
@@ -61,24 +58,19 @@
             }
 
             search(e) {
-                let search = api.request('categories', 'search');
-                search.username = this.text;
-                search.category = this.text;
-                this.json = JSON.stringify(search);
+                let search = {'username' : this.text, 'category': this.text};
 
                 if (e.keyCode === 13 || this.text.length > 2) {
-                    this.$.ajax.generateRequest();
+                    this.$.api.categories('search', (e) => this.response(e), search);
                     if (e.keyCode === 13) {
                         this.text = '';
                     }
-                    application.publish(LOADING, true);
                 }
             }
 
-            response(e) {
-                this.categories = e.detail.response.collection;
+            response(response) {
+                this.categories = response.collection;
                 this.$.categories.setList(this.categories);
-                application.publish(LOADING, false);
             }
         }
         window.customElements.define(BoxSearch.is, BoxSearch);

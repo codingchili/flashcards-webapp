@@ -1,0 +1,79 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chip.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+
+<dom-module id="tag-input">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+            }
+
+            .chip-list {
+                max-width: min-content;
+                width: 80%;
+                min-width: 80%;
+                display: flex;
+                flex-wrap: wrap;
+            }
+        </style>
+                <paper-input label="[[label]]" on-keyup="onInput" value="{{value}}"></paper-input>
+                <div class="chip-list">
+                    <template is="dom-repeat" items="{{values}}" as="value">
+                        <paper-chip label="[[value]]" on-click="remove"></paper-chip>
+                    </template>
+                </div>
+    </template>
+</dom-module>
+<script>
+    class TagInput extends Polymer.Element {
+        static get is() {
+            return 'tag-input';
+        }
+
+        static get properties() {
+            return {
+                label: {
+                    type: String,
+                    value: 'label',
+                },
+                value: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+                values: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                }
+            }
+        }
+
+        remove(e) {
+            this.values = this.values.filter(item => {
+                return !(item === e.model.value);
+            });
+            this.notifySplices('values');
+        }
+
+        onInput(e) {
+            // enter, comma or semicolon
+            if (e.keyCode === 13 || e.keyCode === 186 || e.keyCode === 188) {
+                if (e.keyCode > 13) {
+                    this.value = this.value.slice(0, -1);
+                }
+                if (this.value.length > 0) {
+                    this.values.push(this.value);
+                    this.notifySplices('values');
+                }
+                this.value = "";
+            }
+            console.log('taginput=');
+            console.log(this.values);
+        }
+    }
+    window.customElements.define(TagInput.is, TagInput);
+</script>

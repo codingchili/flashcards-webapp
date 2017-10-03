@@ -26,13 +26,14 @@
         <style is="custom-style">
             :host {
                 display: block;
+                position:absolute;
+                top: 64px;
+                left:0;
+                right:0;
+                bottom:0;
             }
             #drawer {
                 z-index: 100;
-            }
-
-            #about {
-                height: 508px;
             }
 
             #about-buttons {
@@ -47,6 +48,10 @@
             #about-content {
                 margin-left: 8px;
                 margin-right: 8px;
+            }
+
+            #about {
+                min-height: 478px;
             }
 
             .fixed {
@@ -73,11 +78,9 @@
         </app-route>
 
         <app-toolbar class="fixed">
-            <paper-icon-button icon="menu" on-tap="drawer"></paper-icon-button>
+            <paper-icon-button icon="menu" on-click="drawer"></paper-icon-button>
             <div class="title">[[titletext]]</div>
         </app-toolbar>
-
-        <div style="width:100%;height:64px;"></div>
 
         <iron-pages selected="[[routeData.view]]" attr-for-selected="name" id="content">
             <index-view name="" route="{{subroute}}"></index-view>
@@ -91,15 +94,15 @@
         <app-drawer id="drawer">
             <paper-menu selected="0">
                 <!-- if not logged in then go to login view -->
-                <paper-item on-tap="login" hidden$="[[authenticated]]">Login</paper-item>
+                <paper-item on-click="login" hidden$="[[authenticated]]">Login</paper-item>
 
-                <paper-item on-tap="categories" hidden$="[[!authenticated]]">My Categories</paper-item>
-                <paper-item on-tap="search" hidden$="[[!authenticated]]">Search</paper-item>
-                <paper-item on-tap="settings" hidden$="[[!authenticated]]">Settings</paper-item>
-                <paper-item on-tap="account" hidden$="[[!authenticated]]">Account</paper-item>
-                <paper-item on-tap="logout" hidden$="[[!authenticated]]">Logout</paper-item>
+                <paper-item on-click="categories" hidden$="[[!authenticated]]">My Categories</paper-item>
+                <paper-item on-click="search" hidden$="[[!authenticated]]">Search</paper-item>
+                <paper-item on-click="settings" hidden$="[[!authenticated]]">Settings</paper-item>
+                <paper-item on-click="account" hidden$="[[!authenticated]]">Account</paper-item>
+                <paper-item on-click="logout" hidden$="[[!authenticated]]">Logout</paper-item>
 
-                <paper-item on-tap="about">About</paper-item>
+                <paper-item on-click="about">About</paper-item>
             </paper-menu>
         </app-drawer>
 
@@ -113,7 +116,7 @@
                      alt="Fork me on GitHub"
                      data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
-            <h2>About the app - Flashcards v1.0</h2>
+            <h2>Flashcards v1.0.0</h2>
             <div id="about-content">
                     A web application for studying with flashcards and to<br>
                     create quizzes. Some features of this app is:
@@ -129,13 +132,10 @@
                     This applications builds on the following libraries
                     <ul>
                         <li><a href="https://github.com/Polymer/polymer" target="_blank">Polymer 2.0</a></li>
-                        <li><a href="https://github.com/eclipse/vert.x" target="_blank">Vertx</a></li>
-                        <li><a href="https://github.com/hazelcast/hazelcast" target="_blank">Hazelcast</a></li>
+                        <li><a href="https://github.com/eclipse/vert.x" target="_blank">Vertx 3.4</a></li>
                         <li><a href="https://github.com/npgall/cqengine" target="_blank">CQEngine</a></li>
-                        <li><a href="https://github.com/mongodb/mongo" target="_blank">MongoDB</a></li>
+                        <li><a href="https://github.com/codingchili/chili-core" target="_blank">chili-core</a></li>
                     </ul>
-                    Sources for flashcards-webapp and chili-core available on <a href="https://github.com/codingchili/"
-                                                                                 target="_blank">GitHub</a>.
                     Author of the app is Robin Duda &copy;2017
                 <div class="buttons" id="about-buttons">
                     <paper-button dialog-confirm raised autofocus>Close</paper-button>

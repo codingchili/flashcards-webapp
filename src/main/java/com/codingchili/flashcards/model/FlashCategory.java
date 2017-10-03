@@ -17,7 +17,7 @@ public class FlashCategory implements Storable {
     private List<FlashScore> highscores = new ArrayList<>();
     private Set<String> users = new HashSet<>();
     private String id = UUID.randomUUID().toString();
-    private ZonedDateTime created;
+    private SimpleDate created;
     private boolean shared = false;
     private String owner;
     private int cost = 0;
@@ -130,11 +130,11 @@ public class FlashCategory implements Storable {
         return this.compareTo(other) == 0;
     }
 
-    public ZonedDateTime getCreated() {
+    public SimpleDate getCreated() {
         return created;
     }
 
-    public void setCreated(ZonedDateTime created) {
+    public void setCreated(SimpleDate created) {
         this.created = created;
     }
 }

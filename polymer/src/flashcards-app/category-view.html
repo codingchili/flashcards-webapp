@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 <link rel="import" href="/src/flashcards-app/category-list.html">
+<link rel="import" href="/src/flashcards-app/api-request.html">
 
 <dom-module id="category-view">
     <template>
@@ -19,10 +20,6 @@
                 display: block;
                 width: 100%;
                 height: 100%;
-            }
-
-            #create-button {
-                width: 100%;
             }
 
             .cancel-button {
@@ -84,40 +81,68 @@
                 color: var(--faint-text-color);
             }
 
-            .menu-item:hover {
-                border-style: solid;
-                border-width: 1px;
-                border-color: var(--primary-color);
-                box-sizing: border-box;
+            .menu-item:hover > iron-icon {
+                color: var(--secondary-color);
             }
 
             .menu-item > iron-icon {
                 margin: auto;
                 color: var(--primary-color);
             }
+
+            #filters {
+                display: none;
+                justify-content: flex-start;
+                flex-flow: wrap;
+                position: fixed;
+                top: 64px;
+                max-width: 150px;
+                right: 0;
+                z-index: 1;
+                background-color: var(--primary-background-color);
+            }
+
+            .filter {
+                margin: -1px;
+                min-width: 32px;
+                min-height: 32px;
+                cursor: pointer;
+            }
+
+            .clear:hover {
+                color: var(--secondary-color);
+            }
         </style>
+
+        <div id="toolbar">
+            <div class="toolbar-item" on-tap="list">
+                <paper-tooltip animation-delay="0" position="bottom">refresh</paper-tooltip>
+                <iron-icon icon="refresh"></iron-icon>
+            </div>
+            <div class="toolbar-item" on-tap="createnew">
+                <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
+                <iron-icon icon="add"></iron-icon>
+            </div>
+
+            <div class="toolbar-item" on-tap="showFilters">
+                <paper-tooltip animation-delay="0" position="bottom">filter</paper-tooltip>
+                <iron-icon icon="search"></iron-icon>
+            </div>
+        </div>
+
         <paper-card id="box" elevation="3">
+            <paper-card id="filters">
+                <template is="dom-repeat" items="[[colors]]" as="filter">
+                    <iron-icon class="filter" icon="apps" style$="color:[[filter.color]]" on-click="setFilter">
+                    </iron-icon>
+                </template>
+                <iron-icon class="filter clear" icon="clear" on-click="clearFilter"></iron-icon>
+            </paper-card>
+
             <div hidden$="[[populated]]">
                 <iron-icon id="place-holder" icon="social:sentiment-neutral"></iron-icon>
-                <span class="notification">YOU HAVE NOT CREATED ANY CATEGORIES YET.</span>
+                <span class="notification">No categories available.</span>
             </div>
-
-            <div id="toolbar">
-                <div class="toolbar-item" on-tap="list">
-                    <paper-tooltip animation-delay="0" position="bottom">refresh</paper-tooltip>
-                    <iron-icon icon="refresh"></iron-icon>
-                </div>
-                <div class="toolbar-item" on-tap="createnew">
-                    <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
-                    <iron-icon icon="add"></iron-icon>
-                </div>
-
-                <div class="toolbar-item" on-tap="search">
-                    <paper-tooltip animation-delay="0" position="bottom">search</paper-tooltip>
-                    <iron-icon icon="search"></iron-icon>
-                </div>
-            </div>
-
             <category-list id="categories"></category-list>
         </paper-card>
 
@@ -126,7 +151,8 @@
             <div style="margin-top:0px;">
                 <paper-input label="Name" char-counter maxlength="32" on-keydown="onkey" value="{{category.name}}"
                              autofocus id="nameinput"></paper-input>
-                <paper-input label="Users" on-keydown="onkey" value="{{category.users}}"></paper-input>
+
+                <tag-input value="{{user}}" label="Users" values="{{category.users}}"></tag-input>
                 <paper-input label="Cost" hidden="[[category.shared]]" on-keydown="onkey" value="{{category.cost}}">
                     <div slot="suffix">
                         <iron-icon class="cash-icon" icon="euro-symbol">
@@ -141,7 +167,7 @@
                 </paper-swatch-picker>
             </div>
             <div class="buttons button-group">
-                <paper-button on-tap="create" dialog-confirm raised autofocus>Save</paper-button>
+                <paper-button on-click="create" dialog-confirm raised autofocus>Save</paper-button>
                 <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
             </div>
         </paper-dialog>
@@ -149,10 +175,10 @@
 
         <paper-dialog id="category-dialog" modal>
             <h2>[[category.name]]</h2>
-            <div style="margin-top:0px;" class="menu-list">
+            <div style="margin-top:0;" class="menu-list">
                 <template is="dom-repeat" items="[[category.icons]]" as="icon">
                     <template is="dom-if" if="[[icon.menu]]">
-                        <div class="menu-item" on-tap="selected"  dialog-confirm>
+                        <div class="menu-item" on-click="selected" dialog-confirm>
                             <iron-icon icon="[[icon.id]]"></iron-icon>
                             <span class="menu-text">[[icon.text]]</span>
                         </div>
@@ -164,15 +190,7 @@
             </div>
         </paper-dialog>
 
-        <iron-ajax id="createjax" url="[[api]]" method="post" body="[[request]]"
-                   handle-as="json" on-response="list">
-        </iron-ajax>
-        <iron-ajax id="listjax" url="[[api]]" method="post" body="[[request]]"
-                   handle-as="json" on-response="onList">
-        </iron-ajax>
-        <iron-ajax id="deletejax" url="[[api]]" method="post" body="[[request]]"
-                   handle-as="json" on-response="onRemove">
-        </iron-ajax>
+        <api-request id="api" spinner></api-request>
     </template>
 
 </dom-module>
@@ -187,8 +205,9 @@
             super();
             this.api = application.api();
             this.populated = false;
+            this.colors = [];
+            this.filtering = false;
             this.clear();
-
             application.subscribe('authenticated', () => this.list());
         }
 
@@ -203,6 +222,24 @@
                 this.category = category;
                 this.$['category-dialog'].open();
             });
+        }
+
+        showFilters() {
+            this.$.filters.style.display = 'flex';
+        }
+
+        setFilter(e) {
+            this.$.filters.style.display = 'none';
+            this.filtering = true;
+            this.$.categories.setFilter((category) => {
+                return (e.model.filter.color === category.color);
+            });
+        }
+
+        clearFilter() {
+            this.$.filters.style.display = 'none';
+            this.filtering = false;
+            this.$.categories.clearFilter();
         }
 
         selected(e) {
@@ -231,19 +268,23 @@
             this.category.color = 'var(--secondary-color)';
             this.category.users = [];
             this.category.cost = 0;
+            this.user = '';
         }
 
         edit() {
+            this.user = '';
             this.$['create-dialog'].open();
         }
 
         create() {
-            let json = api.request('categories', 'save');
+            let json = {};
             json.color = this.category.color;
+            if (this.user.length > 0) {
+                this.category.users.push(this.user);
+            }
             if (Array.isArray(this.category.users)) {
+                console.log(this.category.users);
                 json.users = this.category.users;
-            } else { // todo tag picker
-                json.users = [this.category.users];
             }
             json.shared = this.category.shared;
             json.name = this.category.name;
@@ -251,28 +292,19 @@
             json.id = this.category.id;
 
             this.clear();
-            this.request = JSON.stringify(json);
-            this.$.createjax.generateRequest();
+            this.$.api.categories('save', () => this.list(), json);
         }
 
         remove(category) {
-            let json = api.request('categories', 'remove');
-            json.id = category.id;
-            console.log(json);
-            this.request = JSON.stringify(json);
-            this.$.deletejax.generateRequest();
+            this.$.api.categories('remove', () => this.list(),
+                {'id': category.id});
         }
 
         list() {
-            let json = api.request('categories', 'list');
-            this.request = JSON.stringify(json);
-            this.$.listjax.generateRequest();
-            application.publish(LOADING, true);
+            this.$.api.categories('list', (e) => this.onList(e));
         }
 
-        onList(e) {
-            let json = e.detail.response;
-            application.publish(LOADING, false);
+        onList(json) {
             this.categories = json.collection;
             this.$.categories.setList(json.collection);
 
@@ -281,12 +313,17 @@
             } else {
                 this.populated = false;
             }
-        }
 
-        onRemove(e) {
-            let json = e.detail.response;
-            console.log(json);
-            this.list();
+            let colors = [];
+            let filter = {};
+            for (let category of this.categories) {
+                let color = {'color': category.color};
+                if (!filter[category.color]) {
+                    colors.push(color);
+                }
+                filter[category.color] = {'color': category.color};
+            }
+            this.colors = colors;
         }
 
         onkey(e) {
@@ -296,8 +333,25 @@
             }
         }
 
-        search() {
-            application.publish('route', '/');
+        removeUser(e) {
+            this.category.users = this.category.users.filter(item => {
+                return !(item === e.model.user);
+            });
+            this.notifyPath('category.users');
+        }
+
+        onAddUser(e) {
+            // enter, comma or semicolon
+            if (e.keyCode === 13 || e.keyCode === 186 || e.keyCode === 188) {
+                if (e.keyCode > 13) {
+                    this.user = this.user.slice(0, -1);
+                }
+                if (this.user.length > 0) {
+                    this.category.users.push(this.user);
+                    this.notifySplices('category.users');
+                }
+                this.user = "";
+            }
         }
     }
     window.customElements.define(CategoryView.is, CategoryView);

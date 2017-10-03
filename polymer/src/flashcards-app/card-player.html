@@ -3,6 +3,9 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 
@@ -13,10 +16,73 @@
             :host {
                 display: block;
             }
+
             #cardbox {
                 margin: auto;
+                width: 100%;
+                text-align: center;
             }
+
+            #navmenu {
+                position: absolute;
+                display: block;
+                right: 64px;
+                top: 12px;
+                width: 64px;
+            }
+
+            .navoption > iron-icon {
+                min-height: 48px;
+                min-width: 48px;
+            }
+
+            img {
+                max-height: 256px;
+                max-width: 256px;
+                display: block;
+                margin: auto;
+            }
+
+            #cardbox {
+                min-height: 128px;
+            }
+
+            #optionbox {
+                margin-top: 16px;
+                width: 100%;
+            }
+
+            .option {
+                transition: background-color 0.5s;
+                transition-timing-function: ease-in-out;
+            }
+
+            .correct {
+                background-color: var(--primary-color);
+            }
+
+            .wrong {
+                background-color: var(--secondary-color);
+            }
+
         </style>
+
+        <template is="dom-if" if="[[playing]]">
+            <div id="toolbar">
+                <div on-click="flip" class="toolbar-item">
+                    <iron-icon icon="compare-arrows"></iron-icon>
+                    <paper-tooltip animation-delay="0" position="bottom">Flip</paper-tooltip>
+                </div>
+                <div on-click="next" class="toolbar-item">
+                    <iron-icon icon="forward"></iron-icon>
+                    <paper-tooltip animation-delay="0" position="bottom">Next</paper-tooltip>
+                </div>
+                <div on-click="stop" class="toolbar-item">
+                    <paper-tooltip animation-delay="0" position="bottom">stop</paper-tooltip>
+                    <iron-icon icon="clear"></iron-icon>
+                </div>
+            </div>
+        </template>
 
         <div hidden="[[!playing]]">
             <paper-card id="cardbox">
@@ -25,12 +91,12 @@
                 </template>
                 <template is="dom-if" if="[[!card.flipped]]">
                     [[card.mediacontent]]
-                    <template is="dom-repeat" items="[[card.alternatives]]" as="option">
-                        <paper-button on-tap="guess">[[option]]</paper-button>
-                    </template>
                 </template>
-                <!-- todo replace with skip/alternative buttons -->
-                <paper-button on-tap="next" raised primary>next</paper-button>
+            </paper-card>
+            <paper-card id="optionbox">
+                <template is="dom-repeat" items="[[card.alternatives]]" as="option">
+                    <paper-item on-click="guess" class="option">[[option]]</paper-item>
+                </template>
             </paper-card>
         </div>
 
@@ -42,85 +108,101 @@
 
 </dom-module>
 <script>
-        class CardPlayer extends Polymer.Element {
-            static get is() {
-                return 'card-player';
-            }
+    class CardPlayer extends Polymer.Element {
+        static get is() {
+            return 'card-player';
+        }
 
-            // todo implement hotkeys.
-
-            constructor() {
-                super();
-                this.cardIndex = 0;
-                this.cards = [];
-                this.card = {};
-                this.playing = true;
-            }
-
-            next() {
-                if (this.cardIndex < this.cards.length) {
-                    this.card = this.cards[this.cardIndex];
-                    let content = this.card.content;
-                    this.set('card.mediacontent', this.getMediaContent(content));
-                    console.log(this.$.img);
-                } else {
-                    this.score();
+        static get properties() {
+            return {
+                playing: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
                 }
-                this.cardIndex++;
-            }
-
-            getMediaContent(content) {
-                let matches = content.match(/(:img:.+?(\.png|\.jpg))/mgi);
-
-                if (matches) {
-                    for (let i = 0; i < matches.length; i++) {
-                        let url = matches[i].replace(/\:img\:/mgi, 'https://i.imgur.com/');
-                        this.$.img.src = url;
-                        this.$.img.alt = url;
-                        this.$.cardbox.prepend(this.$.img);
-                    }
-                }
-                return content;
-            }
-
-            guess(e) {
-                console.log(e.model.option + ' ?= ' + this.card.answer);
-                if (e.model.option === this.card.answer) {
-                    // play some animation here..
-                    // se button to green etc..
-                    console.log('answer!');
-                    setTimeout(() => {
-                        this.next();
-                    }, 2450);
-                } else {
-                    // play another animation here.
-                    // set button color to red etc..
-                    console.log('not the answer');
-                }
-            }
-
-            // todo add ui to call this early.
-            score() {
-                console.log('score');
-            }
-
-            back() {
-                console.log('go back')
-            }
-
-            start(cards) {
-                // todo shuffle cards
-                this.playing = true;
-                this.cards = cards;
-                this.cardIndex = 0;
-                this.next();
-            }
-
-            stop() {
-                this.playing = false;
             }
         }
 
-        window.customElements.define(CardPlayer.is, CardPlayer);
+        constructor() {
+            super();
+            this.cardIndex = 0;
+            this.cards = [];
+            this.card = {};
+            this.playing = true;
+        }
+
+        flip() {
+            this.set('card.flipped', !(this.card.flipped));
+        }
+
+        next() {
+            if (this.cardIndex < this.cards.length) {
+                this.card = this.cards[this.cardIndex];
+                let content = this.card.content;
+                this.set('card.mediacontent', this.getMediaContent(content));
+            } else {
+                this.score();
+            }
+            this.cardIndex++;
+        }
+
+        getMediaContent(content) {
+            let matches = content.match(/(:img:.+?(\.png|\.jpg))/mgi);
+
+            if (matches) {
+                for (let i = 0; i < matches.length; i++) {
+                    let url = matches[i].replace(/\:img\:/mgi, 'https://i.imgur.com/');
+                    this.$.img.src = url;
+                    this.$.img.alt = url;
+                    this.$.img.id = url;
+                    this.$.cardbox.prepend(this.$.img);
+                }
+            }
+            return content;
+        }
+
+        guess(e) {
+            if (e.model.option === this.card.answer) {
+                e.target.classList.add('correct');
+                setTimeout(() => {
+                    this.next();
+                }, 1000);
+            } else {
+                e.target.classList.add('wrong');
+            }
+            setTimeout(() => {
+                for (let element of this.shadowRoot.querySelectorAll('.option')) {
+                    element.classList.remove('correct');
+                    element.classList.remove('wrong');
+                }
+            }, 500);
+        }
+
+        // todo add ui to call this early.
+        score() {
+            console.log('score');
+        }
+
+        back() {
+            console.log('go back')
+        }
+
+        start(cards) {
+            // todo shuffle cards
+            this.playing = true;
+            this.cards = cards;
+            this.cardIndex = 0;
+            for (let card of this.cards) {
+                card.flipped = false;
+            }
+            this.next();
+        }
+
+        stop() {
+            this.playing = false;
+        }
+    }
+
+    window.customElements.define(CardPlayer.is, CardPlayer);
 
 </script>

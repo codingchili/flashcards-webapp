@@ -9,10 +9,10 @@ import com.codingchili.flashcards.AppConfig;
 import com.codingchili.flashcards.model.AsyncCategoryStore;
 import com.codingchili.flashcards.model.CategoryDB;
 import com.codingchili.flashcards.model.FlashCategory;
+import com.codingchili.flashcards.model.SimpleDate;
 import com.codingchili.flashcards.request.CategoryRequest;
 import com.codingchili.flashcards.response.SizeResponse;
 
-import java.time.ZonedDateTime;
 
 import static com.codingchili.core.protocol.RoleMap.PUBLIC;
 import static com.codingchili.core.protocol.RoleMap.USER;
@@ -36,7 +36,7 @@ public class CategoryHandler implements CoreHandler {
     public void save(CategoryRequest request) {
         FlashCategory category = request.category();
         category.setOwner(request.sender());
-        category.setCreated(ZonedDateTime.now());
+        category.setCreated(new SimpleDate());
         categories.save(category).setHandler(request::result);
     }
 

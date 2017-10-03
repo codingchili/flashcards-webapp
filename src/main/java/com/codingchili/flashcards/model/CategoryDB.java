@@ -55,10 +55,10 @@ public class CategoryDB implements AsyncCategoryStore {
     public Future<Collection<FlashCategory>> search(String username, String query) {
         Future<Collection<FlashCategory>> future = Future.future();
         categories
-                .query(ID_OWNER).equalTo(username).and(ID_NAME).startsWith(query)
-                .or(ID_USERS + ARRAY).equalTo(username).and(ID_NAME).startsWith(query)
-                .or(ID_SHARED).equalTo(true).and(ID_NAME).startsWith(query)
-                .or(ID_COST).between(1L, Long.MAX_VALUE).and(ID_NAME).startsWith(query)
+                .query(ID_OWNER).equalTo(username).and(ID_NAME).like(query)
+                .or(ID_USERS + ARRAY).equalTo(username).and(ID_NAME).like(query)
+                .or(ID_SHARED).equalTo(true).and(ID_NAME).like(query)
+                .or(ID_COST).between(1L, Long.MAX_VALUE).and(ID_NAME).like(query)
                 .execute(categories -> {
                     if (categories.succeeded()) {
                         future.complete(categories.result());

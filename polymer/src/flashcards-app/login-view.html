@@ -23,10 +23,25 @@
                 text-align: center;
                 font-family: 'Roboto', Helvetica, sans-serif;
             }
+
+            .register-link {
+                width: 100%;
+                text-align: center;
+                margin-top: 32px;
+            }
+
+            .register-link:hover > a {
+                color: var(--secondary-color);
+            }
+
+            #registerbutton {
+                margin-top: 21px;
+            }
+
         </style>
 
         <paper-card id="box" elevation="3">
-            <h2 class="header" hidden$="[[registration]]">Authenticate</h2>
+            <h2 class="header" hidden$="[[registration]]">Login</h2>
             <h2 class="header" hidden$="[[!registration]]">Register</h2>
             <paper-input label="Username" id="userinput" on-keydown="onkey" value="{{username}}"
                          autofocus></paper-input>
@@ -35,9 +50,13 @@
             <paper-input hidden$="[[!registration]]" id="pass-repeat" on-keydown="onkey"
                          label="Password (repeat)" value="{{passrepeat}}" type="password"></paper-input>
 
-            <paper-button hidden$="[[registration]]" raised on-tap="call">Authenticate</paper-button>
-            <paper-button hidden$="[[!registration]]" raised on-tap="call">Register</paper-button>
-            <paper-button hidden$="[[!registration]]" class="cancel-button" on-tap="setLogin">Cancel</paper-button>
+            <div class="register-link" hidden$="[[registration]]" on-click="setRegisterNew">
+                <a href="">Register new</a>
+            </div>
+
+            <paper-button hidden$="[[registration]]" raised on-click="call">Authenticate</paper-button>
+            <paper-button hidden$="[[!registration]]" id="registerbutton" raised on-click="call">Register</paper-button>
+            <paper-button hidden$="[[!registration]]" class="cancel-button" on-click="setLogin">Cancel</paper-button>
         </paper-card>
 
         <api-request id="api" spinner></api-request>
@@ -127,6 +146,11 @@
             } else {
                 this.$.api.accounts('authenticate', (e) => this.doLogin(e), request);
             }
+        }
+
+        setRegisterNew() {
+            this.registration = true;
+            this.$.userinput.focus();
         }
 
         setRegister() {
