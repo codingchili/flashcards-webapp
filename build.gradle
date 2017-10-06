@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.codingchili:core:1.0.5'
+    compile 'com.github.codingchili.chili-core:core:1.0.5'
 }
 
 test {
@@ -44,11 +44,11 @@ ext {
 task polymer {
     doLast {
         exec {
-            workingDir "./src/main/resources/polymer"
+            workingDir "./polymer"
             commandLine = [bowerBin, "install"]
         }
         exec {
-            workingDir "./src/main/resources/polymer"
+            workingDir "./polymer"
             commandLine = [polymerBin, "build"]
         }
     }
