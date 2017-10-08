@@ -78,7 +78,7 @@
                         let response = JSON.parse(xhr.responseText);
                         this.requestCompleted(id);
 
-                        if (response.status === ERROR) {
+                        if (response.status === ERROR || response.status === UNAUTHORIZED) {
                             this.submitError(request, id, response.message);
                         } else {
                             handler(response);
@@ -97,7 +97,7 @@
                 if (!this.volatile) {
                     application.publish(TOAST_ERROR, reason);
                 }
-                let message = reason + ': processing request ' + requestId + ' to \'' + request.target +
+                let message = reason + ' => processing request ' + requestId + ' to \'' + request.target +
                     '\' with route \'' + request.route + '\'.';
                 this.requestCompleted(requestId);
                 console.log(message);

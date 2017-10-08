@@ -24,7 +24,9 @@
 
             #box {
                 width: 100%;
-                margin-bottom: 64px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
             }
         </style>
 
@@ -34,9 +36,7 @@
                 <div slot="suffix"></div>
             </paper-input>
 
-            <div id="hits">
-                <category-list id="categories"></category-list>
-            </div>
+            <category-list id="categories" header="Results for [[query]] .." footer="[[categories.length]] hits"></category-list>
         </paper-card>
 
         <api-request id="api" spinner></api-request>
@@ -51,6 +51,8 @@
                 super();
                 this.api = application.api();
                 this.text = '';
+                this.query = '';
+                this.categories = [];
 
                 application.subscribe('onSearchPage', () => {
                     this.$.search.focus();
@@ -58,10 +60,11 @@
             }
 
             search(e) {
-                let search = {'username' : this.text, 'category': this.text};
+                let search = {'username': this.text, 'category': this.text};
 
                 if (e.keyCode === 13 || this.text.length > 2) {
                     this.$.api.categories('search', (e) => this.response(e), search);
+                    this.query = this.text;
                     if (e.keyCode === 13) {
                         this.text = '';
                     }

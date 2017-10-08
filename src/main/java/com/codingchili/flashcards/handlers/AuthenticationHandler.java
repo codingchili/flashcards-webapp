@@ -63,6 +63,6 @@ public class AuthenticationHandler implements CoreHandler {
 
     @Override
     public void handle(Request request) {
-        protocol.get(request.route()).handle(new AuthenticationRequest(request));
+        protocol.get(request.route()).submit(new AuthenticationRequest(request));
     }
 }

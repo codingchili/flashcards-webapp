@@ -3,6 +3,8 @@ package com.codingchili.flashcards.handlers;
 import com.codingchili.core.context.CoreContext;
 import com.codingchili.core.listener.CoreHandler;
 import com.codingchili.core.listener.Request;
+import com.codingchili.core.logging.Level;
+import com.codingchili.core.logging.Logger;
 import com.codingchili.core.protocol.*;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.flashcards.AppConfig;
@@ -26,10 +28,12 @@ public class CategoryHandler implements CoreHandler {
     private Protocol<Request> protocol = new Protocol<>(this);
     private TokenFactory tokenFactory = AppConfig.factory();
     private AsyncCategoryStore categories;
+    private Logger logger;
 
     @Override
     public void init(CoreContext core) {
         this.categories = new CategoryDB(core);
+        this.logger = core.logger(getClass());
     }
 
     @Api
@@ -58,7 +62,12 @@ public class CategoryHandler implements CoreHandler {
 
     @Api(route = "search")
     public void search(CategoryRequest request) {
-        categories.search(request.sender(), request.categoryName()).setHandler(request::result);
+        long start = System.currentTimeMillis();
+        categories.search(request.sender(), request.categoryName()).setHandler(done -> {
+            request.result(done);
+            logger.log(logger.event("onSearchCompleted", Level.INFO)
+                    .put("searchtime", (System.currentTimeMillis() - start) + "ms"));
+        });
     }
 
     @Api(value = PUBLIC, route = "search")
@@ -80,7 +89,7 @@ public class CategoryHandler implements CoreHandler {
     @Override
     public void handle(Request request) {
         protocol.get(request.route(), access(request))
-                .handle(new CategoryRequest(request));
+                .submit(new CategoryRequest(request));
     }
 
     private Role access(Request request) {

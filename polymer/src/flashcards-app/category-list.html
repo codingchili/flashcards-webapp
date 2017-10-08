@@ -4,6 +4,8 @@
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
@@ -13,11 +15,8 @@
         <style>
             :host {
                 width: 100%;
-                bottom: 0px;
-                max-height: -webkit-fill-available;
-                min-height: -webkit-fill-available;
+                height: 100%;
                 top: 76px;
-                overflow-y: scroll;
                 display: flex;
                 flex-flow: wrap;
                 justify-content: center;
@@ -32,14 +31,14 @@
 
             @media screen and (max-width: 675px) {
                 .category {
-                    margin: 4px 16px 0;
+                    margin-left: 0;
+                    margin-right: 0;
                     width: 100%;
                 }
 
                 .name {
                     display: block;
                 }
-
             }
 
             .icon-category {
@@ -59,7 +58,6 @@
             }
 
             .name-box {
-                height: 100%;
                 line-height: 425%;
                 left: -8px;
                 display: inline-block;
@@ -117,38 +115,65 @@
                 display: flex;
                 justify-content: flex-end;
             }
+
+            section {
+                width: 100%;
+                height: 100%;
+                @apply --layout-vertical;
+            }
+
+            section paper-dialog-scrollable {
+                @apply --layout-flex;
+            }
+
+            .header {
+                padding: 8px 24px;
+            }
+
+            .footer {
+                padding: 8px 24px;
+                text-align: right;
+            }
         </style>
-        <template is="dom-repeat" items="{{categories}}" as="category">
-            <template is="dom-if" if="{{filtered(category, filter)}}">
-                <paper-card class="category" elevation="1" on-click="clicked">
-                    <iron-icon class="icon-category" icon="[[category.icon]]" style$="color:[[category.color]];">
-                    </iron-icon>
-                    <div class="owner-box" hidden$="[[isOwner(category)]]">
-                        <span class="owner-text">[[category.owner]]</span>
-                    </div>
-                    <div class="name-box">
-                        <span class="name">[[category.name]]</span>
-                    </div>
-                    <span class="created">
+        <section>
+            <div class="header">[[header]]</div>
+            <paper-dialog-scrollable>
+                <template is="dom-repeat" items="{{categories}}" as="category">
+                    <template is="dom-if" if="{{filtered(category, filter)}}">
+                        <paper-card class="category" elevation="1" on-click="clicked">
+                            <iron-icon class="icon-category" icon="[[category.icon]]"
+                                       style$="color:[[category.color]];">
+                            </iron-icon>
+                            <div class="owner-box" hidden$="[[isOwner(category)]]">
+                                <span class="owner-text">[[category.owner]]</span>
+                            </div>
+                            <div class="name-box">
+                                <span class="name">[[category.name]]</span>
+                            </div>
+                            <span class="created">
                             [[category.created.year]] [[category.created.month]]
                         </span>
-                    <div hidden$="[[!isPurchaseable(category)]]">
-                        <span class="price">[[category.cost]]&nbsp;&xi;</span>
-                    </div>
+                            <div hidden$="[[!isPurchaseable(category)]]">
+                                <span class="price">[[category.cost]]&nbsp;&xi;</span>
+                            </div>
 
-                    <div class="icon-list">
-                        <template is="dom-repeat" items="[[icons(category)]]" as="icon">
-                            <template is="dom-if" if="[[!icon.menu]]">
-                                <div>
-                                    <iron-icon class="icon-item" icon="[[icon.id]]"></iron-icon>
-                                    <paper-tooltip animation-delay="0" position="bottom">[[icon.text]]</paper-tooltip>
-                                </div>
-                            </template>
-                        </template>
-                    </div>
-                </paper-card>
-            </template>
-        </template>
+                            <div class="icon-list">
+                                <template is="dom-repeat" items="[[icons(category)]]" as="icon">
+                                    <template is="dom-if" if="[[!icon.menu]]">
+                                        <div>
+                                            <iron-icon class="icon-item" icon="[[icon.id]]"></iron-icon>
+                                            <paper-tooltip animation-delay="0" position="bottom">[[icon.text]]
+                                            </paper-tooltip>
+                                        </div>
+                                    </template>
+                                </template>
+                            </div>
+                        </paper-card>
+                    </template>
+                </template>
+            </paper-dialog-scrollable>
+            <div class="footer">[[footer]]</div>
+        </section>
     </template>
 
 </dom-module>
@@ -165,6 +190,19 @@
     class CategoryList extends Polymer.Element {
         static get is() {
             return 'category-list';
+        }
+
+        static get properties() {
+            return {
+                header: {
+                    type: String,
+                    value: ''
+                },
+                footer: {
+                    type: String,
+                    value: ''
+                }
+            }
         }
 
         constructor() {
@@ -231,4 +269,5 @@
         }
     }
     window.customElements.define(CategoryList.is, CategoryList);
+
 </script>

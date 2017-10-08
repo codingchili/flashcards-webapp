@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class FlashCategory implements Storable {
     public static final String ID_COST = "cost";
     public static final String ID_SHARED = "shared";
+    public static final String ID_INDEXED_NAME = "indexedName";
     public static final String ID_USERS = "users";
     private static final int MAX_SCORE_HISTORY = 10;
     private List<FlashScore> highscores = new ArrayList<>();
@@ -22,6 +23,7 @@ public class FlashCategory implements Storable {
     private String owner;
     private int cost = 0;
     private String name;
+    private String indexedName;
     private String color = "var(--paper-pink-200)";
     private String icon = "apps";
 
@@ -57,6 +59,7 @@ public class FlashCategory implements Storable {
     }
 
     public FlashCategory setName(String name) {
+        this.indexedName = name.toLowerCase();
         this.name = name;
         return this;
     }
@@ -113,6 +116,14 @@ public class FlashCategory implements Storable {
                 .limit(MAX_SCORE_HISTORY)
                 .collect(Collectors.toList());
         return this;
+    }
+
+    public String getIndexedName() {
+        return indexedName;
+    }
+
+    public void setIndexedName(String indexedName) {
+        this.indexedName = indexedName;
     }
 
     @Override

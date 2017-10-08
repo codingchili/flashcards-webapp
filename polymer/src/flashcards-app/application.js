@@ -5,6 +5,7 @@
  */
 const MISSING = 'MISSING';
 const CONFLICT = 'CONFLICT';
+const UNAUTHORIZED = 'UNAUTHORIZED';
 const ERROR = 'ERROR';
 const ACCEPTED = 'ACCEPTED';
 const TOAST_ERROR = 'toast_error';

@@ -24,7 +24,8 @@ public class Service implements CoreService {
     public static void main(String[] args) {
         Configurations.system()
                 .setHandlers(1)
-                .setListeners(1);
+                .setListeners(1)
+                .setMetrics(true);
 
         Configurations.storage().setMaxResults(64);
 

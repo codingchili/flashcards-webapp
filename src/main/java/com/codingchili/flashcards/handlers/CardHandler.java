@@ -87,6 +87,6 @@ public class CardHandler implements CoreHandler {
     }
 
     private void handle(Role role, CardRequest request) {
-        protocol.get(request.route(), role).handle(request);
+        protocol.get(request.route(), role).submit(request);
     }
 }
