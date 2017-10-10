@@ -7,8 +7,8 @@ apply plugin: 'maven'
 project.version = "1.0.0-SNAPSHOT"
 project.group = 'com.codingchili'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.9
+targetCompatibility = 1.9
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.codingchili:core:1.0.5'
+    compile 'com.github.codingchili.chili-core:core:1.0.5'
 }
 
 test {
