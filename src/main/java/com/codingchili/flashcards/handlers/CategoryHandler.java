@@ -60,7 +60,7 @@ public class CategoryHandler implements CoreHandler {
         categories.list(request.sender()).setHandler(request::result);
     }
 
-    @Api(route = "search")
+    @Api
     public void search(CategoryRequest request) {
         long start = System.currentTimeMillis();
         categories.search(request.sender(), request.categoryName()).setHandler(done -> {

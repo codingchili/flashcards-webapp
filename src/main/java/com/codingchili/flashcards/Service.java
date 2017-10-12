@@ -3,17 +3,24 @@ package com.codingchili.flashcards;
 import com.codingchili.core.Launcher;
 import com.codingchili.core.context.CoreContext;
 import com.codingchili.core.context.LaunchContext;
-import com.codingchili.core.files.Configurations;
 import com.codingchili.core.listener.BusRouter;
 import com.codingchili.core.listener.CoreService;
 import com.codingchili.core.listener.ListenerSettings;
 import com.codingchili.core.listener.transport.RestListener;
+import com.codingchili.core.listener.transport.WebsocketListener;
 import com.codingchili.flashcards.handlers.AuthenticationHandler;
 import com.codingchili.flashcards.handlers.CardHandler;
 import com.codingchili.flashcards.handlers.CategoryHandler;
+import com.codingchili.flashcards.handlers.TransactionHandler;
 import com.codingchili.flashcards.handlers.Webserver;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
+
+import java.util.Arrays;
+
+import static com.codingchili.core.files.Configurations.launcher;
+import static com.codingchili.core.files.Configurations.storage;
+import static com.codingchili.core.files.Configurations.system;
 
 /**
  * Application launcher, entry point.
@@ -22,17 +29,11 @@ public class Service implements CoreService {
     private CoreContext core;
 
     public static void main(String[] args) {
-        Configurations.system()
-                .setHandlers(1)
-                .setListeners(1)
-                .setMetrics(true);
-
-        Configurations.storage().setMaxResults(64);
-
-        Configurations.launcher()
+        system().setHandlers(1).setListeners(1).setServices(1).setMetrics(false);
+        storage().setMaxResults(64);
+        launcher().setVersion("1.0.0").setApplication("flashcards")
                 .deployable(Service.class)
                 .setClustered(false);
-
         Launcher.start(new LaunchContext(args));
     }
 
@@ -41,16 +42,21 @@ public class Service implements CoreService {
         this.core = core;
     }
 
+    @Override
     public void start(Future start) {
-        CompositeFuture.all(
+        CompositeFuture.all(Arrays.asList(
                 core.handler(AuthenticationHandler::new),
                 core.handler(CardHandler::new),
                 core.handler(CategoryHandler::new),
+                core.handler(TransactionHandler::new),
+
                 core.service(Webserver::new),
+
                 core.listener(() -> new RestListener()
-                        .settings(() -> new ListenerSettings().setPort(8180)
-                                .setMaxRequestBytes(512))
-                        .handler(new BusRouter()))
+                        .settings(() -> new ListenerSettings()
+                            .setPort(8180)
+                            .setMaxRequestBytes(512))
+                        .handler(new BusRouter())))
         ).setHandler(start);
     }
 }

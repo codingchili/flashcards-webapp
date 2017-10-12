@@ -5,7 +5,7 @@ apply plugin: 'idea'
 apply plugin: 'maven'
 
 project.version = "1.0.0-SNAPSHOT"
-project.group = 'com.codingchili'
+project.group = 'com.codingchili.flashcards'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -21,7 +21,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.codingchili.chili-core:core:1.0.5'
+    compile 'com.github.codingchili.chili-core:core:1.0.6-SNAPSHOT'
+    compile 'org.web3j:core:2.3.1'
 }
 
 test {
@@ -54,10 +55,8 @@ task polymer {
     }
 }
 
-
-jar.dependsOn polymer
-
 jar {
+    zip64 true
     from {
         (configurations.runtime).collect {
             it.isDirectory() ? it : zipTree(it)
@@ -68,6 +67,7 @@ jar {
                 'Implementation-Version': version,
                 'Main-Class': 'com.codingchili.flashcards.Service'
     }
+    exclude 'META-INF/*.RSA', 'META-INF/*.DSA', 'META-INF/*.SF'
 }
 
 task alljavadoc(type: Javadoc) {
