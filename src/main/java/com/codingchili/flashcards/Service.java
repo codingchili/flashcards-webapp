@@ -7,11 +7,9 @@ import com.codingchili.core.listener.BusRouter;
 import com.codingchili.core.listener.CoreService;
 import com.codingchili.core.listener.ListenerSettings;
 import com.codingchili.core.listener.transport.RestListener;
-import com.codingchili.core.listener.transport.WebsocketListener;
 import com.codingchili.flashcards.handlers.AuthenticationHandler;
 import com.codingchili.flashcards.handlers.CardHandler;
 import com.codingchili.flashcards.handlers.CategoryHandler;
-import com.codingchili.flashcards.handlers.TransactionHandler;
 import com.codingchili.flashcards.handlers.Webserver;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
@@ -48,7 +46,7 @@ public class Service implements CoreService {
                 core.handler(AuthenticationHandler::new),
                 core.handler(CardHandler::new),
                 core.handler(CategoryHandler::new),
-                core.handler(TransactionHandler::new),
+                //core.handler(TransactionHandler::new),
 
                 core.service(Webserver::new),
 

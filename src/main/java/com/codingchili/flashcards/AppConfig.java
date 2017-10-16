@@ -1,6 +1,6 @@
 package com.codingchili.flashcards;
 
-import com.codingchili.core.configuration.BaseConfigurable;
+import com.codingchili.core.configuration.Configurable;
 import com.codingchili.core.files.Configurations;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.core.storage.IndexedMapPersisted;
@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Stores flashcard application configuration.
  */
-public class AppConfig extends BaseConfigurable {
+public class AppConfig implements Configurable {
     private static final String APPLICATION_JSON = "application.json";
     private static String secret = getSecretOrDefault();
     private String storage = IndexedMapPersisted.class.getName();
