@@ -1,11 +1,12 @@
 package com.codingchili.flashcards;
 
+import java.util.UUID;
+
 import com.codingchili.core.configuration.Configurable;
 import com.codingchili.core.files.Configurations;
 import com.codingchili.core.security.TokenFactory;
+import com.codingchili.core.storage.AsyncStorage;
 import com.codingchili.core.storage.IndexedMapPersisted;
-
-import java.util.UUID;
 
 /**
  * Stores flashcard application configuration.
@@ -24,9 +25,10 @@ public class AppConfig implements Configurable {
         return new TokenFactory(secret.getBytes());
     }
 
-    public static Class storage() {
+    @SuppressWarnings("unchecked")
+    public static Class<? extends AsyncStorage> storage() {
         try {
-            return Class.forName(settings().getStorage());
+            return (Class<? extends AsyncStorage>) Class.forName(settings().getStorage());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

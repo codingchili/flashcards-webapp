@@ -65,8 +65,8 @@ public class CategoryHandler implements CoreHandler {
         long start = System.currentTimeMillis();
         categories.search(request.sender(), request.categoryName()).setHandler(done -> {
             request.result(done);
-            logger.log(logger.event("onSearchCompleted", Level.INFO)
-                    .put("searchtime", (System.currentTimeMillis() - start) + "ms"));
+            logger.event("onSearchCompleted", Level.INFO)
+                    .put("searchtime", (System.currentTimeMillis() - start) + "ms").send();
         });
     }
 
