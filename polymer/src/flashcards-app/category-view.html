@@ -36,10 +36,18 @@
                 margin: auto;
             }
 
-            #box {
-                text-align: center;
+            #container {
                 width: 100%;
                 height: 100%;
+            }
+
+            #box {
+                text-align: center;
+                position: absolute;
+                top: 0px;
+                bottom: 0px;
+                left: 8px;
+                right: 8px;
             }
 
             .color-picker {
@@ -105,8 +113,8 @@
 
             .filter {
                 margin: -1px;
-                min-width: 32px;
-                min-height: 32px;
+                min-width: 3em;
+                min-height: 3em;
                 cursor: pointer;
             }
 
@@ -117,6 +125,7 @@
             .fill-height {
                 height: 100%;
             }
+
         </style>
 
         <div id="toolbar">
@@ -135,24 +144,27 @@
             </div>
         </div>
 
-        <paper-card id="box" elevation="3">
-            <paper-card id="filters">
-                <template is="dom-repeat" items="[[colors]]" as="filter">
-                    <iron-icon class="filter" icon="apps" style$="color:[[filter.color]]" on-click="setFilter">
-                    </iron-icon>
-                </template>
-                <iron-icon class="filter clear" icon="clear" on-click="clearFilter"></iron-icon>
+        <div id="container">
+            <paper-card id="box" elevation="3">
+                <paper-card id="filters">
+                    <template is="dom-repeat" items="[[colors]]" as="filter">
+                        <iron-icon class="filter" icon="apps" style$="color:[[filter.color]]" on-click="setFilter">
+                        </iron-icon>
+                    </template>
+                    <iron-icon class="filter clear" icon="clear" on-click="clearFilter"></iron-icon>
+                </paper-card>
+
+                <div hidden$="[[populated]]">
+                    <iron-icon id="place-holder" icon="social:sentiment-neutral"></iron-icon>
+                    <span class="notification">No categories available.</span>
+                </div>
+
+                <div hidden$="[[!populated]]" class="fill-height">
+                    <category-list id="categories" header="My categories"
+                                   footer="[[categories.length]]"></category-list>
+                </div>
             </paper-card>
-
-            <div hidden$="[[populated]]">
-                <iron-icon id="place-holder" icon="social:sentiment-neutral"></iron-icon>
-                <span class="notification">No categories available.</span>
-            </div>
-
-            <div hidden$="[[!populated]]" class="fill-height">
-                <category-list id="categories" header="My categories" footer="[[categories.length]]"></category-list>
-            </div>
-        </paper-card>
+        </div>
 
         <paper-dialog id="create-dialog" modal>
             <h2>Category options</h2>
@@ -366,4 +378,5 @@
         }
     }
     window.customElements.define(CategoryView.is, CategoryView);
+
 </script>
