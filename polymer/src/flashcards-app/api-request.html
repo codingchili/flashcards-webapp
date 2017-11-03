@@ -60,6 +60,10 @@
                 this.submit('cards', route, handler, json);
             }
 
+            highscores(route, handler, json) {
+                this.submit('highscores', route, handler, json);
+            }
+
             submit(target, route, handler, json) {
                 let request = api.request(target, route, json);
 

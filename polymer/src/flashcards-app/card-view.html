@@ -72,7 +72,7 @@
         </style>
 
         <app-location route="{{route}}"></app-location>
-        <app-route route="{{route}}" pattern="/:view/:category" data="{{page}}"></app-route>
+        <app-route use-hash-as-path route="{{route}}" pattern="/:view/:category" data="{{page}}"></app-route>
 
         <div id="toolbar">
             <template is="dom-if" if="[[!playing]]">
@@ -147,7 +147,6 @@
             this.clear();
 
             application.subscribe('openCategory', category => {
-                this.$.cardplayer.stop();
                 this.category = category;
                 this.list();
             });
@@ -226,7 +225,7 @@
         }
 
         start() {
-            this.$.cardplayer.start(this.cards);
+            this.$.cardplayer.start(this.cards, this.category.id);
             this.playing = true;
         }
 

@@ -21,7 +21,7 @@ import static com.codingchili.core.configuration.CoreStrings.ID_USERNAME;
  * Stores accounts in an AsyncStorage.
  */
 public class AccountDB implements AsyncAccountStore {
-    private TokenFactory factory = AppConfig.factory();
+    private TokenFactory factory = AppConfig.tokenFactory();
     private AsyncStorage<Account> accounts;
     private HashHelper hasher;
 

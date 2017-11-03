@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 
@@ -64,12 +65,13 @@
             .wrong {
                 background-color: var(--secondary-color);
             }
-
         </style>
+
+        <!-- todo hide options if no options available and replace with input -->
 
         <template is="dom-if" if="[[playing]]">
             <div id="toolbar">
-                <div on-click="flip" class="toolbar-item">
+                <div hidden="hasBack(card)" on-click="flip" class="toolbar-item">
                     <iron-icon icon="compare-arrows"></iron-icon>
                     <paper-tooltip animation-delay="0" position="bottom">Flip</paper-tooltip>
                 </div>
@@ -100,6 +102,42 @@
             </paper-card>
         </div>
 
+        <paper-dialog id="score-dialog" modal>
+            <h2>Finished!</h2>
+            <div style="margin-top:0px;">
+                Rate category
+                <div id="rate-box">
+                    <template is="dom-repeat" items="{{ratingValues}}" as="value">
+                        [[value]]=
+                        <template is="dom-if" if="[[isStarFilled(value,rating)]]">
+                            <iron-icon on-click="rate" icon="icons:star"></iron-icon>
+                        </template>
+
+                        <template is="dom-if" if="[[!isStarFilled(value,rating)]]">
+                            <iron-icon on-click="rate" icon="icons:star-border"></iron-icon>
+                        </template>
+                    </template>
+                </div>
+
+                <div id="score-box">
+                    Correct guesses [[correct]]/[[cards.length]] in [[time.minutes]]m [[time.seconds]]s.
+                </div>
+
+                <div id="highscore-box">
+                    2132pts Grodan<br>
+                    1900pts Grodan<br>
+                    1132pts Grodan<br>
+                </div>
+            </div>
+            <div class="buttons button-group">
+                <paper-button on-click="restart" dialog-confirm raised autofocus>Try again</paper-button>
+                <paper-button on-click="stop" class="cancel-button" dialog-confirm>Close</paper-button>
+            </div>
+        </paper-dialog>
+
+        <!-- to update/retrieve highscore -->
+        <api-request id="api" spinner></api-request>
+
         <!-- template for inserting images -->
         <div hidden="hidden">
             <img id="img" src="" alt=""/>
@@ -125,14 +163,22 @@
 
         constructor() {
             super();
-            this.cardIndex = 0;
-            this.cards = [];
             this.card = {};
-            this.playing = true;
+            this.ratingValues = [1, 2, 3, 4, 5];
+            this.rating = 1;
         }
 
         flip() {
             this.set('card.flipped', !(this.card.flipped));
+        }
+
+        hasBack(card) {
+            return (card.back && card.back.length > 0);
+        }
+
+        isStarFilled(value, rating) {
+            console.log('star  v=' + value + " r=" + rating + " is=" + (value <= rating));
+            return rating >= value;
         }
 
         next() {
@@ -163,11 +209,16 @@
 
         guess(e) {
             if (e.model.option === this.card.answer) {
+                // yes, you can click the correct option multiple times to gain more points.
+                // you could also initiate your own requests to update the highscore.
+                // you could even read all the correct answers.
+                this.correct++;
                 e.target.classList.add('correct');
                 setTimeout(() => {
                     this.next();
-                }, 1000);
+                }, 750);
             } else {
+                this.wrong++;
                 e.target.classList.add('wrong');
             }
             setTimeout(() => {
@@ -175,34 +226,65 @@
                     element.classList.remove('correct');
                     element.classList.remove('wrong');
                 }
-            }, 500);
+            }, 375);
         }
 
-        // todo add ui to call this early.
         score() {
-            console.log('score');
+            this.$.api.highscores('add', (highscore) => {
+                console.log(highscore);
+                this.highscore = highscore;
+            }, {
+                seconds: (new Date().getTime() - this.time) / 1000,
+                correct: this.correct,
+                wrong: this.wrong,
+                cards: this.cards.length,
+                category: this.category
+            });
+
+            this.$['score-dialog'].open();
+            this.scored = true;
+        }
+
+        rate(e) {
+            this.rating = e.model.value;
+            console.log('rated ' + this.rating);
         }
 
         back() {
-            console.log('go back')
+            if (this.cardIndex > 0) {
+                this.cardIndex -= 2;
+                this.next();
+            }
         }
 
-        start(cards) {
+        start(cards, category) {
             // todo shuffle cards
+            this.category = category;
+            this.scored = false;
+            this.correct = 0;
+            this.wrong = 0;
             this.playing = true;
             this.cards = cards;
             this.cardIndex = 0;
+            this.time = new Date().getTime();
             for (let card of this.cards) {
                 card.flipped = false;
             }
             this.next();
         }
 
+        restart() {
+            this.start(this.cards);
+        }
+
         stop() {
-            this.playing = false;
+            if (!this.scored) {
+                this.score();
+            } else {
+                this.playing = false;
+                this.$['score-dialog'].close();
+            }
         }
     }
-
     window.customElements.define(CardPlayer.is, CardPlayer);
-
 </script>

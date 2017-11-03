@@ -1,6 +1,5 @@
 package com.codingchili.flashcards;
 
-import com.codingchili.core.Launcher;
 import com.codingchili.core.context.CoreContext;
 import com.codingchili.core.context.LaunchContext;
 import com.codingchili.core.listener.BusRouter;
@@ -10,15 +9,14 @@ import com.codingchili.core.listener.transport.RestListener;
 import com.codingchili.flashcards.handlers.AuthenticationHandler;
 import com.codingchili.flashcards.handlers.CardHandler;
 import com.codingchili.flashcards.handlers.CategoryHandler;
+import com.codingchili.flashcards.handlers.HighscoreHandler;
 import com.codingchili.flashcards.handlers.Webserver;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 
 import java.util.Arrays;
 
-import static com.codingchili.core.files.Configurations.launcher;
-import static com.codingchili.core.files.Configurations.storage;
-import static com.codingchili.core.files.Configurations.system;
+import static com.codingchili.core.files.Configurations.*;
 
 /**
  * Application launcher, entry point.
@@ -32,7 +30,8 @@ public class Service implements CoreService {
         launcher().setVersion("1.0.0").setApplication("flashcards")
                 .deployable(Service.class)
                 .setClustered(false);
-        Launcher.start(new LaunchContext(args));
+
+        new LaunchContext(args).start();
     }
 
     @Override
@@ -46,6 +45,7 @@ public class Service implements CoreService {
                 core.handler(AuthenticationHandler::new),
                 core.handler(CardHandler::new),
                 core.handler(CategoryHandler::new),
+                core.handler(HighscoreHandler::new),
                 //core.handler(TransactionHandler::new),
 
                 core.service(Webserver::new),

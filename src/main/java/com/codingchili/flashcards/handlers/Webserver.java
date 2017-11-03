@@ -22,17 +22,6 @@ public class Webserver implements CoreService {
         Router router = Router.router(core.vertx());
         router.route().handler(BodyHandler.create());
 
-        router.route("/*").handler(ctx -> {
-            // let the clientside router handle views to not break links.
-            if (ctx.request().path().contains(".")) {
-                ctx.next();
-            } else if (!ctx.request().path().equals("/")) {
-                ctx.reroute("/");
-            } else {
-                ctx.next();
-            }
-        });
-
         router.route("/*").handler(StaticHandler.create()
                 .setCachingEnabled(false)
                 .setWebRoot(POLYMER));

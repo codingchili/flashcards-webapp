@@ -21,7 +21,7 @@ public class AppConfig implements Configurable {
         return settings().database;
     }
 
-    public static TokenFactory factory() {
+    public static TokenFactory tokenFactory() {
         return new TokenFactory(secret.getBytes());
     }
 
