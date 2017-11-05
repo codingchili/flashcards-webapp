@@ -16,6 +16,7 @@ import com.codingchili.flashcards.request.HighscoreRequest;
 import io.vertx.core.Future;
 
 import static com.codingchili.core.protocol.RoleMap.PUBLIC;
+import static com.codingchili.core.protocol.RoleMap.USER;
 
 /**
  * handles the addition and retrieval of highscores.
@@ -44,7 +45,7 @@ public class HighscoreHandler implements CoreHandler {
         });
     }
 
-    @Api(PUBLIC)
+    @Api(USER)
     public void add(HighscoreRequest request) {
         highscores.add(request.getCategory(), Highscore.of(request))
                 .setHandler(request::result);

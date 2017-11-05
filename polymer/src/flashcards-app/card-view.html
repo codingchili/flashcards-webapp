@@ -163,6 +163,12 @@
 
         edit(e) {
             this.card = e.model.card;
+            this.notifyPath('card.alternatives');
+/*            for (let i = 0; i < this.card.alternatives.length; i++) {
+                if (this.card.answer === this.card.alternatives[i]) {
+                    this.answer = i;
+                }
+            }*/
             this.dialog();
         }
 

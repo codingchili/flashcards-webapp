@@ -10,7 +10,8 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="/src/flashcards-app/index-view.html">
+<link rel="import" href="/src/flashcards-app/start-view.html">
+<link rel="import" href="/src/flashcards-app/search-view.html">
 <link rel="import" href="/src/flashcards-app/login-view.html">
 <link rel="import" href="/src/flashcards-app/card-view.html">
 <link rel="import" href="/src/flashcards-app/category-view.html">
@@ -67,34 +68,32 @@
                 z-index: 100;
             }
 
+            .title {
+                cursor: pointer;
+            }
+
             @media screen and (max-width: 464px) {
                 .title {
                     display: none;
                 }
             }
         </style>
-        <app-location route="{{route}}"></app-location>
-
-        <app-route
-                use-hash-as-path
-                route="{{route}}"
-                pattern="/:view"
-                data="{{routeData}}"
-                tail="{{subroute}}">
-        </app-route>
+        <app-location route="{{route}}" use-hash-as-path></app-location>
+        <app-route route="{{route}}" pattern="/:view" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
         <app-toolbar class="fixed">
             <paper-icon-button icon="menu" on-click="drawer"></paper-icon-button>
-            <div class="title">[[titletext]]</div>
+            <div class="title" on-tap="startpage">[[titletext]]</div>
         </app-toolbar>
 
         <iron-pages selected="[[routeData.view]]" attr-for-selected="name" id="content">
-            <index-view name="" route="{{subroute}}"></index-view>
-            <login-view name="login" route="{{subroute}}"></login-view>
-            <card-view name="cards" route="{{subroute}}"></card-view>
-            <category-view name="categories" route="{{subroute}}"></category-view>
-            <account-view name="account" route="{{subroute}}"></account-view>
-            <settings-view name="settings" route="{{subroute}}"></settings-view>
+            <start-view name=""></start-view>
+            <search-view name="search"></search-view>
+            <login-view name="login"></login-view>
+            <card-view name="cards"></card-view>
+            <category-view name="categories"></category-view>
+            <account-view name="account"></account-view>
+            <settings-view name="settings"></settings-view>
         </iron-pages>
 
         <app-drawer id="drawer">
@@ -166,13 +165,13 @@
 
             application.subscribe('authenticated', () => {
                 this.authenticated = true;
-                this.set('route.path', '/');
+                this.set('route.path', '/search');
                 application.publish('onSearchPage');
             });
 
             application.subscribe('route', (route) => {
                 switch (route) {
-                    case '/': this.search();
+                    case '/': this.startpage();
                 }
             });
 
@@ -187,8 +186,12 @@
 
         ready() {
             super.ready();
-            if (!this.authenticated) {
-                this.set('route.path', '/login');
+            if (!this.routeData.view) {
+                this.startpage();
+            } else {
+                if (!this.authenticated && this.routeData.view !== 'search') {
+                    this.set('route.path', '/login');
+                }
             }
         }
 
@@ -203,21 +206,25 @@
             this.$.drawer.close();
         }
 
-        search() {
+        startpage() {
             this.set('route.path', '/')
+        }
+
+        search() {
+            this.set('route.path', '/search');
             this.titletext = 'Flashcards';
             application.publish('onSearchPage');
             this.$.drawer.close();
         }
 
         account() {
-            this.set('route.path', '/account')
+            this.set('route.path', '/account');
             this.titletext = 'Account';
             this.$.drawer.close();
         }
 
         settings() {
-            this.set('route.path', '/settings')
+            this.set('route.path', '/settings');
             this.titletext = 'Settings';
             this.$.drawer.close();
         }

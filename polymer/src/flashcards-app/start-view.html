@@ -1,0 +1,248 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="start-view">
+    <template>
+
+        <style>
+            :host {
+                width: 100%;
+                height: 100%;
+                top: 76px;
+                display: flex;
+                flex-flow: wrap;
+                justify-content: center;
+            }
+
+            header {
+                @apply --layout-vertical;
+                @apply --layout-center-center;
+                height: calc(100vh - 64px);
+                padding: 0 16px;
+                background-image: url('/fullbleed.jpeg');
+                background-repeat: no-repeat;
+                background-size: cover;
+                color: white;
+                text-align: center;
+            }
+
+            header > h2 {
+                font-size: 56px;
+                font-weight: 300;
+                margin: 0;
+            }
+
+            header > p {
+                font-size: 32px;
+            }
+
+            section {
+                padding: 88px 16px;
+            }
+
+            .container {
+                @apply --layout-horizontal;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .container > * {
+                @apply --layout-flex;
+            }
+
+            iron-icon.large {
+                min-width: 100%;
+                min-height: 100%;
+                height: 64px;
+                color: var(--primary-color);
+            }
+
+            .container h3 {
+                font-size: 32px;
+                font-weight: 300;
+                margin: 24px 0;
+            }
+
+            .container p {
+                line-height: 1.5;
+            }
+
+            @media (max-width: 600px) {
+                .container {
+                    @apply --layout-vertical;
+                }
+            }
+
+            .header-text {
+                color: #000000;
+                background-color: #ffffff;
+                opacity: 0.84;
+                padding-top: 32px;
+                padding-left: 32px;
+                padding-right: 32px;
+            }
+
+            .scroll-icon {
+                color: var(--primary-color);
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.5);
+                transition: color 1s;
+            }
+
+            .scroll-area:hover > .scroll-icon {
+                color: var(--secondary-color);
+                transition: color 1s;
+            }
+
+            .scroll-area:hover {
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                transition: box-shadow 1s;
+            }
+
+            .scroll-area {
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                transition: box-shadow 1s;
+                width: 64px;
+                height: 64px;
+                cursor: pointer;
+                display: flex;
+                margin-top: 64px;
+            }
+
+            .subheading {
+                font-size: 0.52em;
+            }
+
+            section {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                @apply --layout-vertical;
+            }
+
+            paper-dialog-scrollable {
+                --paper-dialog-scrollable: {
+                    padding: 0 0px;
+                };
+            }
+
+            section paper-dialog-scrollable {
+                @apply --layout-flex;
+                padding: 0;
+            }
+
+            .icon-container {
+                min-height: 64px;
+            }
+
+            #tiles {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .tile {
+                margin-top: 64px;
+            }
+        </style>
+
+        <section>
+            <paper-dialog-scrollable>
+                <app-header-layout>
+
+                    <header>
+                        <h2 class="header-text">
+                            Flash your brain with the cards.
+                            <p class="subheading">Create. Discover. Share.</p>
+                        </h2>
+
+                        <div class="scroll-area" on-click="scroll">
+                            <iron-icon class="scroll-icon" icon="icons:arrow-downward"></iron-icon>
+                        </div>
+                    </header>
+
+                    <div id="tiles">
+                        <div id="about" class="tile">
+                            <div class="container">
+                                <div class="icon-container">
+                                    <iron-icon class="large" icon="icons:credit-card"></iron-icon>
+                                </div>
+                                <div>
+                                    <h3>Create</h3>
+                                    <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
+                                        ea.
+                                        Lorem
+                                        ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
+                                        ea.</p>
+                                    <p>Convenire definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.
+                                        Convenire
+                                        definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="services" class="tile">
+                            <div class="container">
+                                <div class="icon-container">
+                                    <iron-icon class="large" icon="icons:apps"></iron-icon>
+                                </div>
+                                <div>
+                                    <h3>Discover</h3>
+                                    <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
+                                        ea.
+                                        Lorem
+                                        ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
+                                        ea.</p>
+                                    <p>Convenire definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.
+                                        Convenire
+                                        definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="contact" class="tile">
+                            <div class="container">
+                                <div class="icon-container">
+                                    <iron-icon class="large" icon="icons:account-circle"></iron-icon>
+                                </div>
+                                <div>
+                                    <h3>Share</h3>
+                                    <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
+                                        ea.
+                                        Lorem
+                                        ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
+                                        ea.</p>
+                                    <p>Convenire definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.
+                                        Convenire
+                                        definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </app-header-layout>
+            </paper-dialog-scrollable>
+        </section>
+    </template>
+
+    <script>
+        class StartView extends Polymer.Element {
+            static get is() {
+                return 'start-view';
+            }
+
+            constructor() {
+                super();
+            }
+
+            scroll() {
+                this.$.tiles.scrollIntoView({behavior: 'smooth'});
+            }
+        }
+        window.customElements.define(StartView.is, StartView);
+    </script>
+</dom-module>

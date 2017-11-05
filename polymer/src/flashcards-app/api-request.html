@@ -89,7 +89,7 @@
                             this.log(response);
                         }
                     } else if (xhr.readyState === 4) {
-                        this.submitError(request, id, "failed to connect");
+                        this.submitError(request, id, "failed to connect " + xhr.status);
                     }
                     this.latency = performance.now() - start;
                 };

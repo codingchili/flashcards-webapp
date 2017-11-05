@@ -4,7 +4,7 @@
 <link rel="import" href="/src/flashcards-app/statistics-bar.html">
 <link rel="import" href="/src/flashcards-app/box-search.html">
 
-<dom-module id="index-view">
+<dom-module id="search-view">
     <template>
         <style include="shared-styles"></style>
         <style>
@@ -38,15 +38,15 @@
     </template>
 
     <script>
-        class IndexView extends Polymer.Element {
+        class SearchView extends Polymer.Element {
             static get is() {
-                return 'index-view';
+                return 'search-view';
             }
 
             constructor() {
                 super();
             }
         }
-        window.customElements.define(IndexView.is, IndexView);
+        window.customElements.define(SearchView.is, SearchView);
     </script>
 </dom-module>

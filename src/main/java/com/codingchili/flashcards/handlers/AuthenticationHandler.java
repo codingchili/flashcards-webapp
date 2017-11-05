@@ -1,10 +1,5 @@
 package com.codingchili.flashcards.handlers;
 
-import io.vertx.core.json.JsonObject;
-
-import java.math.BigInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.codingchili.core.context.CoreContext;
 import com.codingchili.core.listener.CoreHandler;
 import com.codingchili.core.listener.Request;
@@ -17,6 +12,7 @@ import com.codingchili.flashcards.model.AccountDB;
 import com.codingchili.flashcards.model.AsyncAccountStore;
 import com.codingchili.flashcards.request.AuthenticationRequest;
 import com.codingchili.flashcards.response.SizeResponse;
+
 import static com.codingchili.core.protocol.RoleMap.PUBLIC;
 import static com.codingchili.core.protocol.RoleMap.USER;
 
