@@ -80,6 +80,10 @@
             application.subscribe('onLoginPage', () => {
                 this.$.userinput.focus();
             });
+
+            application.subscribe('onSignupRequested', () => {
+               this.registration = true;
+            });
         }
 
         doLogin(response) {

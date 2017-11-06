@@ -175,6 +175,10 @@
                 }
             });
 
+            application.subscribe('onSignupRequested', () => {
+               this.login();
+            });
+
             application.subscribe('openCategory', (category) => {
                 this.set('route.path', '/cards/' + category.id);
             });
