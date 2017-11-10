@@ -27,7 +27,7 @@ public class CategoryHandlerTest {
         new StorageLoader<FlashCategory>(context)
                 .withPlugin(IndexedMapPersisted.class.getName())
                 .withDB("fifty", "9")
-                .withClass(FlashCategory.class)
+                .withValue(FlashCategory.class)
                 .build(storage -> {
                     AsyncStorage<FlashCategory> db = storage.result();
 

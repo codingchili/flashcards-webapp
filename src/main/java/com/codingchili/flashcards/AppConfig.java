@@ -15,7 +15,7 @@ public class AppConfig implements Configurable {
     private static final String APPLICATION_JSON = "application.json";
     private static String secret = getSecretOrDefault();
     private String storage = IndexedMapPersisted.class.getName();
-    private String database = "flashcards";
+    private String database = "data";
 
     public static String db() {
         return settings().database;

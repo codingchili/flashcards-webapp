@@ -16,7 +16,13 @@
                 --disabled-text-color: var(--light-theme-disabled-color);
                 --divider-color: var(--light-theme-divider-color);
                 --error-color: var(--paper-deep-orange-a700);
-                --faint-text-color: rgba(255, 0, 0, 0.3);
+            }
+
+            * {
+                --faint-text-color: {
+                    --primary-text-color: var(--light-theme-text-color);
+                    opacity: 0.32;
+                };
             }
 
             paper-spinner {
@@ -158,7 +164,11 @@
                 color: var(--secondary-color);
             }
 
-            @media screen and (max-width: 475px) {
+            * {
+                --dialog-min-width: 426px;
+            }
+
+            @media screen and (max-width: 426px) {
                 paper-dialog {
                     top: 0;
                     left: 0;
@@ -167,11 +177,13 @@
                     margin: 0;
                     bottom: 0px;
                     position: fixed;
+                    min-width: 0px;
+                    --dialog-min-width: 0px;
                 }
             }
 
             paper-dialog {
-                min-width: 376px;
+                min-width: var(--dialog-min-width);
             }
 
             paper-swatch-picker.color-picker {

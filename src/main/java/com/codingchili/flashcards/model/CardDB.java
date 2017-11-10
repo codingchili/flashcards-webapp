@@ -23,7 +23,7 @@ public class CardDB implements AsyncCardStore {
     public CardDB(CoreContext core) {
         new StorageLoader<FlashCard>(core)
                 .withPlugin(AppConfig.storage())
-                .withClass(FlashCard.class)
+                .withValue(FlashCard.class)
                 .withDB(AppConfig.db(), "cards")
                 .build(done -> cards = done.result());
     }

@@ -17,14 +17,23 @@ import static com.codingchili.flashcards.model.FlashCategory.*;
  */
 public class CategoryDB implements AsyncCategoryStore {
     private static final String ARRAY = "[]";
+    private VoterEventStore voters;
     private AsyncStorage<FlashCategory> categories;
 
     public CategoryDB(CoreContext core) {
         new StorageLoader<FlashCategory>(core)
                 .withPlugin(AppConfig.storage())
-                .withClass(FlashCategory.class)
+                .withValue(FlashCategory.class)
                 .withDB(AppConfig.db(), "categories")
                 .build(done -> categories = done.result());
+
+        VoterEventStore.create(core).setHandler(done -> {
+            if (done.succeeded()) {
+                voters = done.result();
+            } else {
+                categories.context().logger(getClass()).onError(done.cause());
+            }
+        });
     }
 
     @Override
@@ -101,4 +110,32 @@ public class CategoryDB implements AsyncCategoryStore {
         return future;
     }
 
+    @Override
+    public Future<Void> rate(String categoryId, String username, Integer rating) {
+        Future<Void> future = Future.future();
+
+        // run the check later - use a runnable to prevent deep nesting.
+        Runnable addRatingToCategory = () -> {
+            categories.get(categoryId, get -> {
+                if (get.succeeded()) {
+                    FlashCategory category = get.result();
+                    category.setRateCount(category.getRateCount() + 1);
+                    category.setRating((rating + category.getRating()) / category.getRateCount());
+                    categories.update(category, future);
+                } else {
+                    future.fail(get.cause());
+                }
+            });
+        };
+
+        // check if allowed to vote.
+        voters.addIfAllowedElseFail(new VoterEvent(username, categoryId)).setHandler(done -> {
+            if (done.succeeded()) {
+                addRatingToCategory.run();
+            } else {
+                future.fail(done.cause());
+            }
+        });
+        return future;
+    }
 }

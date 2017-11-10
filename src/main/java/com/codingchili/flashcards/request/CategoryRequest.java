@@ -38,4 +38,8 @@ public class CategoryRequest extends RequestWrapper {
     public List<String> users() {
         return data().getJsonArray(ID_USERS).getList();
     }
+
+    public Integer rating() {
+        return data().getInteger("rating");
+    }
 }

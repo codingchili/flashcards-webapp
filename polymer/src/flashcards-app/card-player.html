@@ -124,9 +124,11 @@
                 </div>
 
                 <div id="highscore-box">
-                    2132pts Grodan<br>
-                    1900pts Grodan<br>
-                    1132pts Grodan<br>
+                    <ul>
+                        <template is="dom-repeat" items="{{highscore}}" as="score">
+                            <li>[[score.score]]pts by [[score.user]] in [[score.time]] on [[score.date]].</li>
+                        </template>
+                    </ul>
                 </div>
             </div>
             <div class="buttons button-group">
@@ -232,13 +234,13 @@
         score() {
             this.$.api.highscores('add', (highscore) => {
                 console.log(highscore);
-                this.highscore = highscore;
+                this.highscore = highscore.list;
             }, {
                 seconds: (new Date().getTime() - this.time) / 1000,
                 correct: this.correct,
                 wrong: this.wrong,
                 cards: this.cards.length,
-                category: this.category
+                id: this.category.id
             });
 
             this.$['score-dialog'].open();
@@ -248,6 +250,12 @@
         rate(e) {
             this.rating = e.model.value;
             console.log('rated ' + this.rating);
+            this.$.api.categories('rate', (res) => {
+                console.log(res);
+            }, {
+                id: this.category.id,
+                rating: this.rating
+            });
         }
 
         back() {

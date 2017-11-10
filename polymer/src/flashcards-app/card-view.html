@@ -69,10 +69,14 @@
             card-player {
                 z-index: 50;
             }
+
+            h2 {
+                text-align: center;
+            }
         </style>
 
-        <app-location route="{{route}}"></app-location>
-        <app-route use-hash-as-path route="{{route}}" pattern="/:view/:category" data="{{page}}"></app-route>
+        <app-location use-hash-as-path route="{{route}}"></app-location>
+        <app-route route="{{route}}" pattern="/:view/:category" data="{{page}}"></app-route>
 
         <div id="toolbar">
             <template is="dom-if" if="[[!playing]]">
@@ -164,11 +168,11 @@
         edit(e) {
             this.card = e.model.card;
             this.notifyPath('card.alternatives');
-/*            for (let i = 0; i < this.card.alternatives.length; i++) {
+            for (let i = 0; i < this.card.alternatives.length; i++) {
                 if (this.card.answer === this.card.alternatives[i]) {
                     this.answer = i;
                 }
-            }*/
+            }
             this.dialog();
         }
 
@@ -178,9 +182,9 @@
         }
 
         clear() {
+            this.answer = 0;
             this.card = {
                 alternatives: [],
-                answer: 0,
                 altenative: ''
             };
         }
@@ -213,7 +217,7 @@
             json.content = this.card.content;
             json.back = this.card.back;
             json.alternatives = this.card.alternatives;
-            if (this.answer < this.card.alternatives.length) {
+            if (this.card.answer < this.card.alternatives.length) {
                 json.answer = this.card.alternatives[this.answer];
             }
             this.$.api.cards('create', () => this.list(), json);
@@ -226,12 +230,13 @@
         }
 
         list() {
+            console.log(this.page);
             let json = {'category': this.page.category};
             this.$.api.cards('list', (response) => this.cards = response.collection, json);
         }
 
         start() {
-            this.$.cardplayer.start(this.cards, this.category.id);
+            this.$.cardplayer.start(this.cards, this.category);
             this.playing = true;
         }
 

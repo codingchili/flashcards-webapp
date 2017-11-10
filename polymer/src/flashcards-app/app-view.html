@@ -83,7 +83,7 @@
 
         <app-toolbar class="fixed">
             <paper-icon-button icon="menu" on-click="drawer"></paper-icon-button>
-            <div class="title" on-tap="startpage">[[titletext]]</div>
+            <div class="title" on-click="startpage">[[titletext]]</div>
         </app-toolbar>
 
         <iron-pages selected="[[routeData.view]]" attr-for-selected="name" id="content">
@@ -98,9 +98,10 @@
 
         <app-drawer id="drawer">
             <paper-menu selected="0">
+                <!-- show only if the title is hidden. -->
+                <paper-item on-click="startpage">Start</paper-item>
                 <!-- if not logged in then go to login view -->
                 <paper-item on-click="login" hidden$="[[authenticated]]">Login</paper-item>
-
                 <paper-item on-click="categories" hidden$="[[!authenticated]]">My Categories</paper-item>
                 <paper-item on-click="search" hidden$="[[!authenticated]]">Search</paper-item>
                 <paper-item on-click="settings" hidden$="[[!authenticated]]">Settings</paper-item>
@@ -154,6 +155,7 @@
 </dom-module>
 <script>
     class AppView extends Polymer.Element {
+
         static get is() {
             return 'app-view';
         }
@@ -212,11 +214,13 @@
 
         startpage() {
             this.set('route.path', '/')
+            this.titletext = 'Flashcards';
+            this.$.drawer.close();
         }
 
         search() {
             this.set('route.path', '/search');
-            this.titletext = 'Flashcards';
+            this.titletext = 'Search';
             application.publish('onSearchPage');
             this.$.drawer.close();
         }

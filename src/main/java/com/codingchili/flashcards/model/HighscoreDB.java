@@ -33,7 +33,7 @@ public class HighscoreDB implements AsyncHighscoreStore {
         new StorageLoader<HighscoreList>(core)
                 .withPlugin(AppConfig.storage())
                 .withDB(AppConfig.db(), "highscores")
-                .withClass(HighscoreList.class).build(done -> {
+                .withValue(HighscoreList.class).build(done -> {
             if (done.succeeded()) {
                 future.complete(new HighscoreDB(done.result()));
             } else {
@@ -44,7 +44,7 @@ public class HighscoreDB implements AsyncHighscoreStore {
     }
 
     @Override
-    public Future<HighscoreList> add(String cateogory, Highscore highscore) {
+    public Future<HighscoreList> add(String category, Highscore highscore) {
         Future<HighscoreList> future = Future.future();
 
         BiConsumer<HighscoreList, Highscore> save = (list, score) -> {
@@ -58,11 +58,11 @@ public class HighscoreDB implements AsyncHighscoreStore {
             });
         };
 
-        db.contains(cateogory, contains -> {
+        db.contains(category, contains -> {
             if (contains.failed()) {
                 future.fail(contains.cause());
             } else if (contains.result()) {
-                db.get(cateogory, get -> {
+                db.get(category, get -> {
                     if (get.succeeded()) {
                         save.accept(get.result(), highscore);
                     } else {
@@ -70,7 +70,7 @@ public class HighscoreDB implements AsyncHighscoreStore {
                     }
                 });
             } else {
-                save.accept(new HighscoreList().setCategory(cateogory), highscore);
+                save.accept(new HighscoreList().setCategory(category), highscore);
             }
         });
 

@@ -33,10 +33,14 @@ public class CardRequest extends RequestWrapper {
     }
 
     public boolean categoryOwned() {
-        return category().getOwner().equals(sender());
+        return category.getOwner().equals(sender());
     }
 
     public boolean categorySharedWith() {
-        return category().getUsers().contains(sender());
+        if (category != null && category.getUsers() != null) {
+            return category().getUsers().contains(sender());
+        } else {
+            return false;
+        }
     }
 }

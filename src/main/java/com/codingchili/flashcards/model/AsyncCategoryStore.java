@@ -63,4 +63,13 @@ public interface AsyncCategoryStore {
      * @return callback
      */
     Future<Void> remove(String username, String categoryId);
+
+    /**
+     * Updates the rating of a category.
+     *
+     * @param categoryId the category id to rate on.
+     * @param username the user updating the rating.
+     * @param rating the rating to set.
+     */
+    Future<Void> rate(String categoryId, String username, Integer rating);
 }

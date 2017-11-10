@@ -2,8 +2,12 @@ package com.codingchili.flashcards.model;
 
 import com.codingchili.core.storage.Storable;
 
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -15,6 +19,8 @@ public class FlashCategory implements Storable {
     public static final String ID_INDEXED_NAME = "indexedName";
     public static final String ID_USERS = "users";
     private static final int MAX_SCORE_HISTORY = 10;
+    private float rating = 0.0f;
+    private Integer rateCount = 0;
     private List<FlashScore> highscores = new ArrayList<>();
     private Set<String> users = new HashSet<>();
     private String id = UUID.randomUUID().toString();
@@ -147,5 +153,21 @@ public class FlashCategory implements Storable {
 
     public void setCreated(SimpleDate created) {
         this.created = created;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public Integer getRateCount() {
+        return rateCount;
+    }
+
+    public void setRateCount(Integer rateCount) {
+        this.rateCount = rateCount;
     }
 }

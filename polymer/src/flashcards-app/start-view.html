@@ -87,7 +87,6 @@
                 color: var(--primary-color);
                 width: 100%;
                 height: 100%;
-                background-color: rgba(255, 255, 255, 0.5);
                 transition: color 1s;
             }
 
@@ -145,17 +144,32 @@
             }
 
             .tile {
-                margin-top: 3vh;
+                margin-top: 2vh;
                 padding-left: 32px;
                 padding-right: 32px;
             }
 
+            #about {
+                margin-top: 64px;
+            }
+
             #video-container {
-                margin-top: 10vh;
+                margin-top: 12vh;
                 position: relative;
                 width: 100%;
                 height: 0;
                 padding-bottom: 56.25%;
+            }
+
+            @media (min-width: 1024px) {
+                #video-container {
+                    margin-top: 10vh;
+                    position: relative;
+                    width: 1024px;
+                    padding-bottom: 576px;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
             }
 
             #video {
@@ -167,7 +181,7 @@
             }
 
             #signup {
-                margin-top: 2vh;
+                margin-top: 8vh;
                 width: 80%;
                 margin-left: auto;
                 margin-right: auto;
@@ -271,9 +285,7 @@
                 <div class="page-section">
                     <hr>
                     <div id="video-container">
-                        <iframe id="video" width="560" height="315" scrolling="no"
-                                src="https://www.youtube.com/embed/FFI9OnW9IuI?rel=0&amp;controls=0&amp;showinfo=0"
-                                frameborder="0" allowfullscreen></iframe>
+                        <iframe id="video" width="768" height="410" src="https://www.youtube.com/embed/FFI9OnW9IuI?rel=0" frameborder="0" allowfullscreen></iframe>
                     </div>
 
                     <div id="signup">
@@ -295,7 +307,6 @@
                         <a href="https://github.com/codingchili">Robin Duda &copy;2017 find me on github</a>
                     </div>
                 </div>
-                <hr>
                 </app-header-layout>
             </paper-dialog-scrollable>
         </section>
@@ -320,7 +331,6 @@
             }
 
             scrolltop() {
-                console.log('scrolltop');
                 this.$.top.scrollIntoView({behavior: 'smooth'});
             }
         }

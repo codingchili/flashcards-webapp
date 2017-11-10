@@ -5,7 +5,11 @@ import com.codingchili.core.listener.CoreHandler;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.logging.Level;
 import com.codingchili.core.logging.Logger;
-import com.codingchili.core.protocol.*;
+import com.codingchili.core.protocol.Address;
+import com.codingchili.core.protocol.Api;
+import com.codingchili.core.protocol.Protocol;
+import com.codingchili.core.protocol.Role;
+import com.codingchili.core.protocol.Roles;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.flashcards.AppConfig;
 import com.codingchili.flashcards.model.AsyncCategoryStore;
@@ -57,6 +61,15 @@ public class CategoryHandler implements CoreHandler {
     @Api
     public void list(CategoryRequest request) {
         categories.list(request.sender()).setHandler(request::result);
+    }
+
+    @Api
+    public void rate(CategoryRequest request) {
+        categories.rate(
+                request.categoryId(),
+                request.sender(),
+                request.rating()
+        ).setHandler(request::result);
     }
 
     @Api

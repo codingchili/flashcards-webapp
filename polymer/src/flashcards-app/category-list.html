@@ -129,7 +129,7 @@
 
             .header {
                 padding: 8px 24px;
-                font-size: 1.3em
+                font-size: 1em;
             }
 
             .footer {
@@ -216,6 +216,10 @@
         icons(category) {
             let icons = [];
 
+            if (this.isOwner(category)) {
+                icons.push(new Icon('remove', 'remove', true));
+                icons.push(new Icon('editor:mode-edit', 'edit', true));
+            }
             if (this.isOwner(category) || this.isMember(category)) {
                 icons.push(new Icon('open-in-new', 'open', true));
             }
@@ -224,10 +228,6 @@
             }
             if (this.isMember(category)) {
                 icons.push(new Icon('file-download', 'member'));
-            }
-            if (this.isOwner(category)) {
-                icons.push(new Icon('editor:mode-edit', 'edit', true));
-                icons.push(new Icon('remove', 'remove', true));
             }
             return icons;
         }

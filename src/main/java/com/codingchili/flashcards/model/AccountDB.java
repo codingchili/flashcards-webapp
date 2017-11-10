@@ -30,7 +30,7 @@ public class AccountDB implements AsyncAccountStore {
         new StorageLoader<Account>(core)
                 .withPlugin(AppConfig.storage())
                 .withDB(AppConfig.db(), "accounts")
-                .withClass(Account.class)
+                .withValue(Account.class)
                 .build(storage -> accounts = storage.result());
     }
 

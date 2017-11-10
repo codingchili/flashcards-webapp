@@ -18,8 +18,8 @@ public class HighscoreRequest extends RequestWrapper {
         super(request);
     }
 
-    public String getCategory() {
-        return data().getString(ID_CATEGORY);
+    public String getCategoryId() {
+        return data().getString("id");
     }
 
     public String getUserId() {

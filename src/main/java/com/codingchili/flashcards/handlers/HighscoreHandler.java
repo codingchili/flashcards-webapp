@@ -47,13 +47,13 @@ public class HighscoreHandler implements CoreHandler {
 
     @Api(USER)
     public void add(HighscoreRequest request) {
-        highscores.add(request.getCategory(), Highscore.of(request))
+        highscores.add(request.getCategoryId(), Highscore.of(request))
                 .setHandler(request::result);
     }
 
     @Api(PUBLIC)
     public void list(HighscoreRequest request) {
-        request.result(highscores.list(request.getCategory()));
+        request.result(highscores.list(request.getCategoryId()));
     }
 
     @Override
