@@ -27,7 +27,7 @@ public class VoterEventDB implements VoterEventStore {
             return voters.query(VoterEvent.CREATED)
                     .between(0L, getLastValidSecond())
                     .setName("removeOldVoteEvents");
-        }, () -> POLL_RATE_MS).start(this::remove).pause();
+        }, () -> POLL_RATE_MS).start(this::remove);
     }
 
     private Long getLastValidSecond() {

@@ -1,22 +1,18 @@
-import com.codingchili.core.protocol.ResponseStatus;
 import com.codingchili.core.testing.RequestMock;
 import com.codingchili.core.testing.ResponseListener;
-import com.codingchili.flashcards.handlers.AuthenticationHandler;
+import com.codingchili.flashcards.handlers.AccountHandler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.codingchili.core.configuration.CoreStrings.ID_PASSWORD;
-import static com.codingchili.core.configuration.CoreStrings.ID_USERNAME;
-
 /**
  * Tests for the authentication handler.
  */
 @RunWith(VertxUnitRunner.class)
-public class AuthenticationHandlerTest {
-    private AuthenticationHandler handler = new AuthenticationHandler();
+public class AccountHandlerTest {
+    private AccountHandler handler = new AccountHandler();
 
     @Test
     public void authenticate(TestContext test) {

@@ -1,7 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/src/flashcards-app/card-player.html">
 <link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 <link rel="import" href="/src/flashcards-app/category-list.html">
@@ -36,8 +39,50 @@
                 <div slot="suffix"></div>
             </paper-input>
 
-            <category-list id="categories" header="Showing results for [[query]] .." footer="[[categories.length]] hits"></category-list>
+            <category-list id="categories" header="Showing results for [[query]] .."
+                           footer="[[categories.length]] hits"></category-list>
         </paper-card>
+
+        <paper-dialog id="category-dialog" modal>
+            <h2>[[category.name]]</h2>
+
+            <template is="dom-if" if="[[loaded]]">
+                <div hidden="[[!isOwner()]]">
+                <span>
+                    This category is owned by you.
+                </span>
+                </div>
+
+                <div hidden="[[!isAuthorized()]]">
+                <span>
+                    You have access to this category.
+                </span>
+                </div>
+
+
+                <div hidden="[[isAuthorized()]]">
+                <span>
+                    Not authorized to access this category.
+                </span>
+
+                    <div hidden="[[!isPurchaseable()]]">
+                    <span>
+                        When trading is enabled you may purchase access.
+                    </span>
+                    </div>
+                </div>
+
+                <div class="buttons button-group">
+                    <paper-button hidden="[[!isAuthorized()]]" on-click="startplayer" dialog-confirm>Start
+                    </paper-button>
+                    <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
+                </div>
+            </template>
+        </paper-dialog>
+
+        <div hidden="[[!playing]]">
+            <card-player id="cardplayer" playing="{{playing}}"></card-player>
+        </div>
 
         <api-request id="api" spinner></api-request>
     </template>
@@ -49,14 +94,37 @@
 
             constructor() {
                 super();
-                this.api = application.api();
                 this.text = '';
                 this.query = '';
                 this.categories = [];
+                this.playing = false;
+                this.loaded = false;
 
                 application.subscribe('onSearchPage', () => {
                     this.$.search.focus();
                 });
+            }
+
+            ready() {
+                super.ready();
+
+                this.$.categories.onClickHandler((category) => {
+                    this.loaded = true;
+                    this.category = category;
+                    this.$['category-dialog'].open();
+                });
+            }
+
+            isOwner() {
+                return this.$.categories.isOwner(this.category);
+            }
+
+            isAuthorized() {
+                return this.$.categories.isMember(this.category) || this.$.categories.isOwner || this.category.shared;
+            }
+
+            isPurchaseable() {
+                return this.$.categories.isPurchaseable(this.category);
             }
 
             search(e) {
@@ -71,7 +139,17 @@
                 }
             }
 
+            startplayer() {
+                this.$.api.cards('list', (cards) => {
+                    console.log(this.category);
+                    this.$.cardplayer.start(this.category, cards.collection);
+                }, {
+                    category: this.category.id
+                });
+            }
+
             response(response) {
+                console.log('got rseponse');
                 this.categories = response.collection;
                 this.$.categories.setList(this.categories);
             }

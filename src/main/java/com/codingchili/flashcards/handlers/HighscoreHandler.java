@@ -58,15 +58,7 @@ public class HighscoreHandler implements CoreHandler {
 
     @Override
     public void handle(Request request) {
-        protocol.get(request.route(), access(request))
+        protocol.get(request.route(), AppConfig.authorize(request))
                 .submit(new HighscoreRequest(request));
-    }
-
-    private Role access(Request request) {
-        if (tokenFactory.verifyToken(request.token())) {
-            return Role.USER;
-        } else {
-            return Role.PUBLIC;
-        }
     }
 }

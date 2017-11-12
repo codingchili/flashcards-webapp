@@ -70,6 +70,7 @@ public interface AsyncCategoryStore {
      * @param categoryId the category id to rate on.
      * @param username the user updating the rating.
      * @param rating the rating to set.
+     * N@return callback.
      */
-    Future<Void> rate(String categoryId, String username, Integer rating);
+    Future<FlashCategory> rate(String categoryId, String username, Integer rating);
 }

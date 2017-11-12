@@ -37,11 +37,28 @@
                 min-width: 48px;
             }
 
+            #rate-box-stars {
+                display: flex;
+                justify-content: center;
+            }
+
+            #rate-box {
+                text-align: center;
+            }
+
+            #rate-box-stars > iron-icon {
+                color: var(--paper-amber-500);
+            }
+
             img {
                 max-height: 256px;
                 max-width: 256px;
                 display: block;
                 margin: auto;
+            }
+
+            h2 {
+                text-align: center;
             }
 
             #cardbox {
@@ -64,6 +81,24 @@
 
             .wrong {
                 background-color: var(--secondary-color);
+            }
+
+            #feedback {
+                text-align: left;
+            }
+
+            #score-box {
+                margin-top: 32px;
+                text-align: center;
+            }
+
+            #highscore-box {
+                margin-top: 16px;
+            }
+
+            .highscore-entry {
+                display: flex;
+                justify-content: space-between;
             }
         </style>
 
@@ -104,31 +139,42 @@
 
         <paper-dialog id="score-dialog" modal>
             <h2>Finished!</h2>
-            <div style="margin-top:0px;">
-                Rate category
+            <div>
                 <div id="rate-box">
-                    <template is="dom-repeat" items="{{ratingValues}}" as="value">
-                        [[value]]=
-                        <template is="dom-if" if="[[isStarFilled(value,rating)]]">
-                            <iron-icon on-click="rate" icon="icons:star"></iron-icon>
-                        </template>
+                    Category rating [[formatRating(category.rating)]]
+                    <div id="rate-box-stars">
+                        <template is="dom-repeat" items="{{ratingValues}}" as="value">
+                            <template is="dom-if" if="[[isStarFilled(value,rating)]]">
+                                <iron-icon on-click="rate" icon="icons:star"></iron-icon>
+                            </template>
 
-                        <template is="dom-if" if="[[!isStarFilled(value,rating)]]">
-                            <iron-icon on-click="rate" icon="icons:star-border"></iron-icon>
+                            <template is="dom-if" if="[[!isStarFilled(value,rating)]]">
+                                <iron-icon on-click="rate" icon="icons:star-border"></iron-icon>
+                            </template>
                         </template>
-                    </template>
+                    </div>
+                    Total number of votes [[category.rateCount]].
+                    <div id="feedback">
+                        <paper-input label="Feedback" char-counter maxlength="64" value="{{feedback}}"
+                                     autofocus></paper-input>
+                    </div>
                 </div>
 
                 <div id="score-box">
-                    Correct guesses [[correct]]/[[cards.length]] in [[time.minutes]]m [[time.seconds]]s.
+                    Correct guesses [[correct]]/[[cards.length]] in [[endtime.minutes]]m [[endtime.seconds]]s.
                 </div>
 
                 <div id="highscore-box">
-                    <ul>
+                    <h4>Highscores</h4>
+                    <div id="highscore-list">
                         <template is="dom-repeat" items="{{highscore}}" as="score">
-                            <li>[[score.score]]pts by [[score.user]] in [[score.time]] on [[score.date]].</li>
+                            <div class="highscore-entry">
+                                <span class="score">[[score.score]]pts</span>
+                                <span class="user">[[score.user]]</span>
+                                <span class="time">[[score.time]]</span>
+                            </div>
                         </template>
-                    </ul>
+                    </div>
                 </div>
             </div>
             <div class="buttons button-group">
@@ -179,8 +225,11 @@
         }
 
         isStarFilled(value, rating) {
-            console.log('star  v=' + value + " r=" + rating + " is=" + (value <= rating));
             return rating >= value;
+        }
+
+        formatRating(rating) {
+            return rating.toFixed(1);
         }
 
         next() {
@@ -232,11 +281,17 @@
         }
 
         score() {
+            let seconds = (new Date().getTime() - this.time) / 1000;
+
+            this.endtime = {
+                seconds: Math.trunc(seconds % 60),
+                minutes: Math.trunc(seconds / 60)
+            };
+
             this.$.api.highscores('add', (highscore) => {
-                console.log(highscore);
                 this.highscore = highscore.list;
             }, {
-                seconds: (new Date().getTime() - this.time) / 1000,
+                seconds: seconds,
                 correct: this.correct,
                 wrong: this.wrong,
                 cards: this.cards.length,
@@ -249,9 +304,8 @@
 
         rate(e) {
             this.rating = e.model.value;
-            console.log('rated ' + this.rating);
             this.$.api.categories('rate', (res) => {
-                console.log(res);
+                this.category = res;
             }, {
                 id: this.category.id,
                 rating: this.rating
@@ -265,14 +319,23 @@
             }
         }
 
-        start(cards, category) {
-            // todo shuffle cards
+        feedback() {
+            this.$.api.accounts('message', res => {}, {
+                title: this.category.name,
+                body: "",
+                receiver: this.category.owner
+            });
+        }
+
+        start(category, cards) {
+            this.rating = category.rating;
             this.category = category;
+            this.feedback = "";
             this.scored = false;
             this.correct = 0;
             this.wrong = 0;
             this.playing = true;
-            this.cards = cards;
+            this.cards = this.shuffle(cards);
             this.cardIndex = 0;
             this.time = new Date().getTime();
             for (let card of this.cards) {
@@ -281,8 +344,17 @@
             this.next();
         }
 
+        shuffle(collection) {
+            for (let i = collection.length - 1; i >= 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [collection[i], collection[j]] = [collection[j], collection[i]];
+            }
+            return collection;
+        }
+
         restart() {
-            this.start(this.cards);
+            this.start(this.category, this.cards);
+            this.sendFeedback()
         }
 
         stop() {
@@ -291,6 +363,17 @@
             } else {
                 this.playing = false;
                 this.$['score-dialog'].close();
+            }
+            this.sendFeedback();
+        }
+
+        sendFeedback() {
+            if (this.feedback.length > 0) {
+                this.$.api.accounts('feedback', (res) => {}, {
+                    title: this.category.name,
+                    body: this.feedback,
+                    receiver: this.category.owner
+                });
             }
         }
     }

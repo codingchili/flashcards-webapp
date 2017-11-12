@@ -195,7 +195,7 @@
             if (!this.routeData.view) {
                 this.startpage();
             } else {
-                if (!this.authenticated && this.routeData.view !== 'search') {
+                if (!this.authenticated) {
                     this.set('route.path', '/login');
                 }
             }
@@ -228,6 +228,7 @@
         account() {
             this.set('route.path', '/account');
             this.titletext = 'Account';
+            application.publish('onShowAuthentication');
             this.$.drawer.close();
         }
 

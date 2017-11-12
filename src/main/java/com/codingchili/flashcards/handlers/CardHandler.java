@@ -53,7 +53,7 @@ public class CardHandler implements CoreHandler {
 
     @Api
     public void list(CardRequest request) {
-        if (request.categorySharedWith() || request.categoryOwned()) {
+        if (request.categorySharedWith() || request.categoryOwned() || request.category().isShared()) {
             cards.get(request.sender(), request.category()).setHandler(request::result);
         } else {
             request.error(new AuthorizationRequiredException());

@@ -1,6 +1,5 @@
 package com.codingchili.flashcards.model;
 
-import com.codingchili.core.security.Account;
 import com.codingchili.core.security.Token;
 import io.vertx.core.Future;
 
@@ -25,7 +24,7 @@ public interface AsyncAccountStore {
      * @param account the account to register
      * @return callback
      */
-    Future<Token> register(Account account);
+    Future<Token> register(FlashAccount account);
 
     /**
      * Searches for users, useful when sharing categories.
@@ -33,7 +32,7 @@ public interface AsyncAccountStore {
      * @param username the query string, must match the beginning.
      * @return a collection of users with an username that resembles the given
      */
-    Future<Collection<Account>> search(String username);
+    Future<Collection<FlashAccount>> search(String username);
 
     /**
      * Gets the number of accounts in the system.
@@ -41,4 +40,26 @@ public interface AsyncAccountStore {
      * @return callback
      */
     Future<Integer> size();
+
+    /**
+     * Sends a message to another account.
+     * @param receiver the receiver of the message
+     * @param message the message to send.
+     * @return callback.
+     */
+    Future<Void> message(String receiver, AccountMessage message);
+
+    /**
+     * @param username the username to get the inbox of.
+     * @return callback.
+     */
+    Future<Collection<AccountMessage>> inbox(String username);
+
+    /**
+     *
+     * @param username the user
+     * @param messageId the id of the message to mark as read.
+     * @return callback.
+     */
+    Future<Collection<AccountMessage>> read(String username, String messageId);
 }

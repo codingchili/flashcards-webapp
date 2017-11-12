@@ -8,13 +8,16 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Contains a single highscore entry.
- *
+ * <p>
  * If the version is changed because the algorithm has changed
  * all highscore entries on a single category will be removed
  * once a Highscore element using the new version is added.
  */
 public class Highscore implements Storable {
     public static final double VERSION = 1.0;
+    public static final int PENALTY_TIME_WEIGHT = 8;
+    public static final int PENALTY_WRONG_WEIGHT = 40;
+    public static final int SCORE_CORRECT_WEIGHT = 100;
     private String date = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
     private Double version = VERSION;
     private String time;
@@ -31,18 +34,19 @@ public class Highscore implements Storable {
     }
 
     private static Integer score(int correct, int wrong, int cards, int seconds) {
-        // todo generate score by calculating number of correct answers
-        // todo: reduce with penalty for errors
-        // todo: recuce with penalty for time / total
-        return 1;
+        int score = correct * SCORE_CORRECT_WEIGHT;
+        score -= wrong * PENALTY_WRONG_WEIGHT;
+        int timePenalty = ((seconds / (correct + 1))) * cards * PENALTY_TIME_WEIGHT;
+
+        if (timePenalty > 0) {
+            score -= timePenalty;
+        }
+        return score;
     }
 
-    public static void main(String[] args) {
-        System.out.println(score(1, 0, 30, 1));
-    }
-
-    private static String formatMMSS(Integer seconds) {
-        return (seconds / 60) + ":" + (seconds % 60);
+    private static String formatMMSS(Integer totalSeconds) {
+        int seconds = totalSeconds % 60;
+        return (totalSeconds / 60) + ":" + ((seconds > 9) ? seconds : "0" + seconds);
     }
 
     public String getUser() {

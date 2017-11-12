@@ -4,9 +4,12 @@ import java.util.UUID;
 
 import com.codingchili.core.configuration.Configurable;
 import com.codingchili.core.files.Configurations;
+import com.codingchili.core.listener.Request;
+import com.codingchili.core.protocol.Role;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.core.storage.AsyncStorage;
 import com.codingchili.core.storage.IndexedMapPersisted;
+import com.codingchili.core.storage.IndexedMapVolatile;
 
 /**
  * Stores flashcard application configuration.
@@ -14,27 +17,36 @@ import com.codingchili.core.storage.IndexedMapPersisted;
 public class AppConfig implements Configurable {
     private static final String APPLICATION_JSON = "application.json";
     private static String secret = getSecretOrDefault();
-    private String storage = IndexedMapPersisted.class.getName();
+    private TokenFactory tokenFactory = new TokenFactory(secret.getBytes());
+    private String storage = IndexedMapVolatile.class.getName();
     private String database = "data";
 
     public static String db() {
-        return settings().database;
+        return get().database;
     }
 
     public static TokenFactory tokenFactory() {
-        return new TokenFactory(secret.getBytes());
+        return get().tokenFactory;
+    }
+
+    public static Role authorize(Request request) {
+        if (get().tokenFactory.verifyToken(request.token())) {
+            return Role.USER;
+        } else {
+            return Role.PUBLIC;
+        }
     }
 
     @SuppressWarnings("unchecked")
     public static Class<? extends AsyncStorage> storage() {
         try {
-            return (Class<? extends AsyncStorage>) Class.forName(settings().getStorage());
+            return (Class<? extends AsyncStorage>) Class.forName(get().getStorage());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static AppConfig settings() {
+    public static AppConfig get() {
         return Configurations.get(APPLICATION_JSON, AppConfig.class);
     }
 

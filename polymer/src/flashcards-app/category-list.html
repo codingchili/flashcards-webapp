@@ -26,7 +26,7 @@
                 min-width: 236px;
                 cursor: pointer;
                 margin: 8px;
-                height: 128px;
+                height: 106px;
             }
 
             @media screen and (max-width: 675px) {
@@ -46,7 +46,7 @@
                 min-width: 64px;
                 position: absolute;
                 left: 0px;
-                top: 26px;
+                top: 20px;
             }
 
             .icon-item {
@@ -63,7 +63,7 @@
                 left: -8px;
                 display: inline-block;
                 width: 100%;
-                margin-top: 24px;
+                margin-top: 18px;
             }
 
             .name {
@@ -80,18 +80,20 @@
 
             .created {
                 position: absolute;
-                font-size: 0.7em;
+                font-size: 0.71em;
                 bottom: 4px;
-                right: 8px;
+                text-align: center;
+                width: 100%;
+                left: 0;
             }
 
             .price {
                 position: absolute;
                 left: 10px;
-                color: var(--error-color);
-                font-weight: 200;
                 bottom: 4px;
+                font-weight: 200;
                 display: block;
+                color: var(--error-color);
             }
 
             .owner-text {
@@ -136,6 +138,23 @@
                 padding: 8px 24px;
                 text-align: right;
             }
+
+            .rating-box {
+                position: absolute;
+                right: 4px;
+                bottom: 4px;
+            }
+
+            .icon-rating {
+                color: var(--paper-amber-500);
+                max-height: 14px;
+                max-width: 14px;
+                margin-top: -2px;
+            }
+
+            .rating {
+                font-size: 0.72em;
+            }
         </style>
         <section>
             <div class="header">[[header]]</div>
@@ -146,6 +165,7 @@
                             <iron-icon class="icon-category" icon="[[category.icon]]"
                                        style$="color:[[category.color]];">
                             </iron-icon>
+
                             <div class="owner-box" hidden$="[[isOwner(category)]]">
                                 <span class="owner-text">[[category.owner]]</span>
                             </div>
@@ -154,9 +174,17 @@
                             </div>
                             <span class="created">
                             [[category.created.year]] [[category.created.month]]
-                        </span>
+                            </span>
+
+                            <template is="dom-if" if="[[isRated(category)]]">
+                                <div class="rating-box">
+                                    <span class="rating">[[formatRating(category.rating)]]</span>
+                                    <iron-icon class="icon-rating" icon="icons:star"></iron-icon>
+                                </div>
+                            </template>
+
                             <div hidden$="[[!isPurchaseable(category)]]">
-                                <span class="price">[[category.cost]]&nbsp;&xi;</span>
+                                <span class="price">[[category.cost]]&nbsp;&Xi;</span>
                             </div>
 
                             <div class="icon-list">
@@ -211,6 +239,14 @@
             super();
             this.categories = [];
             this.filter = () => true;
+        }
+
+        formatRating(rating) {
+            return rating.toFixed(1);
+        }
+
+        isRated(category) {
+            return (category.rateCount > 0);
         }
 
         icons(category) {

@@ -6,7 +6,7 @@ import com.codingchili.core.listener.BusRouter;
 import com.codingchili.core.listener.CoreService;
 import com.codingchili.core.listener.ListenerSettings;
 import com.codingchili.core.listener.transport.RestListener;
-import com.codingchili.flashcards.handlers.AuthenticationHandler;
+import com.codingchili.flashcards.handlers.AccountHandler;
 import com.codingchili.flashcards.handlers.CardHandler;
 import com.codingchili.flashcards.handlers.CategoryHandler;
 import com.codingchili.flashcards.handlers.HighscoreHandler;
@@ -42,7 +42,7 @@ public class Service implements CoreService {
     @Override
     public void start(Future start) {
         CompositeFuture.all(Arrays.asList(
-                core.handler(AuthenticationHandler::new),
+                core.handler(AccountHandler::new),
                 core.handler(CardHandler::new),
                 core.handler(CategoryHandler::new),
                 core.handler(HighscoreHandler::new),
@@ -52,8 +52,8 @@ public class Service implements CoreService {
 
                 core.listener(() -> new RestListener()
                         .settings(() -> new ListenerSettings()
-                            .setPort(8180)
-                            .setMaxRequestBytes(512))
+                                .setPort(8180)
+                                .setMaxRequestBytes(512))
                         .handler(new BusRouter())))
         ).setHandler(start);
     }

@@ -1,7 +1,6 @@
 package com.codingchili.flashcards.model;
 
 import com.codingchili.core.context.CoreContext;
-import com.codingchili.core.security.Account;
 import com.codingchili.core.security.HashHelper;
 import com.codingchili.core.security.Token;
 import com.codingchili.core.security.TokenFactory;
@@ -22,15 +21,15 @@ import static com.codingchili.core.configuration.CoreStrings.ID_USERNAME;
  */
 public class AccountDB implements AsyncAccountStore {
     private TokenFactory factory = AppConfig.tokenFactory();
-    private AsyncStorage<Account> accounts;
+    private AsyncStorage<FlashAccount> accounts;
     private HashHelper hasher;
 
     public AccountDB(CoreContext core) {
         this.hasher = new HashHelper(core);
-        new StorageLoader<Account>(core)
+        new StorageLoader<FlashAccount>(core)
                 .withPlugin(AppConfig.storage())
                 .withDB(AppConfig.db(), "accounts")
-                .withValue(Account.class)
+                .withValue(FlashAccount.class)
                 .build(storage -> accounts = storage.result());
     }
 
@@ -54,7 +53,7 @@ public class AccountDB implements AsyncAccountStore {
     }
 
     @Override
-    public Future<Token> register(Account account) {
+    public Future<Token> register(FlashAccount account) {
         Future<Token> future = Future.future();
         hasher.hash(done -> {
             account.setPassword(done.result());
@@ -71,7 +70,7 @@ public class AccountDB implements AsyncAccountStore {
         return future;
     }
 
-    private void sendToken(Future<Token> future, Account account) {
+    private void sendToken(Future<Token> future, FlashAccount account) {
         Token token = new Token();
         token.setDomain(account.getUsername());
         token.setProperties(account.getProperties());
@@ -81,15 +80,18 @@ public class AccountDB implements AsyncAccountStore {
     }
 
     @Override
-    public Future<Collection<Account>> search(String username) {
-        Future<Collection<Account>> future = Future.future();
+    public Future<Collection<FlashAccount>> search(String username) {
+        Future<Collection<FlashAccount>> future = Future.future();
         accounts.query(ID_USERNAME).startsWith(username)
                 .pageSize(16)
                 .orderBy(ID_USERNAME)
                 .execute(done -> {
                     if (done.succeeded()) {
                         future.complete(done.result().stream()
-                                .map(account -> account.setPassword(null))
+                                .peek(account -> {
+                                    account.setInbox(null);
+                                    account.setPassword(null);
+                                })
                                 .collect(Collectors.toList()));
                     } else {
                         future.fail(done.cause());
@@ -102,6 +104,55 @@ public class AccountDB implements AsyncAccountStore {
     public Future<Integer> size() {
         Future<Integer> future = Future.future();
         accounts.size(future);
+        return future;
+    }
+
+    @Override
+    public Future<Void> message(String receiver, AccountMessage message) {
+        Future<Void> future = Future.future();
+        accounts.get(receiver, get -> {
+            if (get.succeeded()) {
+                FlashAccount account = get.result();
+                account.addMessage(message);
+                accounts.update(account, future);
+            } else {
+                future.fail(get.cause());
+            }
+        });
+        return future;
+    }
+
+    @Override
+    public Future<Collection<AccountMessage>> inbox(String username) {
+        Future<Collection<AccountMessage>> future = Future.future();
+        accounts.get(username, done -> {
+            if (done.succeeded()) {
+                future.complete(done.result().getInbox());
+            } else {
+                future.fail(done.cause());
+            }
+        });
+        return future;
+    }
+
+    @Override
+    public Future<Collection<AccountMessage>> read(String username, String messageId) {
+        Future<Collection<AccountMessage>> future = Future.future();
+        accounts.get(username, get -> {
+            if (get.succeeded()) {
+                FlashAccount account = get.result();
+                account.readMessage(messageId);
+                accounts.update(account, updated -> {
+                    if (updated.succeeded()) {
+                        future.complete(account.getInbox());
+                    } else {
+                        future.fail(updated.cause());
+                    }
+                });
+            } else {
+                future.fail(get.cause());
+            }
+        });
         return future;
     }
 }

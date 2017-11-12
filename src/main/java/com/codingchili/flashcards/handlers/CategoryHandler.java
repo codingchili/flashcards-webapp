@@ -8,7 +8,6 @@ import com.codingchili.core.logging.Logger;
 import com.codingchili.core.protocol.Address;
 import com.codingchili.core.protocol.Api;
 import com.codingchili.core.protocol.Protocol;
-import com.codingchili.core.protocol.Role;
 import com.codingchili.core.protocol.Roles;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.flashcards.AppConfig;
@@ -18,6 +17,8 @@ import com.codingchili.flashcards.model.FlashCategory;
 import com.codingchili.flashcards.model.SimpleDate;
 import com.codingchili.flashcards.request.CategoryRequest;
 import com.codingchili.flashcards.response.SizeResponse;
+
+import java.util.function.Consumer;
 
 import static com.codingchili.core.protocol.RoleMap.PUBLIC;
 import static com.codingchili.core.protocol.RoleMap.USER;
@@ -42,9 +43,31 @@ public class CategoryHandler implements CoreHandler {
     @Api
     public void save(CategoryRequest request) {
         FlashCategory category = request.category();
-        category.setOwner(request.sender());
-        category.setCreated(new SimpleDate());
-        categories.save(category).setHandler(request::result);
+
+        Consumer<FlashCategory> save = (saving) -> {
+            saving.setOwner(request.sender());
+            saving.setCreated(new SimpleDate());
+            categories.save(saving).setHandler(request::result);
+        };
+
+        // if its an update to an existing: read existing values for rating.
+        if (category.getId() != null) {
+            categories.get(category.getId()).setHandler(done -> {
+                if (done.succeeded()) {
+                    FlashCategory old = done.result();
+                    category.setRating(old.getRating());
+                    category.setRateCount(old.getRateCount());
+                    save.accept(category);
+                } else {
+                    save.accept(category);
+                }
+            });
+        } else {
+            // if its a new request: reset rating and rate count.
+            category.setRating(0f);
+            category.setRateCount(0);
+            save.accept(category);
+        }
     }
 
     @Api
@@ -100,15 +123,7 @@ public class CategoryHandler implements CoreHandler {
 
     @Override
     public void handle(Request request) {
-        protocol.get(request.route(), access(request))
+        protocol.get(request.route(), AppConfig.authorize(request))
                 .submit(new CategoryRequest(request));
-    }
-
-    private Role access(Request request) {
-        if (tokenFactory.verifyToken(request.token())) {
-            return Role.USER;
-        } else {
-            return Role.PUBLIC;
-        }
     }
 }

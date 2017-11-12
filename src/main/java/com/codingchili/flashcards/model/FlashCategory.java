@@ -2,13 +2,10 @@ package com.codingchili.flashcards.model;
 
 import com.codingchili.core.storage.Storable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * A set of flash cards that can be shared.
@@ -21,7 +18,6 @@ public class FlashCategory implements Storable {
     private static final int MAX_SCORE_HISTORY = 10;
     private float rating = 0.0f;
     private Integer rateCount = 0;
-    private List<FlashScore> highscores = new ArrayList<>();
     private Set<String> users = new HashSet<>();
     private String id = UUID.randomUUID().toString();
     private SimpleDate created;
@@ -74,8 +70,9 @@ public class FlashCategory implements Storable {
         return id;
     }
 
-    public void setId(String id) {
+    public FlashCategory setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getColor() {
@@ -100,28 +97,6 @@ public class FlashCategory implements Storable {
 
     public void setCost(int cost) {
         this.cost = cost;
-    }
-
-    public List<FlashScore> getHighscores() {
-        return highscores;
-    }
-
-    public void setHighscores(List<FlashScore> highscores) {
-        this.highscores = highscores;
-    }
-
-    public FlashCategory score(String user, int correct, int misses, int seconds) {
-        highscores.add(new FlashScore()
-                .setUser(user)
-                .setCorrect(correct)
-                .setMisses(misses)
-                .setSeconds(seconds));
-
-        highscores = highscores.stream()
-                .sorted(Storable::compareTo)
-                .limit(MAX_SCORE_HISTORY)
-                .collect(Collectors.toList());
-        return this;
     }
 
     public String getIndexedName() {
@@ -159,8 +134,9 @@ public class FlashCategory implements Storable {
         return rating;
     }
 
-    public void setRating(float rating) {
+    public FlashCategory setRating(float rating) {
         this.rating = rating;
+        return this;
     }
 
     public Integer getRateCount() {

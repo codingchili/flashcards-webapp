@@ -1,6 +1,7 @@
 package com.codingchili.flashcards.model;
 
 import com.codingchili.core.context.CoreContext;
+import com.codingchili.core.context.SystemContext;
 import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
 import com.codingchili.core.storage.AsyncStorage;
 import com.codingchili.core.storage.StorageLoader;
@@ -111,8 +112,8 @@ public class CategoryDB implements AsyncCategoryStore {
     }
 
     @Override
-    public Future<Void> rate(String categoryId, String username, Integer rating) {
-        Future<Void> future = Future.future();
+    public Future<FlashCategory> rate(String categoryId, String username, Integer rating) {
+        Future<FlashCategory> future = Future.future();
 
         // run the check later - use a runnable to prevent deep nesting.
         Runnable addRatingToCategory = () -> {
@@ -120,8 +121,15 @@ public class CategoryDB implements AsyncCategoryStore {
                 if (get.succeeded()) {
                     FlashCategory category = get.result();
                     category.setRateCount(category.getRateCount() + 1);
-                    category.setRating((rating + category.getRating()) / category.getRateCount());
-                    categories.update(category, future);
+                    float delta = ((rating - category.getRating()) / category.getRateCount());
+                    category.setRating(delta + category.getRating());
+                    categories.update(category, updated -> {
+                        if (updated.succeeded()) {
+                            future.complete(category);
+                        } else {
+                            future.fail(updated.cause());
+                        }
+                    });
                 } else {
                     future.fail(get.cause());
                 }

@@ -1,6 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="/src/flashcards-app/shared-styles.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/src/flashcards-app/shared-styles.html">
+<link rel="import" href="/src/flashcards-app/api-request.html">
 
 <dom-module id="account-view">
     <template>
@@ -18,6 +21,11 @@
                 margin-top: 64px;
             }
 
+            .message {
+                display: block;
+                font-weight: normal;
+            }
+
             .details {
                 padding: 16px;
             }
@@ -27,13 +35,53 @@
             }
 
             .large {
-                font-size: 2.5em;
+                font-size: 1.4em;
             }
 
             .medium {
-                font-size: 0.85em;
+                font-size: 0.86em;
             }
+
+            .small {
+                font-size: 0.7em;
+            }
+
+            .message-sender {
+                text-align: right;
+                display: block;
+            }
+
+            .message-body {
+                display: block;
+                padding-top: 8px;
+                width: 80%;
+            }
+
+            .message-title {
+                padding-top: 8px;
+                display: block;
+            }
+
+            .message-created {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+            }
+
+            .unread {
+                max-height: 16px;
+                margin-bottom: 4px;
+                color: var(--primary-color);
+            }
+
         </style>
+
+        <div id="toolbar">
+            <div class="toolbar-item" on-tap="loadInbox">
+                <paper-tooltip animation-delay="0" position="bottom">refresh</paper-tooltip>
+                <iron-icon icon="refresh"></iron-icon>
+            </div>
+        </div>
 
         <paper-card elevation="3" class="info">
             <div class="details">
@@ -42,9 +90,23 @@
                 The following properties are set<br>
                 <pre><span class="special medium">[[stringify(token.properties)]]</span></pre>
             </div>
-        </paper-card>
-    </template>
 
+            <div id="inbox">
+                <template is="dom-repeat" items="[[messages]]" as="message">
+                    <paper-item class="message" on-click="read">
+                        <template is="dom-if" if="[[!message.read]]">
+                            <iron-icon class="unread" icon="icons:mail"></iron-icon>
+                        </template>
+                        <span class="message-title large">[[message.title]]</span>
+                        <span class="message-body medium">[[message.body]]</span>
+                        <span class="message-sender small">[[message.sender]]</span>
+                        <span class="message-created small">[[formatDate(message.created)]]</span>
+                    </paper-item>
+                </template>
+            </div>
+        </paper-card>
+        <api-request id="api" spinner></api-request>
+    </template>
 </dom-module>
 
 <script>
@@ -55,11 +117,36 @@
 
         constructor() {
             super();
-            this.api = application.api();
             this.token = application.token;
 
             application.subscribe('authenticated', (token) => {
                 this.token = token;
+            });
+
+            application.subscribe('onShowAuthentication', () => {
+                this.loadInbox();
+            });
+        }
+
+        formatDate(epochSecond) {
+            return new Date(epochSecond * 1000).toLocaleString();
+        }
+
+        ready() {
+            super.ready();
+        }
+
+        read(e) {
+            this.$.api.accounts('read', (res) => {
+                this.messages = res.collection;
+            }, {
+                message: e.model.message.id
+            });
+        }
+
+        loadInbox() {
+            this.$.api.accounts('inbox', (res) => {
+                this.messages = res.collection;
             });
         }
 
