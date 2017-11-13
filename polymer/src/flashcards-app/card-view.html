@@ -96,9 +96,8 @@
             </template>
         </div>
 
-        <span class="header">[[category.name]]</span>
-
         <template is="dom-if" if="[[!playing]]">
+            <span class="header">[[category.name]]</span>
             <div id="card-container">
                 <template is="dom-repeat" items="[[cards]]" as="card">
                     <paper-card class="card">

@@ -100,13 +100,21 @@
                 display: flex;
                 justify-content: space-between;
             }
+
+            .header {
+                margin: 8px 28px;
+                font-size: 1em;
+                padding-top: 8px;
+                padding-bottom: 24px;
+                text-align: center;
+            }
         </style>
 
-        <!-- todo hide options if no options available and replace with input -->
+        <p class="header">[[category.name]]</p>
 
         <template is="dom-if" if="[[playing]]">
             <div id="toolbar">
-                <div hidden="hasBack(card)" on-click="flip" class="toolbar-item">
+                <div hidden="[[hasBack(card)]]" on-click="flip" class="toolbar-item">
                     <iron-icon icon="compare-arrows"></iron-icon>
                     <paper-tooltip animation-delay="0" position="bottom">Flip</paper-tooltip>
                 </div>
@@ -320,7 +328,8 @@
         }
 
         feedback() {
-            this.$.api.accounts('message', res => {}, {
+            this.$.api.accounts('message', res => {
+            }, {
                 title: this.category.name,
                 body: "",
                 receiver: this.category.owner
@@ -369,7 +378,8 @@
 
         sendFeedback() {
             if (this.feedback.length > 0) {
-                this.$.api.accounts('feedback', (res) => {}, {
+                this.$.api.accounts('feedback', (res) => {
+                }, {
                     title: this.category.name,
                     body: this.feedback,
                     receiver: this.category.owner
