@@ -1,6 +1,13 @@
 {
   "entrypoint": "index.html",
-  "fragments": [],
+  "fragments": [
+    "src/flashcards-app/account-view.html",
+    "src/flashcards-app/card-player.html",
+    "src/flashcards-app/card-view.html",
+    "src/flashcards-app/category-view.html",
+    "src/flashcards-app/login-view.html",
+    "src/flashcards-app/search-view.html"
+  ],
   "sources": [
     "src/**/*",
     "index.html",

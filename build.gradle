@@ -84,11 +84,11 @@ task archiveZip(type: Zip, dependsOn: [subprojects.jar, polymer]) {
         into('/')
     }
 
-    from('/data') {
+    from('data') {
         into('/data/')
     }
 
-    from('/') {
+    from('./') {
         include 'application.json'
         into('/')
     }
