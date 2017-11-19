@@ -221,14 +221,11 @@
             this.colors = [];
             this.filtering = false;
             this.clear();
-            application.subscribe('authenticated', () => this.list());
+            application.subscribe('onCategoryPage', () => this.list());
         }
 
         ready() {
             super.ready();
-            if (application.authenticated) {
-                this.list();
-            }
 
             this.$.categories.onClickHandler((category) => {
                 category.icons = this.$.categories.icons(category);

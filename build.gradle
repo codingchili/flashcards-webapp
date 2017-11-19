@@ -70,6 +70,36 @@ jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.DSA', 'META-INF/*.SF'
 }
 
+task archiveZip(type: Zip, dependsOn: [subprojects.jar, polymer]) {
+    baseName = 'flashcards'
+
+    from('script') {
+        fileMode = 0755
+        include '**/run.sh'
+        include '**/run.bat'
+        expand(jar: jar.outputs.files[0].name, app: project.name, version: project.version)
+    }
+
+    from (jar.outputs.files) {
+        into('/')
+    }
+
+    from('/data') {
+        into('/data/')
+    }
+
+    from('/') {
+        include 'application.json'
+        into('/')
+    }
+
+    from('polymer/build/default/') {
+        into('/polymer')
+    }
+
+    into('/')
+}
+
 task alljavadoc(type: Javadoc) {
     source subprojects.collect { it.sourceSets.main.allJava }
     classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
@@ -79,14 +109,4 @@ task alljavadoc(type: Javadoc) {
 task archiveJavadoc(type: Zip, dependsOn: alljavadoc) {
     baseName = 'javadocs'
     from fileTree(file("${buildDir}/docs/javadoc"))
-}
-
-task testReport(type: TestReport, dependsOn: 'build') {
-    destinationDir = file("$buildDir/reports/allTests")
-    reportOn subprojects*.test
-}
-
-task archiveTestReport(type: Zip, dependsOn: testReport) {
-    baseName = 'testreport'
-    from fileTree(file("$buildDir/reports/allTests"))
 }

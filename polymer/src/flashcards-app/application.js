@@ -38,7 +38,6 @@ const application = {
     onAuthenticated: function (token) {
         this.authenticated = true;
         this.token = token;
-        console.log('token set');
         this.publish('authenticated', token);
     },
 

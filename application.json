@@ -1,0 +1,5 @@
+{
+  "storage": "com.codingchili.core.storage.IndexedMapPersisted",
+  "database": "data",
+  "secret": "c129a9cb-2832-4c56-9620-b4480a0d6d1b"
+}
