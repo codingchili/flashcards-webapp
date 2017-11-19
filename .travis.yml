@@ -4,16 +4,16 @@ dist: trusty
 jdk: oraclejdk8
 install: true
 script:
-  - npm install -g polymer-cli
-  - npm install -g bower
-  - ./gradlew -version
-  - ./gradlew build
-  - ./gradlew archiveZip
+- npm install -g polymer-cli
+- npm install -g bower
+- "./gradlew -version"
+- "./gradlew build"
+- "./gradlew archiveZip"
 notifications:
   email: true
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
   - "$HOME/.gradle/caches/"
@@ -21,7 +21,7 @@ cache:
 deploy:
   provider: releases
   api_key:
-    secure: W9XJLLhuWj7f3/xcV8TYWVTrtoYi8iMQTcatwNR3I9nKmK05ywab/G+iD4anZJWyZrOtvuS0ztBrPQMiGGdEju1iMRkuFTlC0XJOAJNL60gGgeZ7ngpBV/RWEEqGcUw+CNXvVIkbox9uXK5qokw8PMB7osnjmRpyfmLIL2hbiYVzXN3S3iKGn8nO7evWIVYjhEcHcZSCMlcLviBWJgCVzBpofubTy6zOVIggRG17tJjfstDsoyjmCWoZA18ZlGftcvM1a60H5retY9k/qYYVT5EPTrDmLLAHLP7Vy2ScgfzCWcO9V9Q8/BgfEwlpQ4j7ngHWW8zIk3QCqPZ9iDiXTkok8qhMQTRKebIOXJGnaI9ZoT/WehL6mGhHW23Cvpp8ubDLSyFuv9ylfUk9drdshEP/b02dV2o3S06PYhjXFinoOBRXMkIHwX0QFt8W85OyOCjARpBR5qDyxH5gCxSpfFaoUG0/CdWWoKdXDlwaG3KNzyU2jsjGsI3Y73q2AE+9qc9tgHHheK2TIjJPRMkjy0bxRHmEnSMM3JsP+/vNJNEDnZFgMxpHcixMikVbxpBzcSFSnjQNZs1bETMaHmIsPX34w8ODwwd5XQCrZb0zJiqe8A7tlcjcY9izTJ7+2O2hl9Lq8DJCQNb0awWXbX+KYjHH9YG2eF5sXxPrLLWgX+k=
+    secure: iNs+TwU63s8FwNhOx/rTpAFKAb6duCLAM95FGjB29Oyvs503CpBUUQnw7VjwQjYhhqHfLt2i7djwweEKL7DUaRhmX5bZyCJj9WCCQRINtgNOD/AkpFQ8VHRwRgbEwUb0LCxVe1YhT+U7fd7PuPNMJnWvo/NfGt4h7xOnRJzCH+jygcrf7oR/BcmNPFD+G1Q7lDZeE4m4WVBUuuUzxAKx3Nceb7x/eC/AhSNBqdQrFHTrgWq45fG7XwzIH4uKDWDjGFdPid0VAIFR0oFgseuwv/+GG30uqE8Vdg3hXfLMX++cokjE0jGl5HL1+LKKIf7YKZAE61p0W7NAjjd/4Bp8MmFHymjneAvpXP+fQRoZwYI4GupLzEZoCFFVXGR/mjTm36jaZEAJVmm5u1Go49kfdvYhnyLQj5CsjRkzX2fp0dK/t3kZeuwxQXHPmcR9eebkIc+/KGCWlyVVp7J60wyxAm9e1wizQPPUg7hBJk6jrb32fnoOQHRBPxQUBJKI1CdTvXs2O5BEggRJH9KFeN3fI3pbR7I1TjelhTlu+XAyEmwwWVKW5Km6YfeNHLkQdZpJ80xLJz9+qD8fKD5xrnJhTDHTcs0GkPqqe8jNgBEMkb+3vdPymqxF16XpNYHfbX/uzqDPEqYRlcVQ8yu5/c8dowFvtO02VcvBgeip5vuVuPk=
   file_glob: true
   file:
     - build/distributions/*
@@ -31,5 +31,8 @@ deploy:
     tags: true
 env:
   global:
-    - GRADLE_OPTS="-Xms256m"
-    - JDK_JAVA_OPTIONS='--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
+  - GRADLE_OPTS="-Xms256m"
+  - JDK_JAVA_OPTIONS='--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED
+    --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED
+    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED
+    --add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
