@@ -308,8 +308,10 @@
         }
 
         remove(category) {
-            this.$.api.categories('remove', () => this.list(),
-                {'id': category.id});
+            // todo add an extra dialog here to prevent accidental remove
+            application.publish(TOAST, 'remove operation is currently disabled to avoid accidents.');
+            /*this.$.api.categories('remove', () => this.list(),
+                {'id': category.id});*/
         }
 
         list() {
