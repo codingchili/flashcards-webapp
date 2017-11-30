@@ -82,7 +82,7 @@
                         let response = JSON.parse(xhr.responseText);
                         this.requestCompleted(id);
 
-                        if (response.status === ERROR || response.status === UNAUTHORIZED) {
+                        if (response.status === ERROR || response.status === UNAUTHORIZED || response.status == BAD) {
                             this.submitError(request, id, response.message);
                         } else {
                             handler(response);

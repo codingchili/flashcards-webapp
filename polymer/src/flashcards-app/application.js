@@ -8,6 +8,7 @@ const CONFLICT = 'CONFLICT';
 const UNAUTHORIZED = 'UNAUTHORIZED';
 const ERROR = 'ERROR';
 const ACCEPTED = 'ACCEPTED';
+const BAD = 'BAD';
 const TOAST_ERROR = 'toast_error';
 const TOAST = 'toast';
 const LOADING = 'loading';
