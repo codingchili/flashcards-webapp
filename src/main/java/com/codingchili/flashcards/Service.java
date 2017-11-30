@@ -53,7 +53,7 @@ public class Service implements CoreService {
                 core.listener(() -> new RestListener()
                         .settings(() -> new ListenerSettings()
                                 .setPort(8180)
-                                .setMaxRequestBytes(4096))
+                                .setMaxRequestBytes(1))
                         .handler(new BusRouter())))
         ).setHandler(start);
     }
