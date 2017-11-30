@@ -54,7 +54,9 @@ public class CategoryDB implements AsyncCategoryStore {
     @Override
     public Future<Collection<FlashCategory>> list(String username) {
         Future<Collection<FlashCategory>> future = Future.future();
-        categories.query(ID_OWNER).equalTo(username).execute(future);
+        categories.query(ID_OWNER).equalTo(username)
+                .pageSize(256)
+                .execute(future);
         return future;
     }
 

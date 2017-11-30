@@ -4,7 +4,6 @@ import com.codingchili.core.configuration.Configurable;
 import com.codingchili.core.files.Configurations;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.protocol.Role;
-import com.codingchili.core.protocol.Serializer;
 import com.codingchili.core.security.TokenFactory;
 import com.codingchili.core.storage.AsyncStorage;
 import com.codingchili.core.storage.IndexedMapVolatile;
