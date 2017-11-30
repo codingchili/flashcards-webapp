@@ -111,9 +111,9 @@
         <paper-dialog id="create-dialog" modal>
             <h2>Card options</h2>
             <div>
-                <paper-input label="Content" char-counter maxlength="128" on-keydown="onkey" value="{{card.content}}"
+                <paper-input label="Content" char-counter maxlength="1024" on-keydown="onkey" value="{{card.content}}"
                              autofocus></paper-input>
-                <paper-input label="Back" on-keydown="onkey" value="{{card.back}}"></paper-input>
+                <paper-input label="Back" char-counter maxlength="1024" on-keydown="onkey" value="{{card.back}}"></paper-input>
                 <tag-input value="{{alternative}}" values="{{card.alternatives}}" label="Alternatives"></tag-input>
                 <paper-dropdown-menu label="Answer">
                     <paper-listbox slot="dropdown-content" selected="{{answer}}">
