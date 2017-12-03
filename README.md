@@ -3,6 +3,7 @@
 An open source web application to help with managing flashcards. Built as microservices using [chili-core](https://github.com/codingchili/chili-core).
 
 See the demo for v1.0.0 on [YouTube](https://www.youtube.com/watch?v=1LcJ4d6hzA8).
+Or try it for yourself at [FlashCardsAlligator](https://flashcardsalligator.com/).
 
 ## Build & run
 
