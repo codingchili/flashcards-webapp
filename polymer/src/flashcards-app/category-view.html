@@ -152,7 +152,7 @@
 
             <div hidden$="[[!populated]]" class="fill-height">
                 <category-list id="categories" header="My categories"
-                               footer="[[categories.length]]"></category-list>
+                               footer="[[categories.length]] categorie(s)"></category-list>
             </div>
         </paper-card>
 
@@ -176,7 +176,7 @@
                 </paper-swatch-picker>
             </div>
             <div class="buttons button-group">
-                <paper-button on-click="create" dialog-confirm raised autofocus>Save</paper-button>
+                <paper-button on-click="create" raised autofocus>Save</paper-button>
                 <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
             </div>
         </paper-dialog>
@@ -300,7 +300,10 @@
             json.id = this.category.id;
 
             this.clear();
-            this.$.api.categories('save', () => this.list(), json);
+            this.$.api.categories('save', () => {
+                this.$['create-dialog'].close();
+                this.list()
+            }, json);
         }
 
         remove(category) {
@@ -339,7 +342,6 @@
         onkey(e) {
             if (e.keyCode === 13) {
                 this.create();
-                this.$['create-dialog'].close();
             }
         }
 

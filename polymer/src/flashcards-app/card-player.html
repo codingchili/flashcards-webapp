@@ -21,7 +21,16 @@
             #cardbox {
                 margin: auto;
                 width: 100%;
-                text-align: center;
+                text-align: left;
+            }
+
+            #cardbox-text {
+                margin: auto auto 16px;
+                width: 376px;
+            }
+
+            .card-text {
+                white-space: pre;
             }
 
             #navmenu {
@@ -131,12 +140,14 @@
 
         <div hidden="[[!playing]]">
             <paper-card id="cardbox">
-                <template is="dom-if" if="[[card.flipped]]">
-                    [[card.back]]
-                </template>
-                <template is="dom-if" if="[[!card.flipped]]">
-                    [[card.mediacontent]]
-                </template>
+                <div id="cardbox-text">
+                    <template is="dom-if" if="[[card.flipped]]">
+                        <span class="card-text">[[card.back]]</span>
+                    </template>
+                    <template is="dom-if" if="[[!card.flipped]]">
+                        <span class="card-text">[[card.mediacontent]]</span>
+                    </template>
+                </div>
             </paper-card>
             <paper-card id="optionbox">
                 <template is="dom-repeat" items="[[card.alternatives]]" as="option">
@@ -387,5 +398,6 @@
             }
         }
     }
+
     window.customElements.define(CardPlayer.is, CardPlayer);
 </script>

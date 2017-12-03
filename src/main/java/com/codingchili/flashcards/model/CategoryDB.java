@@ -1,14 +1,13 @@
 package com.codingchili.flashcards.model;
 
-import com.codingchili.core.context.CoreContext;
-import com.codingchili.core.context.SystemContext;
-import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
-import com.codingchili.core.storage.AsyncStorage;
-import com.codingchili.core.storage.StorageLoader;
 import com.codingchili.flashcards.AppConfig;
 import io.vertx.core.Future;
 
 import java.util.Collection;
+
+import com.codingchili.core.context.CoreContext;
+import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
+import com.codingchili.core.storage.*;
 
 import static com.codingchili.flashcards.model.FlashCard.ID_OWNER;
 import static com.codingchili.flashcards.model.FlashCategory.*;
@@ -71,7 +70,7 @@ public class CategoryDB implements AsyncCategoryStore {
                 .or(ID_USERS + ARRAY).equalTo(username).and(ID_INDEXED_NAME).like(query)
                 .or(ID_SHARED).equalTo(true).and(ID_INDEXED_NAME).like(query)
                 .or(ID_COST).between(1L, Long.MAX_VALUE).and(ID_INDEXED_NAME).like(query)
-                .orderBy(FlashCategory.ID_RATING)
+                .orderBy(FlashCategory.ID_RATING).order(SortOrder.DESCENDING)
                 .execute(categories -> {
                     if (categories.succeeded()) {
                         future.complete(categories.result());

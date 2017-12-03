@@ -154,7 +154,7 @@
                 </paper-dropdown-menu>
             </paper-dialog-scrollable>
             <div class="buttons button-group">
-                <paper-button on-click="save" dialog-confirm raised autofocus>Save</paper-button>
+                <paper-button on-click="save"raised autofocus>Save</paper-button>
                 <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
             </div>
         </paper-dialog>
@@ -233,8 +233,9 @@
 
         onkey(e) {
             if (e.keyCode === 13) {
-                this.save();
-                this.$['create-dialog'].close();
+                if (e.ctrlKey) {
+                    this.save();
+                }
             }
         }
 
@@ -250,7 +251,10 @@
             if (this.answer < this.card.alternatives.length) {
                 json.answer = this.card.alternatives[this.answer];
             }
-            this.$.api.cards('create', () => this.list(), json);
+            this.$.api.cards('create', () => {
+                this.$['create-dialog'].close();
+                this.list();
+                }, json);
         }
 
         loadCategory(categoryId) {

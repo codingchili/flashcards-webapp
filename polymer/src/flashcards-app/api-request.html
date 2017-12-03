@@ -9,7 +9,6 @@
             :host {
                 display: block;
                 position: fixed;
-                z-index: 333;
             }
         </style>
         <iron-ajax id="jax" url="[[api]]" method="post" body="[[requestData]]"
@@ -82,7 +81,7 @@
                         let response = JSON.parse(xhr.responseText);
                         this.requestCompleted(id);
 
-                        if (response.status !== ACCEPTED) {
+                        if (response.status !== ACCEPTED && response.status !== MISSING) {
                             if (response.status === UNAUTHORIZED) {
                                 application.onLogout();
                             }
