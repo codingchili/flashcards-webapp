@@ -50,6 +50,7 @@ public class CardDB implements AsyncCardStore {
         // other users or the owner of the category cannot see these cards in this search.
         cards.query(ID_CATEGORY).equalTo(category.id())
                 .pageSize(1024)
+                .orderBy(FlashCard.ID_CONTENT)
                 .execute(search -> {
                     if (search.succeeded()) {
                         future.complete(search.result());

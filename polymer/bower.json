@@ -14,7 +14,6 @@
     "paper-item": "PolymerElements/paper-item#^2.0.0",
     "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^2.1.0",
     "iron-ajax": "PolymerElements/iron-ajax#^2.0.5",
-    "paper-input": "PolymerElements/paper-input#^2.0.2",
     "paper-toast": "PolymerElements/paper-toast#^2.0.0",
     "paper-card": "PolymerElements/paper-card#^2.0.0",
     "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.1",
@@ -26,7 +25,8 @@
     "paper-chip": "ThomasCybulski/paper-chip#^2.0.16",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^2.0.0",
     "paper-tooltip": "PolymerElements/paper-tooltip#^2.0.1",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "paper-input": "PolymerElements/paper-input#^2.0.4"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0"

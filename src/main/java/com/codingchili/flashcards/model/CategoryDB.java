@@ -56,6 +56,7 @@ public class CategoryDB implements AsyncCategoryStore {
         Future<Collection<FlashCategory>> future = Future.future();
         categories.query(ID_OWNER).equalTo(username)
                 .pageSize(256)
+                .orderBy(FlashCategory.ID_INDEXED_NAME)
                 .execute(future);
         return future;
     }
@@ -70,6 +71,7 @@ public class CategoryDB implements AsyncCategoryStore {
                 .or(ID_USERS + ARRAY).equalTo(username).and(ID_INDEXED_NAME).like(query)
                 .or(ID_SHARED).equalTo(true).and(ID_INDEXED_NAME).like(query)
                 .or(ID_COST).between(1L, Long.MAX_VALUE).and(ID_INDEXED_NAME).like(query)
+                .orderBy(FlashCategory.ID_RATING)
                 .execute(categories -> {
                     if (categories.succeeded()) {
                         future.complete(categories.result());
@@ -83,7 +85,9 @@ public class CategoryDB implements AsyncCategoryStore {
     @Override
     public Future<Collection<FlashCategory>> search(String query) {
         Future<Collection<FlashCategory>> future = Future.future();
-        categories.query(ID_SHARED).equalTo(true).execute(future);
+        categories.query(ID_SHARED).equalTo(true)
+                .orderBy(FlashCategory.ID_RATING)
+                .execute(future);
         return future;
     }
 
