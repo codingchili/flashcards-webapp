@@ -20,7 +20,7 @@ import static com.codingchili.core.protocol.RoleMap.PUBLIC;
  * Handler controller for cards.
  */
 @Address("cards")
-public class CardHandler implements CoreHandler {
+public class CardHandler implements CoreHandler<Request> {
     private Protocol<Request> protocol = new Protocol<>(this);
     private TokenFactory factory = AppConfig.tokenFactory();
     private AsyncCardStore cards;

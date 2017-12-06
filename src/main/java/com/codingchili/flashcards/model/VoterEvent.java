@@ -20,7 +20,7 @@ public class VoterEvent implements Storable {
     }
 
     @Override
-    public String id() {
+    public String getId() {
         return user + "." + category;
     }
 
@@ -52,7 +52,7 @@ public class VoterEvent implements Storable {
 
     @Override
     public int hashCode() {
-        return id().hashCode();
+        return getId().hashCode();
     }
 
     @Override

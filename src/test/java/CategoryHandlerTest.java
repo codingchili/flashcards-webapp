@@ -42,8 +42,8 @@ public class CategoryHandlerTest {
                     System.out.println(cat.hashCode());
                     System.out.println(cat2.hashCode());
                     System.out.println(cat.equals(cat2));
-                    System.out.println(cat.id());
-                    System.out.println(cat2.id());
+                    System.out.println(cat.getId());
+                    System.out.println(cat2.getId());
 
                     db.put(cat, done -> {
 

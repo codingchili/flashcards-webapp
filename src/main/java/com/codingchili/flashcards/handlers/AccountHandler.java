@@ -23,7 +23,7 @@ import static com.codingchili.core.protocol.RoleMap.USER;
  */
 @Roles(PUBLIC)
 @Address("accounts")
-public class AccountHandler implements CoreHandler {
+public class AccountHandler implements CoreHandler<Request> {
     private Protocol<Request> protocol = new Protocol<>(this);
     private AsyncAccountStore accounts;
 

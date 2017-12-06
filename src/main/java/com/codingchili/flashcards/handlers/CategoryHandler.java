@@ -28,9 +28,8 @@ import static com.codingchili.core.protocol.RoleMap.USER;
  */
 @Roles(USER)
 @Address("categories")
-public class CategoryHandler implements CoreHandler {
+public class CategoryHandler implements CoreHandler<Request> {
     private Protocol<Request> protocol = new Protocol<>(this);
-    private TokenFactory tokenFactory = AppConfig.tokenFactory();
     private AsyncCategoryStore categories;
     private Logger logger;
 

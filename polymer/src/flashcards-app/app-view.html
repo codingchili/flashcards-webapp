@@ -54,10 +54,7 @@
             #about-content {
                 margin-left: 8px;
                 margin-right: 8px;
-            }
-
-            #about {
-                min-height: 478px;
+                padding-bottom: 32px;
             }
 
             .fixed {
@@ -72,9 +69,17 @@
                 cursor: pointer;
             }
 
-            @media screen and (max-width: 464px) {
+            #about {
+
+            }
+
+            @media screen and (max-width: 518px) {
                 .title {
                     display: none;
+                }
+
+                #about {
+                    bottom: 0;
                 }
             }
         </style>
@@ -122,7 +127,7 @@
                      alt="Fork me on GitHub"
                      data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
-            <h2>Flashcards v1.0.4</h2>
+            <h2>Flashcards v1.0.5</h2>
             <div id="about-content">
                     A web application for studying with flashcards and to<br>
                     create quizzes. Some features of this app is:
@@ -138,12 +143,12 @@
                     This applications builds on the following libraries
                     <ul>
                         <li><a href="https://github.com/Polymer/polymer" target="_blank">Polymer 2.0</a></li>
-                        <li><a href="https://github.com/eclipse/vert.x" target="_blank">Vertx 3.4</a></li>
+                        <li><a href="https://github.com/eclipse/vert.x" target="_blank">Vertx 3.5</a></li>
                         <li><a href="https://github.com/npgall/cqengine" target="_blank">CQEngine</a></li>
                         <li><a href="https://github.com/codingchili/chili-core" target="_blank">chili-core</a></li>
                     </ul>
                     Author of the app is Robin Duda &copy;2017
-                <div class="buttons" id="about-buttons">
+                <div class="buttons button-group" id="about-buttons">
                     <paper-button dialog-confirm raised autofocus>Close</paper-button>
                 </div>
             </div>

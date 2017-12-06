@@ -20,7 +20,7 @@ import static com.codingchili.core.protocol.RoleMap.PUBLIC;
 
 @Roles(PUBLIC)
 @Address("transactions")
-public class TransactionHandler implements CoreHandler {
+public class TransactionHandler implements CoreHandler<Request> {
     private Protocol<Request> protocol = new Protocol<>(this);
     private AtomicReference<EthBlock.Block> block = new AtomicReference<>();
     private Logger logger;

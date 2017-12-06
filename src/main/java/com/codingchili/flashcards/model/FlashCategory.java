@@ -109,11 +109,6 @@ public class FlashCategory implements Storable {
     }
 
     @Override
-    public String id() {
-        return id;
-    }
-
-    @Override
     public int hashCode() {
         return id.hashCode();
     }

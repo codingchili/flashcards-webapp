@@ -85,11 +85,6 @@ public class FlashCard implements Storable {
     }
 
     @Override
-    public String id() {
-        return id;
-    }
-
-    @Override
     public boolean equals(Object other) {
         return compareTo(other) == 0;
     }
