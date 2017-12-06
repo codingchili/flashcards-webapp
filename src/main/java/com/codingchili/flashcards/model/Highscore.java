@@ -54,7 +54,7 @@ public class Highscore implements Storable {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return user;
     }
 
@@ -100,7 +100,7 @@ public class Highscore implements Storable {
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return id().hashCode();
     }
 
     @Override

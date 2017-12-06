@@ -41,6 +41,6 @@ public class FlashAccount extends Account {
 
     @Override
     public String toString() {
-        return getId();
+        return id();
     }
 }
