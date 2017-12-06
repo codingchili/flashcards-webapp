@@ -22,7 +22,7 @@ import static com.codingchili.core.protocol.RoleMap.USER;
  * handles the addition and retrieval of highscores.
  */
 @Address("highscores")
-public class HighscoreHandler implements CoreHandler<Request> {
+public class HighscoreHandler implements CoreHandler {
     private Protocol<Request> protocol = new Protocol<>(this);
     private TokenFactory tokenFactory = AppConfig.tokenFactory();
     private AsyncHighscoreStore highscores;
