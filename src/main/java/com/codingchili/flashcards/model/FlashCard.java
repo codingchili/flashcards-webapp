@@ -30,6 +30,11 @@ public class FlashCard implements Storable {
         this.id = id;
     }
 
+    @Override
+    public String id() {
+        return id;
+    }
+
     public List<String> getAlternatives() {
         return alternatives;
     }
