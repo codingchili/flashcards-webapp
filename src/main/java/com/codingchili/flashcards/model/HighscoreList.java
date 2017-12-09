@@ -16,7 +16,7 @@ public class HighscoreList implements Storable {
     private String category;
 
     @Override
-    public String id() {
+    public String getId() {
         return category;
     }
 

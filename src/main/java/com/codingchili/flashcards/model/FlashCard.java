@@ -22,16 +22,12 @@ public class FlashCard implements Storable {
     private String back;
     private String answer;
 
-    public String getId() {
-        return id;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
 
     @Override
-    public String id() {
+    public String getId() {
         return id;
     }
 

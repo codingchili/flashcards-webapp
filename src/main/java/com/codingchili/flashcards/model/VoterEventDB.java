@@ -36,7 +36,7 @@ public class VoterEventDB implements VoterEventStore {
 
     private void remove(Collection<VoterEvent> events) {
         events.forEach(event -> {
-            voters.remove(event.id(), Future.<Void>future().setHandler(done -> {
+            voters.remove(event.getId(), Future.<Void>future().setHandler(done -> {
                 if (done.failed() && !(done.cause() instanceof NothingToRemoveException)) {
                     logger.onError(done.cause());
                 }

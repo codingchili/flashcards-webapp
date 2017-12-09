@@ -67,6 +67,7 @@ public class FlashCategory implements Storable {
         return this;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -106,11 +107,6 @@ public class FlashCategory implements Storable {
 
     public void setIndexedName(String indexedName) {
         this.indexedName = indexedName;
-    }
-
-    @Override
-    public String id() {
-        return getId();
     }
 
     @Override

@@ -4,7 +4,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
 
-project.version = "1.0.6-SNAPSHOT"
+project.version = "1.0.7-SNAPSHOT"
 project.group = 'com.codingchili.flashcards'
 
 sourceCompatibility = 1.8
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.codingchili.chili-core:core:1.0.16-SNAPSHOT'
+    compile 'com.github.codingchili.chili-core:core:1.0.17-SNAPSHOT'
     compile 'org.web3j:core:2.3.1'
 }
 

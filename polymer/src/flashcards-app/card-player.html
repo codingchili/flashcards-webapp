@@ -22,15 +22,18 @@
                 margin: auto;
                 width: 100%;
                 text-align: left;
+                min-height: 128px;
             }
 
             #cardbox-text {
                 margin: auto auto 16px;
                 width: 376px;
+                max-width: 376px;
             }
 
-            .card-text {
-                white-space: pre;
+            .cardbox-text {
+                word-wrap: break-word;
+                white-space: pre-wrap;
             }
 
             #navmenu {
@@ -68,10 +71,6 @@
 
             h2 {
                 text-align: center;
-            }
-
-            #cardbox {
-                min-height: 128px;
             }
 
             #optionbox {
@@ -142,10 +141,10 @@
             <paper-card id="cardbox">
                 <div id="cardbox-text">
                     <template is="dom-if" if="[[card.flipped]]">
-                        <span class="card-text">[[card.back]]</span>
+                        <span class="cardbox-text">[[card.back]]</span>
                     </template>
                     <template is="dom-if" if="[[!card.flipped]]">
-                        <span class="card-text">[[card.mediacontent]]</span>
+                        <span class="cardbox-text">[[card.mediacontent]]</span>
                     </template>
                 </div>
             </paper-card>
