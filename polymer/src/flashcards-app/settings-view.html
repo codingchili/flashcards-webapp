@@ -66,7 +66,9 @@
                 <paper-checkbox checked="{{remember}}" class="picker">Remember me</paper-checkbox>
             </div>
 
-            <paper-button on-click="save" raised autofocus>Apply</paper-button>
+            <div class="button-group">
+                <paper-button on-click="save" raised autofocus>Apply</paper-button>
+            </div>
         </paper-card>
     </template>
 
@@ -142,5 +144,6 @@
             }
         }
     }
+
     window.customElements.define(SettingsView.is, SettingsView);
 </script>
