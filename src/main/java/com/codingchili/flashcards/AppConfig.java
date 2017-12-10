@@ -79,9 +79,11 @@ public class AppConfig implements Configurable {
     }
 
     private static String getSecretOrDefault() {
-        String secret = System.getProperty("secret");
         if (secret == null) {
-            secret = UUID.randomUUID().toString();
+            secret = System.getProperty("secret");
+            if (secret == null) {
+                secret = UUID.randomUUID().toString();
+            }
         }
         return secret;
     }

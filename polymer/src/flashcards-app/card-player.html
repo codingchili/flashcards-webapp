@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
@@ -23,17 +24,21 @@
                 width: 100%;
                 text-align: left;
                 min-height: 128px;
+                max-width: 426px;
             }
 
             #cardbox-text {
                 margin: auto auto 16px;
-                width: 376px;
                 max-width: 376px;
+                padding-top: 32px;
             }
 
             .cardbox-text {
                 word-wrap: break-word;
                 white-space: pre-wrap;
+                padding-left: 8px;
+                padding-right: 8px;
+                display: block;
             }
 
             #navmenu {
@@ -74,7 +79,10 @@
             }
 
             #optionbox {
-                margin-top: 16px;
+                margin-top: 48px;
+                max-width: 674px;
+                margin-left: auto;
+                margin-right: auto;
                 width: 100%;
             }
 
@@ -110,15 +118,28 @@
             }
 
             .header {
-                margin: 8px 28px;
-                font-size: 1em;
+                font-size: 1.65em;
                 padding-top: 8px;
                 padding-bottom: 24px;
                 text-align: center;
+                display: block;
             }
-        </style>
 
-        <p class="header">[[category.name]]</p>
+            paper-progress {
+                width: 100%;
+            }
+
+            #player-area {
+                display: flex;
+                flex-direction: column;
+            }
+
+            #progress-text {
+                text-align:right;
+                float: right;
+            }
+
+        </style>
 
         <template is="dom-if" if="[[playing]]">
             <div id="toolbar">
@@ -137,8 +158,12 @@
             </div>
         </template>
 
-        <div hidden="[[!playing]]">
+        <div id="player-area" hidden="[[!playing]]">
+            <div class="header">[[category.name]]</div>
+
             <paper-card id="cardbox">
+                <div id="progress-text">[[cardIndex]]/[[cards.length]]</div>
+                <paper-progress value="[[cardIndex]]" max="[[cards.length]]"></paper-progress>
                 <div id="cardbox-text">
                     <template is="dom-if" if="[[card.flipped]]">
                         <span class="cardbox-text">[[card.back]]</span>
@@ -151,6 +176,10 @@
             <paper-card id="optionbox">
                 <template is="dom-repeat" items="[[card.alternatives]]" as="option">
                     <paper-item on-click="guess" class="option">[[option]]</paper-item>
+                </template>
+                <template is="dom-if" if="[[!hasAlternatives(card)]]">
+                    <paper-item on-click="correctAndNext" class="option">I was correct</paper-item>
+                    <paper-item on-click="failAndNext" class="option">I was not correct</paper-item>
                 </template>
             </paper-card>
         </div>
@@ -234,6 +263,10 @@
             this.rating = 1;
         }
 
+        hasAlternatives(card) {
+            return (card.alternatives && card.alternatives.length > 0);
+        }
+
         flip() {
             this.set('card.flipped', !(this.card.flipped));
         }
@@ -274,6 +307,23 @@
                 }
             }
             return content;
+        }
+
+        correctAndNext(e) {
+            e.model = {};
+            e.model.option = true;
+            this.card.answer = true;
+            this.guess(e);
+        }
+
+        failAndNext(e) {
+            e.model = {};
+            e.model.option = false;
+            this.card.answer = true;
+            this.guess(e);
+            setTimeout(() => {
+                this.next();
+            }, 750);
         }
 
         guess(e) {

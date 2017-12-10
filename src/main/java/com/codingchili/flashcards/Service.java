@@ -27,7 +27,7 @@ public class Service implements CoreService {
     public static void main(String[] args) {
         system().setHandlers(1).setListeners(1).setServices(1).setMetrics(false);
         storage().setMaxResults(64);
-        launcher().setVersion("1.0.9").setApplication("flashcards")
+        launcher().setVersion("1.0.10").setApplication("flashcards")
                 .deployable(Service.class)
                 .setClustered(false);
 
