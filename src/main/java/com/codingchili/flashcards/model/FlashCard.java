@@ -22,12 +22,13 @@ public class FlashCard implements Storable {
     private String back;
     private String answer;
 
-    public String getId() {
-        return id;
-    }
-
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     public List<String> getAlternatives() {
@@ -82,11 +83,6 @@ public class FlashCard implements Storable {
     public FlashCard setBack(String back) {
         this.back = back;
         return this;
-    }
-
-    @Override
-    public String id() {
-        return id;
     }
 
     @Override

@@ -34,10 +34,6 @@
                 color: var(--secondary-color);
             }
 
-            #registerbutton {
-                margin-top: 21px;
-            }
-
             @media (min-width: 1024px) {
                 #box {
                     margin-top: 24vh;
@@ -60,9 +56,11 @@
                 <a href="">Register new</a>
             </div>
 
-            <paper-button hidden$="[[registration]]" raised on-click="call">Authenticate</paper-button>
-            <paper-button hidden$="[[!registration]]" id="registerbutton" raised on-click="call">Register</paper-button>
-            <paper-button hidden$="[[!registration]]" class="cancel-button" on-click="setLogin">Cancel</paper-button>
+            <div class="button-group">
+                <paper-button hidden$="[[registration]]" raised on-click="call">Authenticate</paper-button>
+                <paper-button hidden$="[[!registration]]" id="registerbutton" raised on-click="call">Register</paper-button>
+                <paper-button hidden$="[[!registration]]" class="cancel-button" on-click="setLogin">Cancel</paper-button>
+            </div>
         </paper-card>
 
         <api-request id="api" spinner></api-request>
@@ -88,7 +86,7 @@
             });
 
             application.subscribe('onSignupRequested', () => {
-               this.registration = true;
+                this.registration = true;
             });
         }
 
@@ -180,5 +178,6 @@
             application.publish(TOAST_ERROR, text);
         }
     }
+
     window.customElements.define(LoginView.is, LoginView);
 </script>

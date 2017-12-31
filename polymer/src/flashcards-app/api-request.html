@@ -9,7 +9,6 @@
             :host {
                 display: block;
                 position: fixed;
-                z-index: 333;
             }
         </style>
         <iron-ajax id="jax" url="[[api]]" method="post" body="[[requestData]]"
@@ -82,14 +81,17 @@
                         let response = JSON.parse(xhr.responseText);
                         this.requestCompleted(id);
 
-                        if (response.status === ERROR || response.status === UNAUTHORIZED || response.status == BAD) {
+                        if (response.status !== ACCEPTED && response.status !== MISSING) {
+                            if (response.status === UNAUTHORIZED) {
+                                application.onLogout();
+                            }
                             this.submitError(request, id, response.message);
                         } else {
                             handler(response);
                             this.log(response);
                         }
                     } else if (xhr.readyState === 4) {
-                        this.submitError(request, id, "failed to connect " + xhr.status);
+                        this.submitError(request, id, "failed to connect.");
                     }
                     this.latency = performance.now() - start;
                 };
@@ -111,7 +113,7 @@
                 this.pending[id] = {};
                 setTimeout(() => {
                     if (this.pending[id]) {
-                        this.submitError(request, "timed out after 5s");
+                        this.submitError(request, id, "timed out after 5s");
                         this.requestCompleted(id);
                     }
                 }, 5000);

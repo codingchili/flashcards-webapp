@@ -27,7 +27,7 @@ public class Service implements CoreService {
     public static void main(String[] args) {
         system().setHandlers(1).setListeners(1).setServices(1).setMetrics(false);
         storage().setMaxResults(64);
-        launcher().setVersion("1.0.0").setApplication("flashcards")
+        launcher().setVersion("1.0.12").setApplication("flashcards")
                 .deployable(Service.class)
                 .setClustered(false);
 
@@ -53,7 +53,7 @@ public class Service implements CoreService {
                 core.listener(() -> new RestListener()
                         .settings(() -> new ListenerSettings()
                                 .setPort(8180)
-                                .setMaxRequestBytes(1))
+                                .setMaxRequestBytes(16384))
                         .handler(new BusRouter())))
         ).setHandler(start);
     }

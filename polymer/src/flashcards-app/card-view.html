@@ -5,7 +5,10 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="/src/flashcards-app/tag-input.html">
 <link rel="import" href="/src/flashcards-app/api-request.html">
@@ -50,7 +53,7 @@
             .header {
                 text-align: center;
                 padding: 8px 24px;
-                font-size: 1em;
+                font-size: 1.65em;
                 display: block;
             }
 
@@ -64,6 +67,26 @@
                 top: 4px;
                 right: 4px;
                 cursor: pointer;
+            }
+
+            section {
+                width: 100%;
+                height: 100%;
+                @apply --layout-vertical;
+            }
+
+            section paper-dialog-scrollable {
+                @apply --layout-flex;
+            }
+
+            .footer {
+                padding: 8px 24px;
+                text-align: right;
+            }
+
+            .header {
+                padding: 8px 24px;
+                font-size: 1.65em;
             }
 
             paper-dropdown-menu {
@@ -97,24 +120,31 @@
         </div>
 
         <template is="dom-if" if="[[!playing]]">
-            <span class="header">[[category.name]]</span>
-            <div id="card-container">
-                <template is="dom-repeat" items="[[cards]]" as="card">
-                    <paper-card class="card">
-                        <div class="text" on-click="edit">[[card.content]]</div>
-                        <iron-icon class="remove-icon" icon="clear" on-click="remove"></iron-icon>
-                    </paper-card>
-                </template>
-            </div>
+            <section>
+                <div class="header">[[category.name]]</div>
+                <paper-dialog-scrollable>
+                    <div id="card-container">
+                        <template is="dom-repeat" items="[[cards]]" as="card">
+                            <paper-card class="card">
+                                <div class="text" on-click="edit">[[card.content]]</div>
+                                <iron-icon class="remove-icon" icon="clear" on-click="remove"></iron-icon>
+                            </paper-card>
+                        </template>
+                    </div>
+                </paper-dialog-scrollable>
+                <div class="footer">[[cards.length]] card(s)</div>
+            </section>
         </template>
 
         <paper-dialog id="create-dialog" modal>
             <h2>Card options</h2>
-            <div>
-                <paper-input label="Content" char-counter maxlength="1024" on-keydown="onkey" value="{{card.content}}"
-                             autofocus></paper-input>
-                <paper-input label="Back" char-counter maxlength="1024" on-keydown="onkey" value="{{card.back}}"></paper-input>
-                <tag-input value="{{alternative}}" values="{{card.alternatives}}" label="Alternatives"></tag-input>
+            <paper-dialog-scrollable>
+                <paper-textarea label=" Content" char-counter maxlength="512" on-keydown="onkey"
+                                value="{{card.content}}" autofocus></paper-textarea>
+                <paper-textarea label="Back" char-counter maxlength="512" on-keydown="onkey"
+                                value="{{card.back}}"></paper-textarea>
+                <tag-input value="{{alternative}}" values="{{card.alternatives}}"
+                           label="Alternatives"></tag-input>
                 <paper-dropdown-menu label="Answer">
                     <paper-listbox slot="dropdown-content" selected="{{answer}}">
                         <template is="dom-repeat" items="[[card.alternatives]]">
@@ -122,9 +152,9 @@
                         </template>
                     </paper-listbox>
                 </paper-dropdown-menu>
-            </div>
+            </paper-dialog-scrollable>
             <div class="buttons button-group">
-                <paper-button on-click="save" dialog-confirm raised autofocus>Save</paper-button>
+                <paper-button on-click="save"raised autofocus>Save</paper-button>
                 <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
             </div>
         </paper-dialog>
@@ -203,8 +233,9 @@
 
         onkey(e) {
             if (e.keyCode === 13) {
-                this.save();
-                this.$['create-dialog'].close();
+                if (e.ctrlKey) {
+                    this.save();
+                }
             }
         }
 
@@ -220,7 +251,10 @@
             if (this.answer < this.card.alternatives.length) {
                 json.answer = this.card.alternatives[this.answer];
             }
-            this.$.api.cards('create', () => this.list(), json);
+            this.$.api.cards('create', () => {
+                this.$['create-dialog'].close();
+                this.list();
+                }, json);
         }
 
         loadCategory(categoryId) {
@@ -244,5 +278,6 @@
             this.playing = false;
         }
     }
+
     window.customElements.define(CardView.is, CardView);
 </script>

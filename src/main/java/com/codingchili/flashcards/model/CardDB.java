@@ -48,8 +48,9 @@ public class CardDB implements AsyncCardStore {
         // returns cards that are created by the category owner or the current user
         // this allows users to add cards to categories they are not the owner of.
         // other users or the owner of the category cannot see these cards in this search.
-        cards.query(ID_CATEGORY).equalTo(category.id())
+        cards.query(ID_CATEGORY).equalTo(category.getId())
                 .pageSize(1024)
+                .orderBy(FlashCard.ID_CONTENT)
                 .execute(search -> {
                     if (search.succeeded()) {
                         future.complete(search.result());

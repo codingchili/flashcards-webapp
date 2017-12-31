@@ -62,6 +62,10 @@ const application = {
     }
 };
 
+document.addEventListener("keydown", (e) => {
+    application.publish(e);
+}, false);
+
 // token can be saved in the settings view.
 application.token = JSON.parse(localStorage.getItem('token'));
 application.authenticated = (application.token !== null);

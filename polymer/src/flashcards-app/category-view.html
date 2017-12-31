@@ -22,10 +22,6 @@
                 height: 100%;
             }
 
-            .cancel-button {
-                margin-top: 16px;
-            }
-
             paper-checkbox {
                 margin-top: 16px;
             }
@@ -156,7 +152,7 @@
 
             <div hidden$="[[!populated]]" class="fill-height">
                 <category-list id="categories" header="My categories"
-                               footer="[[categories.length]]"></category-list>
+                               footer="[[categories.length]] categorie(s)"></category-list>
             </div>
         </paper-card>
 
@@ -180,7 +176,7 @@
                 </paper-swatch-picker>
             </div>
             <div class="buttons button-group">
-                <paper-button on-click="create" dialog-confirm raised autofocus>Save</paper-button>
+                <paper-button on-click="create" raised autofocus>Save</paper-button>
                 <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
             </div>
         </paper-dialog>
@@ -304,12 +300,17 @@
             json.id = this.category.id;
 
             this.clear();
-            this.$.api.categories('save', () => this.list(), json);
+            this.$.api.categories('save', () => {
+                this.$['create-dialog'].close();
+                this.list()
+            }, json);
         }
 
         remove(category) {
-            this.$.api.categories('remove', () => this.list(),
-                {'id': category.id});
+            // todo add an extra dialog here to prevent accidental remove
+            application.publish(TOAST, 'remove operation is currently disabled to avoid accidents.');
+            /*this.$.api.categories('remove', () => this.list(),
+                {'id': category.id});*/
         }
 
         list() {
@@ -341,7 +342,6 @@
         onkey(e) {
             if (e.keyCode === 13) {
                 this.create();
-                this.$['create-dialog'].close();
             }
         }
 
@@ -366,6 +366,7 @@
             }
         }
     }
+
     window.customElements.define(CategoryView.is, CategoryView);
 
 </script>

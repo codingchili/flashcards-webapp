@@ -40,6 +40,10 @@
                 right: 0;
                 bottom: 0;
             }
+
+            .query {
+                margin-left: 16px;
+            }
         </style>
 
         <paper-card id="box" elevation="3">
@@ -48,8 +52,9 @@
                 <div slot="suffix"></div>
             </paper-input>
 
-            <category-list id="categories" header="Showing results for [[query]] .."
-                           footer="[[categories.length]] hits"></category-list>
+            <span class="query">Showing results for '[[query]]' ..</span>
+            <category-list id="categories" header=""
+                           footer="[[categories.length]] hit(s)"></category-list>
         </paper-card>
 
         <paper-dialog id="category-dialog" modal>

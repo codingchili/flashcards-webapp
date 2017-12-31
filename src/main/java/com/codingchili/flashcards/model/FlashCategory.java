@@ -11,6 +11,7 @@ import java.util.UUID;
  * A set of flash cards that can be shared.
  */
 public class FlashCategory implements Storable {
+    public static final String ID_RATING = "rating";
     public static final String ID_COST = "cost";
     public static final String ID_SHARED = "shared";
     public static final String ID_INDEXED_NAME = "indexedName";
@@ -66,6 +67,7 @@ public class FlashCategory implements Storable {
         return this;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -105,11 +107,6 @@ public class FlashCategory implements Storable {
 
     public void setIndexedName(String indexedName) {
         this.indexedName = indexedName;
-    }
-
-    @Override
-    public String id() {
-        return id;
     }
 
     @Override

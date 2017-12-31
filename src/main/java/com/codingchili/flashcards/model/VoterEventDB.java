@@ -15,7 +15,7 @@ import java.util.Collection;
  */
 public class VoterEventDB implements VoterEventStore {
     private static final Integer EVENT_TTL_SECONDS = 15;
-    private static final Integer POLL_RATE_MS = 5000;
+    private static final Integer POLL_RATE_MS = 8000;
     private Logger logger;
     private AsyncStorage<VoterEvent> voters;
 
@@ -36,7 +36,7 @@ public class VoterEventDB implements VoterEventStore {
 
     private void remove(Collection<VoterEvent> events) {
         events.forEach(event -> {
-            voters.remove(event.id(), Future.<Void>future().setHandler(done -> {
+            voters.remove(event.getId(), Future.<Void>future().setHandler(done -> {
                 if (done.failed() && !(done.cause() instanceof NothingToRemoveException)) {
                     logger.onError(done.cause());
                 }
