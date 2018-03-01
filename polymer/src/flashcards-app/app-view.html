@@ -17,6 +17,7 @@
 <link rel="import" href="/src/flashcards-app/category-view.html">
 <link rel="import" href="/src/flashcards-app/settings-view.html">
 <link rel="import" href="/src/flashcards-app/account-view.html">
+<link rel="import" href="/src/flashcards-app/faq-view.html">
 <link rel="import" href="/src/flashcards-app/loading-spinner.html">
 <link rel="import" href="/src/flashcards-app/toast-wrapper.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
@@ -99,6 +100,7 @@
             <category-view name="categories"></category-view>
             <account-view name="account"></account-view>
             <settings-view name="settings"></settings-view>
+            <faq-view name="faq"></faq-view>
         </iron-pages>
 
         <app-drawer id="drawer">
@@ -111,6 +113,7 @@
                 <paper-item on-click="search" hidden$="[[!authenticated]]">Search</paper-item>
                 <paper-item on-click="settings" hidden$="[[!authenticated]]">Settings</paper-item>
                 <paper-item on-click="account" hidden$="[[!authenticated]]">Account</paper-item>
+                <paper-item on-click="faq">Help (FAQ)</paper-item>
                 <paper-item on-click="logout" hidden$="[[!authenticated]]">Logout</paper-item>
 
                 <paper-item on-click="about">About</paper-item>
@@ -197,10 +200,12 @@
 
         ready() {
             super.ready();
+            this.publicViews = ['faq'];
+
             if (!this.routeData.view) {
                 this.startpage();
             } else {
-                if (!this.authenticated) {
+                if (this.publicViews.indexOf(this.routeData.view) < 0 && !this.authenticated) {
                     this.set('route.path', '/login');
                 }
             }
@@ -238,6 +243,7 @@
             this.$.drawer.close();
         }
 
+
         settings() {
             this.set('route.path', '/settings');
             this.titletext = 'Settings';
@@ -253,6 +259,12 @@
             this.set('route.path', '/login');
             this.$.drawer.close();
             application.publish('onLoginPage');
+        }
+
+        faq() {
+            this.set('route.path', '/faq')
+            this.$.drawer.close();
+            application.publish('onFAQ');
         }
 
         logout() {
