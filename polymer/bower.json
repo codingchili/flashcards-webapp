@@ -27,7 +27,8 @@
     "paper-tooltip": "PolymerElements/paper-tooltip#^2.0.1",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
     "paper-input": "PolymerElements/paper-input#^2.0.4",
-    "paper-progress": "PolymerElements/paper-progress#^2.0.1"
+    "paper-progress": "PolymerElements/paper-progress#^2.0.1",
+    "web-animations-js": "web-animations/web-animations-js#^2.3.1"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0"
