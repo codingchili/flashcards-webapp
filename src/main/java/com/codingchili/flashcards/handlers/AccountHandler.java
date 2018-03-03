@@ -1,22 +1,16 @@
 package com.codingchili.flashcards.handlers;
 
-import com.codingchili.core.context.CoreContext;
-import com.codingchili.core.listener.CoreHandler;
-import com.codingchili.core.listener.Request;
-import com.codingchili.core.protocol.Address;
-import com.codingchili.core.protocol.Api;
-import com.codingchili.core.protocol.Protocol;
-import com.codingchili.core.protocol.Roles;
 import com.codingchili.flashcards.AppConfig;
-import com.codingchili.flashcards.model.AccountDB;
-import com.codingchili.flashcards.model.AccountMessage;
-import com.codingchili.flashcards.model.AsyncAccountStore;
-import com.codingchili.flashcards.model.FlashAccount;
+import com.codingchili.flashcards.model.*;
 import com.codingchili.flashcards.request.AccountRequest;
 import com.codingchili.flashcards.response.SizeResponse;
 
-import static com.codingchili.core.protocol.RoleMap.PUBLIC;
-import static com.codingchili.core.protocol.RoleMap.USER;
+import com.codingchili.core.context.CoreContext;
+import com.codingchili.core.listener.CoreHandler;
+import com.codingchili.core.listener.Request;
+import com.codingchili.core.protocol.*;
+
+import static com.codingchili.core.protocol.RoleMap.*;
 
 /**
  * Handler controller for authentication.
@@ -64,6 +58,16 @@ public class AccountHandler implements CoreHandler {
     @Api(USER)
     public void read(AccountRequest request) {
         accounts.read(request.authenticatedUser(), request.message()).setHandler(request::result);
+    }
+
+    @Api(USER)
+    @Description("Updates the password of an existing user.")
+    public void updatePassword(AccountRequest request) {
+        accounts.updatePassword(
+                request.authenticatedUser(),
+                request.oldpassword(),
+                request.password())
+                    .setHandler(request::result);
     }
 
     @Api(USER)

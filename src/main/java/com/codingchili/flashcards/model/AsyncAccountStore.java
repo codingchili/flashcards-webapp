@@ -1,9 +1,10 @@
 package com.codingchili.flashcards.model;
 
-import com.codingchili.core.security.Token;
 import io.vertx.core.Future;
 
 import java.util.Collection;
+
+import com.codingchili.core.security.Token;
 
 /**
  * Interface used to handle authentication and the storage of users.
@@ -43,23 +44,36 @@ public interface AsyncAccountStore {
 
     /**
      * Sends a message to another account.
+     *
      * @param receiver the receiver of the message
-     * @param message the message to send.
+     * @param message  the message to send.
      * @return callback.
      */
     Future<Void> message(String receiver, AccountMessage message);
 
     /**
+     * Retrieve messages in an users inbox.
+     *
      * @param username the username to get the inbox of.
      * @return callback.
      */
     Future<Collection<AccountMessage>> inbox(String username);
 
     /**
+     * Marks a message in the users inbox as read.
      *
-     * @param username the user
+     * @param username  the user
      * @param messageId the id of the message to mark as read.
      * @return callback.
      */
     Future<Collection<AccountMessage>> read(String username, String messageId);
+
+    /**
+     * Updates the password of an existing user.
+     *
+     * @param username    the username to change the password for.
+     * @param newpassword the new password to use.
+     * @return callback.
+     */
+    Future<Void> updatePassword(String username, String oldpass, String newpassword);
 }

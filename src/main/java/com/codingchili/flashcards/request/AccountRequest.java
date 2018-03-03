@@ -16,6 +16,7 @@ public class AccountRequest extends RequestWrapper {
     public static final String ID_TITLE = "title";
     public static final String ID_BODY = "body";
     public static final String ID_MESSAGE = "message";
+    public static final String ID_OLD_PASSWORD = "old_password";
 
     public AccountRequest(Request request) {
         super(request);
@@ -51,5 +52,9 @@ public class AccountRequest extends RequestWrapper {
 
     public String message() {
         return data().getString(ID_MESSAGE);
+    }
+
+    public String oldpassword() {
+        return data().getString(ID_OLD_PASSWORD);
     }
 }

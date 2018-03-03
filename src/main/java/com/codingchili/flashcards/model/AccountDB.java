@@ -1,11 +1,5 @@
 package com.codingchili.flashcards.model;
 
-import com.codingchili.core.context.CoreContext;
-import com.codingchili.core.security.HashHelper;
-import com.codingchili.core.security.Token;
-import com.codingchili.core.security.TokenFactory;
-import com.codingchili.core.storage.AsyncStorage;
-import com.codingchili.core.storage.StorageLoader;
 import com.codingchili.flashcards.AppConfig;
 import io.vertx.core.Future;
 
@@ -13,6 +7,11 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
+
+import com.codingchili.core.context.CoreContext;
+import com.codingchili.core.security.*;
+import com.codingchili.core.storage.AsyncStorage;
+import com.codingchili.core.storage.StorageLoader;
 
 import static com.codingchili.core.configuration.CoreStrings.ID_USERNAME;
 
@@ -67,6 +66,26 @@ public class AccountDB implements AsyncAccountStore {
                 }
             });
         }, account.getPassword());
+        return future;
+    }
+
+    @Override
+    public Future<Void> updatePassword(String username, String oldpass, String newpass) {
+        Future<Void> future = Future.future();
+
+        accounts.get(username, get -> {
+            FlashAccount account = get.result();
+
+            hasher.verify(done -> {
+                if (done.succeeded()) {
+                    account.setPassword(hasher.hash(newpass));
+                    accounts.put(account, future);
+                } else {
+                    future.fail(done.cause());
+                }
+            }, account.getPassword(), oldpass);
+        });
+
         return future;
     }
 
