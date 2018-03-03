@@ -57,7 +57,7 @@
                 color: var(--primary-color);
             }
 
-            .container h3 {
+            h3 {
                 text-align: center;
                 font-size: 1.6em;
                 font-weight: 300;
@@ -204,6 +204,9 @@
             .page-section {
                 min-height: 100vh;
             }
+
+
+
         </style>
 
         <section>
@@ -230,14 +233,15 @@
                                 </div>
                                 <div>
                                     <h3>Create</h3>
-                                    <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
-                                        ea.
-                                        Lorem
-                                        ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
-                                        ea.</p>
-                                    <p>Convenire definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.
-                                        Convenire
-                                        definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.</p>
+                                    <p>Create new cards and categories and categorize them by color. A category
+                                        is a collection of cards, typically focused on a single topic. For example
+                                        fish species in the atlantics. A category has a name, color, owner and contains
+                                        cards. Each card has a question or statement, which can be answered by selecting
+                                        one of the given alternatives. If no alternatives are supplied the user will
+                                        have
+                                        the option to correct themselves on each card. The back side of cards could
+                                        contain
+                                        the full answer of the question, or provide just a hint.</p>
                                 </div>
                             </div>
                         </div>
@@ -245,18 +249,19 @@
                         <div id="services" class="tile">
                             <div class="container">
                                 <div class="icon-container">
-                                    <iron-icon class="large" icon="icons:apps"></iron-icon>
+                                    <iron-icon class="large" icon="icons:search"></iron-icon>
                                 </div>
                                 <div>
                                     <h3>Discover</h3>
-                                    <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
-                                        ea.
-                                        Lorem
-                                        ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
-                                        ea.</p>
-                                    <p>Convenire definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.
-                                        Convenire
-                                        definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.</p>
+                                    <p>Categories made by other users can be found using the search functionality.
+                                        When searching the name of the category, its owner and the user rating of the
+                                        category is visible. When an user has completed the cards in a given category
+                                        their score is presented, which is based on the number of correct vs wrong
+                                        guesses and the time taken to complete. The best runs gets recorded in the
+                                        highscore history of the category. The user may also provide feedback on the
+                                        category after completing it by giving it a rating from 1-5 and leaving a
+                                        short message.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -268,14 +273,18 @@
                                 </div>
                                 <div>
                                     <h3>Share</h3>
-                                    <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
-                                        ea.
-                                        Lorem
-                                        ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere
-                                        ea.</p>
-                                    <p>Convenire definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.
-                                        Convenire
-                                        definiebas scriptorem eu cum. Sit dolor dicunt consectetuer no.</p>
+                                    <p>Categories can be shared with other users, simply enter the username's
+                                        of those you want to share with. Its also possible to share categories with
+                                        the public, easy as ticking a box. The sharing functionality allows you to
+                                        benefit
+                                        from other users work. This reduces the time needed to craft cards, so you can
+                                        focus
+                                        on learning!</p>
+
+                                    <p>Using the sharing functionality a card trading system is being
+                                        integrated into the platform. This will introduce micro-payments between users
+                                        using the fast and secure Ethereum blockchain. This will in turn also allow
+                                        you to profit from sharing categories.</p>
                                 </div>
                             </div>
                         </div>
@@ -284,20 +293,27 @@
 
                 <div class="page-section">
                     <hr>
+
+                    <h3>Demo video - what to expect?</h3>
+
                     <div id="video-container">
-                        <iframe id="video" width="768" height="410" src="https://www.youtube.com/embed/1LcJ4d6hzA8" frameborder="0" gesture="media" allowfullscreen></iframe>
+                        <iframe id="video" width="768" height="410" src="https://www.youtube.com/embed/1LcJ4d6hzA8"
+                                frameborder="0" gesture="media" allowfullscreen></iframe>
                     </div>
 
                     <div id="signup">
-                        <paper-button on-click="signup" raised>Sign up</paper-button>
-                        <p>Convinced? hit the button!</p>
+                        <paper-button on-click="signup" raised>Sign up now!</paper-button>
                     </div>
                 </div>
 
                 <div class="page-section">
                     <hr>
                     <div id="the-end">
-                        You made it to the end, lets hope it's not THE end.
+                        <p>
+                            This application is currently in development and some features are yet to be completed.<br>
+                            If you want to read more check out the <a href="." on-click="openFAQ">FAQ</a>.
+                        </p>
+
                         <div class="scroll-area" on-click="scrolltop">
                             <iron-icon class="scroll-icon" icon="icons:arrow-upward"></iron-icon>
                         </div>
@@ -333,7 +349,14 @@
             scrolltop() {
                 this.$.top.scrollIntoView({behavior: 'smooth'});
             }
+
+            openFAQ() {
+                application.publish('route', 'faq');
+            }
         }
         window.customElements.define(StartView.is, StartView);
+
+
+
     </script>
 </dom-module>
