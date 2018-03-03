@@ -1,0 +1,42 @@
+[
+  {
+    "question": "How to create a category?",
+    "answer": "Use the menu -> 'categories' and use the button in the top right corner."
+  },
+  {
+    "question": "How to create cards?",
+    "answer": "First you need to be an owner of the category you want to add cards to. Open the menu -> 'categories' and click on a card. Select 'open' to view the cards in the category. From there you can use the top right button to add new cards."
+  },
+  {
+    "question": "How to share a category with a friend?",
+    "answer": "Open the menu -> 'categories' -> 'edit' -> add the name of the users you want to share the category with. Separate users by ',' or ';' or pressing enter. If you want to share your category with many, consider making it public instead."
+  },
+  {
+    "question": "Why is it not possible to delete a category?",
+    "answer": "Because it would be unfortunate for a small mis-click to remove a hundred cards. Maybe we will enable this feature again in the future."
+  },
+  {
+    "question": "Why does some categories not show up when searching?",
+    "answer": "Only categories that are publicly available, has been shared with your user or bought by you are shown. You may request that the owner shares a category with you if you know them."
+  },
+  {
+    "question": "How to find other categories?",
+    "answer": "Open the menu -> 'search'. From there it is possible to search for categories by owner or category name. "
+  },
+  {
+    "question": "Support for mobile use?",
+    "answer": "A progressive web application can be installed and interacted with in the same way as regular mobile apps. To install flashcards on your mobile phone simply browse to the application and use 'add to homescreen' to enable it. The regular website works well on mobile devices as well."
+  },
+  {
+    "question": "When will blockchain trading be supported?",
+    "answer": "There has been some work done to create a contract for trading. Metamask browser integration and flashcards backend integrations have not been started yet. The currency used will be Ether on the Ethereum network. This feature allows fast peer-to-peer micro-transactions between users with low fees."
+  },
+  {
+    "question": "When will chat rooms be added?",
+    "answer": "This feature will be included in the trading update, at the same time of the blockchain integration. The chat rooms are currently not in progress."
+  },
+  {
+    "question": "I have an idea for an improvement",
+    "answer": "Open an issue on my github page or contact me directly. Find it from the menu -> about -> 'fork me on github'."
+  }
+]
