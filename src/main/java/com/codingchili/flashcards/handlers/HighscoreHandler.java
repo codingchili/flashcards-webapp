@@ -1,22 +1,17 @@
 package com.codingchili.flashcards.handlers;
 
-import com.codingchili.core.context.CoreContext;
-import com.codingchili.core.listener.CoreHandler;
-import com.codingchili.core.listener.Request;
-import com.codingchili.core.protocol.Address;
-import com.codingchili.core.protocol.Api;
-import com.codingchili.core.protocol.Protocol;
-import com.codingchili.core.protocol.Role;
-import com.codingchili.core.security.TokenFactory;
 import com.codingchili.flashcards.AppConfig;
-import com.codingchili.flashcards.model.AsyncHighscoreStore;
-import com.codingchili.flashcards.model.Highscore;
-import com.codingchili.flashcards.model.HighscoreDB;
+import com.codingchili.flashcards.model.*;
 import com.codingchili.flashcards.request.HighscoreRequest;
 import io.vertx.core.Future;
 
-import static com.codingchili.core.protocol.RoleMap.PUBLIC;
-import static com.codingchili.core.protocol.RoleMap.USER;
+import com.codingchili.core.context.CoreContext;
+import com.codingchili.core.listener.CoreHandler;
+import com.codingchili.core.listener.Request;
+import com.codingchili.core.protocol.*;
+import com.codingchili.core.security.TokenFactory;
+
+import static com.codingchili.core.protocol.RoleMap.*;
 
 /**
  * handles the addition and retrieval of highscores.
@@ -53,7 +48,7 @@ public class HighscoreHandler implements CoreHandler {
 
     @Api(PUBLIC)
     public void list(HighscoreRequest request) {
-        request.result(highscores.list(request.getCategoryId()));
+        highscores.list(request.getCategoryId()).setHandler(request::result);
     }
 
     @Override

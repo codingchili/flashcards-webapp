@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/src/flashcards-app/highscore-box.html">
 <link rel="import" href="/src/flashcards-app/card-player.html">
 <link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
@@ -41,6 +42,14 @@
                 bottom: 0;
             }
 
+            .icon-check {
+                color: var(--primary-color);
+            }
+
+            .icon-fail {
+                color: var(--error-color);
+            }
+
             .query {
                 margin-left: 16px;
             }
@@ -63,12 +72,14 @@
             <template is="dom-if" if="[[loaded]]">
                 <div hidden="[[!isOwner(category)]]">
                 <span>
+                    <iron-icon icon="check" class="icon-check" slot="prefix"></iron-icon>
                     This category is owned by you.
                 </span>
                 </div>
 
                 <div hidden="[[!isAuthorized(category)]]">
                 <span>
+                    <iron-icon icon="check" class="icon-check" slot="prefix"></iron-icon>
                     You have access to this category.
                 </span>
                 </div>
@@ -76,22 +87,25 @@
 
                 <div hidden="[[isAuthorized(category)]]">
                 <span>
+                    <iron-icon icon="block" class="icon-fail" slot="prefix"></iron-icon>
                     Not authorized to access this category.
                 </span>
 
                     <div hidden="[[!isPurchaseable(category)]]">
                     <span>
+                        <br>
                         When trading is enabled you may purchase access.
                     </span>
                     </div>
                 </div>
-
-                <div class="buttons button-group">
-                    <paper-button hidden="[[!isAuthorized(category)]]" on-click="startplayer" dialog-confirm>Start
-                    </paper-button>
-                    <paper-button class="cancel-button" dialog-confirm>Close</paper-button>
-                </div>
             </template>
+            <highscore-box id="highscores"></highscore-box>
+
+            <div class="buttons button-group">
+                <paper-button hidden="[[!isAuthorized(category)]]" on-click="startplayer" dialog-confirm>Start
+                </paper-button>
+                <paper-button class="cancel-button" dialog-confirm>Close</paper-button>
+            </div>
         </paper-dialog>
 
         <div hidden="[[!playing]]">
@@ -126,6 +140,7 @@
                     this.loaded = true;
                     this.category = category;
                     this.$['category-dialog'].open();
+                    this.$['highscores'].loadList(category.id);
                 });
             }
 
@@ -157,7 +172,6 @@
 
             startplayer() {
                 this.$.api.cards('list', (cards) => {
-                    console.log(this.category);
                     this.$.cardplayer.start(this.category, cards.collection);
                 }, {
                     category: this.category.id

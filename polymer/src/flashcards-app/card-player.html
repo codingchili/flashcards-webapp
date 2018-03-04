@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="/src/flashcards-app/api-request.html">
+<link rel="import" href="/src/flashcards-app/highscore-box.html">
 <link rel="import" href="/src/flashcards-app/shared-styles.html">
 
 
@@ -108,13 +109,8 @@
                 text-align: center;
             }
 
-            #highscore-box {
+            highscore-box {
                 margin-top: 16px;
-            }
-
-            .highscore-entry {
-                display: flex;
-                justify-content: space-between;
             }
 
             .header {
@@ -212,18 +208,7 @@
                     Correct guesses [[correct]]/[[cards.length]] in [[endtime.minutes]]m [[endtime.seconds]]s.
                 </div>
 
-                <div id="highscore-box">
-                    <h4>Highscores</h4>
-                    <div id="highscore-list">
-                        <template is="dom-repeat" items="{{highscore}}" as="score">
-                            <div class="highscore-entry">
-                                <span class="score">[[score.score]]pts</span>
-                                <span class="user">[[score.user]]</span>
-                                <span class="time">[[score.time]]</span>
-                            </div>
-                        </template>
-                    </div>
-                </div>
+                <highscore-box id="highscores"></highscore-box>
             </div>
             <div class="buttons button-group">
                 <paper-button on-click="restart" dialog-confirm raised autofocus>Try again</paper-button>
@@ -358,7 +343,7 @@
             };
 
             this.$.api.highscores('add', (highscore) => {
-                this.highscore = highscore.list;
+                this.$.highscores.setList(highscore.list);
             }, {
                 seconds: seconds,
                 correct: this.correct,
