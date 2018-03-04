@@ -14,10 +14,11 @@ import java.time.format.DateTimeFormatter;
  * once a Highscore element using the new version is added.
  */
 public class Highscore implements Storable {
-    public static final double VERSION = 1.0;
-    public static final int PENALTY_TIME_WEIGHT = 8;
-    public static final int PENALTY_WRONG_WEIGHT = 40;
-    public static final int SCORE_CORRECT_WEIGHT = 100;
+    static final double VERSION = 1.1;
+    private static final int TIME_BONUS_AMPLIFIER = 2500;
+    private static final int PENALTY_WRONG_WEIGHT = 40;
+    private static final int SCORE_CORRECT_WEIGHT = 100;
+    private static final int MAX_BONUS_SECONDS = 16;
     private String date = ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
     private Double version = VERSION;
     private String time;
@@ -36,11 +37,14 @@ public class Highscore implements Storable {
     private static Integer score(int correct, int wrong, int cards, int seconds) {
         int score = correct * SCORE_CORRECT_WEIGHT;
         score -= wrong * PENALTY_WRONG_WEIGHT;
-        int timePenalty = ((seconds / (correct + 1))) * cards * PENALTY_TIME_WEIGHT;
 
-        if (timePenalty > 0) {
-            score -= timePenalty;
+        // calculate a diminishing bonus over the time to finish.
+        int timeBonus = (int) Math.log((correct * MAX_BONUS_SECONDS) / (seconds + 1)) * TIME_BONUS_AMPLIFIER;
+
+        if (timeBonus > 0) {
+            score += timeBonus;
         }
+
         return score;
     }
 
