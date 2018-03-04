@@ -10,6 +10,8 @@
 <link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="/src/flashcards-app/tag-input.html">
 <link rel="import" href="/src/flashcards-app/api-request.html">
 <link rel="import" href="/src/flashcards-app/card-player.html">
@@ -97,10 +99,21 @@
             card-player {
                 z-index: 50;
             }
+
+            #template {
+                right: 8px;
+                top: 8px;
+                position: absolute;
+            }
+
+
         </style>
 
         <app-location use-hash-as-path route="{{route}}"></app-location>
         <app-route route="{{route}}" pattern="/:view/:category" data="{{page}}"></app-route>
+
+        <iron-a11y-keys id="createHotkey" keys="alt+n" on-keys-pressed="create"></iron-a11y-keys>
+        <iron-a11y-keys id="templateHotkey" keys="alt+t" on-keys-pressed="setTemplate"></iron-a11y-keys>
 
         <div id="toolbar">
             <template is="dom-if" if="[[!playing]]">
@@ -109,7 +122,7 @@
                     <iron-icon icon="refresh"></iron-icon>
                 </div>
                 <div class="toolbar-item" on-tap="create">
-                    <paper-tooltip animation-delay="0" position="bottom">add new</paper-tooltip>
+                    <paper-tooltip animation-delay="0" position="bottom">add new [alt+n]</paper-tooltip>
                     <iron-icon icon="add"></iron-icon>
                 </div>
                 <div class="toolbar-item" on-tap="start">
@@ -121,6 +134,15 @@
 
         <template is="dom-if" if="[[!playing]]">
             <section>
+                <a href="javascript:void(0)" on-click="setTemplate" id="template">
+                    <template is="dom-if" if="[[!templateActive]]">
+                        Apply template
+                    </template>
+                    <template is="dom-if" if="[[templateActive]]">
+                        Update template
+                    </template>
+                </a>
+
                 <div class="header">[[category.name]]</div>
                 <paper-dialog-scrollable>
                     <div id="card-container">
@@ -146,16 +168,32 @@
                 <tag-input value="{{alternative}}" values="{{card.alternatives}}"
                            label="Alternatives"></tag-input>
                 <paper-dropdown-menu label="Answer">
-                    <paper-listbox slot="dropdown-content" selected="{{answer}}">
-                        <template is="dom-repeat" items="[[card.alternatives]]">
+                    <paper-listbox id="alternativesList" slot="dropdown-content" selected="{{answer}}">
+                        <template id="alternativesTemplate" is="dom-repeat" items="[[card.alternatives]]">
                             <paper-item>[[item]]</paper-item>
                         </template>
                     </paper-listbox>
                 </paper-dropdown-menu>
             </paper-dialog-scrollable>
             <div class="buttons button-group">
-                <paper-button on-click="save"raised autofocus>Save</paper-button>
+                <paper-button on-click="save" raised autofocus>Save</paper-button>
                 <paper-button class="cancel-button" dialog-confirm>Cancel</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="template-dialog" modal>
+            <h2>Template</h2>
+            <tag-input id="templateInput" value="{{templateAlternative}}" values="{{templateAlternatives}}"
+                       label="Alternatives" autofocus></tag-input>
+
+            <div>
+                Set a temporary template for alternatives to use when creating new cards. This dialog can
+                be opened using the [alt+t] hotkey combination.
+            </div>
+
+            <div class="buttons button-group">
+                <paper-button raised autofocus dialog-confirm>Apply</paper-button>
+                <paper-button class="cancel-button" on-click="clearTemplate" dialog-confirm>Clear</paper-button>
             </div>
         </paper-dialog>
 
@@ -177,6 +215,7 @@
             super();
             this.api = application.api();
             this.cards = [];
+            this.templateActive = false;
             this.playing = false;
             this.clear();
 
@@ -193,21 +232,36 @@
                 this.category = this.page.category;
                 this.loadCategory(this.category);
             }
+            this.$.templateHotkey.target = document.body;
+            this.$.createHotkey.target = document.body;
         }
 
         edit(e) {
+            this.dialog();
             this.card = e.model.card;
-            this.notifyPath('card.alternatives');
+
+            this.answer = -1;
+            this.updateAlternatives();
             for (let i = 0; i < this.card.alternatives.length; i++) {
                 if (this.card.answer === this.card.alternatives[i]) {
                     this.answer = i;
                 }
             }
-            this.dialog();
+            if (this.answer == -1) {
+                this.answer = 0;
+            }
+        }
+
+        updateAlternatives() {
+            // some hacks to circumvent a bug in dropdown where the title fails to update.
+            this.$.alternativesTemplate.render();
+            this.$.alternativesList.forceSynchronousItemUpdate();
+            this.notifyPath('card.alternatives');
         }
 
         create() {
             this.clear();
+            this.updateAlternatives();
             this.dialog();
         }
 
@@ -217,10 +271,24 @@
                 alternatives: [],
                 altenative: ''
             };
+            if (this.templateActive) {
+                this.card.alternatives = this.templateAlternatives.slice()
+            }
         }
 
         dialog() {
             this.$['create-dialog'].open();
+        }
+
+        setTemplate() {
+            this.templateActive = true;
+            this.$['template-dialog'].open();
+            this.$.templateInput.focus();
+        }
+
+        clearTemplate() {
+            this.templateActive = false;
+            this.templateAlternatives = [];
         }
 
         remove(e) {
@@ -280,4 +348,5 @@
     }
 
     window.customElements.define(CardView.is, CardView);
+
 </script>

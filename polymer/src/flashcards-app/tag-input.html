@@ -19,10 +19,10 @@
                 flex-wrap: wrap;
             }
         </style>
-                <paper-input label="[[label]]" on-keyup="onInput" value="{{value}}"></paper-input>
+                <paper-input id="valueInput" label="[[label]]" on-keyup="onInput" value="{{value}}" autofocus="{{autofocus}}"></paper-input>
                 <div class="chip-list">
                     <template is="dom-repeat" items="{{values}}" as="value">
-                        <paper-chip label="[[value]]" on-click="remove"></paper-chip>
+                        <paper-chip label="{{value}}" on-click="remove"></paper-chip>
                     </template>
                 </div>
     </template>
@@ -50,6 +50,16 @@
                     notify: true
                 }
             }
+        }
+
+        ready() {
+            super.ready();
+            this.autofocus = this.hasAttribute('autofocus');
+        }
+
+        focus() {
+            super.focus();
+            this.$.valueInput.focus();
         }
 
         remove(e) {
