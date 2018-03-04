@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class Highscore implements Storable {
     static final double VERSION = 1.1;
-    private static final int TIME_BONUS_AMPLIFIER = 50;
+    private static final int TIME_BONUS_AMPLIFIER = 1000;
     private static final int PENALTY_WRONG_WEIGHT = 40;
     private static final int SCORE_CORRECT_WEIGHT = 100;
     private static final int MAX_BONUS_SECONDS = 60;
