@@ -36,6 +36,10 @@
     "answer": "This feature will be included in the trading update, at the same time of the blockchain integration. The chat rooms are currently not in progress."
   },
   {
+    "question": "Whats new in version 1.0.13?",
+    "answer": "Added support for using a template to provide alternatives when creating many cards with the same alternatives. Improved the user interface with more icons and a few hotkeys when creating cards. Replaced placeholder text on the start page and added this FAQ page."
+  },
+  {
     "question": "I have an idea for an improvement",
     "answer": "Open an issue on my github page or contact me directly. Find it from the menu -> about -> 'fork me on github'."
   }
