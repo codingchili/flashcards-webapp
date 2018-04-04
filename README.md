@@ -5,6 +5,8 @@ An open source web application to help with managing flashcards. Built as micros
 See the demo for v1.0.0 on [YouTube](https://www.youtube.com/watch?v=1LcJ4d6hzA8).
 Or try it for yourself at [FlashCardsAlligator](https://flashcardsalligator.com/).
 
+![category search](https://raw.githubusercontent.com/codingchili/flashcards-webapp/5dc830d03f2b5b339edbfbd550964f1002744ddb/category-search.png)
+
 ## Build & run
 
 Run from chili-core
