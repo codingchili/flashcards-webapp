@@ -44,6 +44,6 @@ This project makes use of some awesome libraries, including
 It is also built using the [chili-core](https://github.com/codingchili/chili-core) framework!
 
 ## Contributing
-1. Submit a PR
+1. Submit a PR!
 2. Get it reviewed and tested
 3. Deployed to live servers! (TBD)
