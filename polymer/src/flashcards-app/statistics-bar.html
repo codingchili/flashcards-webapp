@@ -103,7 +103,7 @@
 
             retrieve() {
                 let start = performance.now();
-                let latch = this.statistics.length;
+                let latch = 1; // time until first response.
                 let sum = 0;
                 for (let i = 0; i < this.statistics.length; i++) {
                     this.$.api[this.statistics[i].name]('size', (response) => {
