@@ -21,10 +21,10 @@ import static com.codingchili.core.configuration.CoreStrings.ID_USERNAME;
 public class AccountDB implements AsyncAccountStore {
     private TokenFactory factory = AppConfig.tokenFactory();
     private AsyncStorage<FlashAccount> accounts;
-    private HashHelper hasher;
+    private HashFactory hasher;
 
     public AccountDB(CoreContext core) {
-        this.hasher = new HashHelper(core);
+        this.hasher = new HashFactory(core);
         new StorageLoader<FlashAccount>(core)
                 .withPlugin(AppConfig.storage())
                 .withDB(AppConfig.db(), "accounts")
@@ -54,7 +54,7 @@ public class AccountDB implements AsyncAccountStore {
     @Override
     public Future<Token> register(FlashAccount account) {
         Future<Token> future = Future.future();
-        hasher.hash(done -> {
+        hasher.hash(account.getPassword()).setHandler(done -> {
             account.setPassword(done.result());
             account.addProperty("roles", Collections.singletonList("user"));
             account.addProperty("created", Instant.now().getEpochSecond());
@@ -65,7 +65,7 @@ public class AccountDB implements AsyncAccountStore {
                     future.fail(result.cause());
                 }
             });
-        }, account.getPassword());
+        });
         return future;
     }
 
@@ -78,8 +78,13 @@ public class AccountDB implements AsyncAccountStore {
 
             hasher.verify(done -> {
                 if (done.succeeded()) {
-                    account.setPassword(hasher.hash(newpass));
-                    accounts.put(account, future);
+                    hasher.hash(newpass).setHandler(hashed -> {
+                        if (hashed.succeeded()) {
+                            accounts.put(account, future);
+                        } else {
+                            future.fail(hashed.cause());
+                        }
+                    });
                 } else {
                     future.fail(done.cause());
                 }
@@ -94,8 +99,14 @@ public class AccountDB implements AsyncAccountStore {
         token.setDomain(account.getUsername());
         token.setProperties(account.getProperties());
         token.addProperty("issued", Instant.now().getEpochSecond());
-        factory.sign(token);
-        future.complete(token);
+
+        factory.hmac(token).setHandler(done -> {
+            if (done.succeeded()) {
+                future.complete(token);
+            } else {
+                future.fail(done.cause());
+            }
+        });
     }
 
     @Override

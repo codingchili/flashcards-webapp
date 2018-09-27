@@ -9,15 +9,16 @@ import com.codingchili.flashcards.model.FlashCategory;
 /**
  * Request for cards.
  */
-public class CardRequest extends RequestWrapper {
+public class CardRequest implements RequestWrapper {
+    private Request request;
     private FlashCategory category;
 
     public CardRequest(Request request) {
-        super(request);
+        this.request = request;
     }
 
     public String sender() {
-        return super.token().getDomain();
+        return request.token().getDomain();
     }
 
     public FlashCard card() {
@@ -42,5 +43,10 @@ public class CardRequest extends RequestWrapper {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Request request() {
+        return request;
     }
 }

@@ -88,7 +88,8 @@ public class AccountHandler implements CoreHandler {
 
     @Override
     public void handle(Request request) {
-        protocol.get(request.route(), AppConfig.authorize(request))
-                .submit(new AccountRequest(request));
+        AppConfig.authorize(request).setHandler(done -> {
+           protocol.get(request.route(), done.result()).submit(new AccountRequest(request));
+        });
     }
 }

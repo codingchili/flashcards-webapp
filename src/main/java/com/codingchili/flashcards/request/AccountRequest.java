@@ -11,15 +11,16 @@ import static com.codingchili.core.configuration.CoreStrings.*;
 /**
  * Request helper class for authentication.
  */
-public class AccountRequest extends RequestWrapper {
+public class AccountRequest implements RequestWrapper {
     public static final String ID_RECEIVER = "receiver";
     public static final String ID_TITLE = "title";
     public static final String ID_BODY = "body";
     public static final String ID_MESSAGE = "message";
     public static final String ID_OLD_PASSWORD = "old_password";
+    private Request request;
 
     public AccountRequest(Request request) {
-        super(request);
+        this.request = request;
     }
 
     public String username() {
@@ -56,5 +57,10 @@ public class AccountRequest extends RequestWrapper {
 
     public String oldpassword() {
         return data().getString(ID_OLD_PASSWORD);
+    }
+
+    @Override
+    public Request request() {
+        return request;
     }
 }

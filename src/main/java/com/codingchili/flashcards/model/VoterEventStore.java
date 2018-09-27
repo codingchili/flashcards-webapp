@@ -1,6 +1,7 @@
 package com.codingchili.flashcards.model;
 
 import com.codingchili.core.context.CoreContext;
+import com.codingchili.core.storage.IndexedMapPersisted;
 import com.codingchili.core.storage.StorageLoader;
 import io.vertx.core.Future;
 
@@ -13,7 +14,8 @@ public interface VoterEventStore {
      */
     static Future<VoterEventDB> create(CoreContext core) {
         Future<VoterEventDB> future = Future.future();
-        new StorageLoader<VoterEvent>().memIndex(core)
+        new StorageLoader<VoterEvent>(core)
+                .withPlugin(IndexedMapPersisted.class)
                 .withValue(VoterEvent.class)
                 .build(done -> {
                     if (done.succeeded()) {

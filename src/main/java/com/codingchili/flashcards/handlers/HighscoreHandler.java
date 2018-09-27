@@ -19,7 +19,6 @@ import static com.codingchili.core.protocol.RoleMap.*;
 @Address("highscores")
 public class HighscoreHandler implements CoreHandler {
     private Protocol<Request> protocol = new Protocol<>(this);
-    private TokenFactory tokenFactory = AppConfig.tokenFactory();
     private AsyncHighscoreStore highscores;
     private CoreContext core;
 
@@ -53,7 +52,9 @@ public class HighscoreHandler implements CoreHandler {
 
     @Override
     public void handle(Request request) {
-        protocol.get(request.route(), AppConfig.authorize(request))
-                .submit(new HighscoreRequest(request));
+        AppConfig.authorize(request).setHandler(done -> {
+            protocol.get(request.route(), done.result())
+                    .submit(new HighscoreRequest(request));
+        });
     }
 }

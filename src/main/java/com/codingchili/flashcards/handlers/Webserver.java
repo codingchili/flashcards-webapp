@@ -27,7 +27,7 @@ public class Webserver implements CoreService {
                 .setCachingEnabled(false)
                 .setWebRoot(POLYMER));
 
-        core.vertx().createHttpServer(new ListenerSettings().getHttpOptions(core))
+        core.vertx().createHttpServer(new ListenerSettings().getHttpOptions())
                 .requestHandler(router::accept)
                 .listen(443, start);
     }

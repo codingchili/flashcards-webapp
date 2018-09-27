@@ -25,9 +25,13 @@ public class Service implements CoreService {
     private CoreContext core;
 
     public static void main(String[] args) {
-        system().setHandlers(1).setListeners(1).setServices(1).setMetrics(false);
+        system().setHandlers(2)
+                .setListeners(2)
+                .setServices(1)
+                .setMetrics(false);
+
         storage().setMaxResults(64);
-        launcher().setVersion("1.0.12").setApplication("flashcards")
+        launcher().setVersion("1.0.14").setApplication("flashcards")
                 .deployable(Service.class)
                 .setClustered(false);
 

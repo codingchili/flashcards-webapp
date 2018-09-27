@@ -13,10 +13,11 @@ import static com.codingchili.flashcards.model.FlashCategory.ID_USERS;
 /**
  * Helper class to interact with the request data.
  */
-public class CategoryRequest extends RequestWrapper {
+public class CategoryRequest implements RequestWrapper {
+    private Request request;
 
     public CategoryRequest(Request request) {
-        super(request);
+        this.request = request;
     }
 
     public String categoryName() {
@@ -41,5 +42,10 @@ public class CategoryRequest extends RequestWrapper {
 
     public Integer rating() {
         return data().getInteger("rating");
+    }
+
+    @Override
+    public Request request() {
+        return request;
     }
 }

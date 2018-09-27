@@ -1,6 +1,9 @@
 package com.codingchili.flashcards;
 
+import io.vertx.core.Future;
+
 import com.codingchili.core.configuration.Configurable;
+import com.codingchili.core.context.StartupListener;
 import com.codingchili.core.files.Configurations;
 import com.codingchili.core.listener.Request;
 import com.codingchili.core.protocol.Role;
@@ -16,9 +19,15 @@ import java.util.UUID;
 public class AppConfig implements Configurable {
     private static final String APPLICATION_JSON = "application.json";
     private static String secret = getSecretOrDefault();
-    private TokenFactory tokenFactory = new TokenFactory(secret.getBytes());
+    private TokenFactory tokenFactory;
     private String storage = IndexedMapVolatile.class.getName();
     private String database = "data";
+
+    {
+        StartupListener.subscribe(core -> {
+            tokenFactory = new TokenFactory(core, secret.getBytes());
+        });
+    }
 
     public static String db() {
         return get().database;
@@ -28,12 +37,17 @@ public class AppConfig implements Configurable {
         return get().tokenFactory;
     }
 
-    public static Role authorize(Request request) {
-        if (get().tokenFactory.verifyToken(request.token())) {
-            return Role.USER;
-        } else {
-            return Role.PUBLIC;
-        }
+    public static Future<Role> authorize(Request request) {
+        Future<Role> future = Future.future();
+
+        get().tokenFactory.verify(request.token()).setHandler(done -> {
+            if (done.succeeded()) {
+                    future.complete(Role.USER);
+                } else {
+                    future.complete(Role.PUBLIC);
+                }
+        });
+        return future;
     }
 
     @SuppressWarnings("unchecked")

@@ -9,6 +9,7 @@ import com.codingchili.core.protocol.Protocol;
 import com.codingchili.core.protocol.Role;
 import com.codingchili.core.protocol.exception.AuthorizationRequiredException;
 import com.codingchili.core.security.TokenFactory;
+
 import com.codingchili.flashcards.AppConfig;
 import com.codingchili.flashcards.model.*;
 import com.codingchili.flashcards.request.CardRequest;
@@ -71,19 +72,21 @@ public class CardHandler implements CoreHandler {
     public void handle(Request req) {
         CardRequest request = new CardRequest(req);
 
-        if (factory.verifyToken(request.token())) {
-            FlashCard card = request.card();
-            if (card.getCategory() != null) {
-                categories.get(card.getCategory()).setHandler(get -> {
-                    request.setCategory(get.result());
+        factory.verify(request.token()).setHandler(done -> {
+            if (done.succeeded()) {
+                FlashCard card = request.card();
+                if (card.getCategory() != null) {
+                    categories.get(card.getCategory()).setHandler(get -> {
+                        request.setCategory(get.result());
+                        handle(Role.USER, request);
+                    });
+                } else {
                     handle(Role.USER, request);
-                });
+                }
             } else {
-                handle(Role.USER, request);
+                handle(Role.PUBLIC, request);
             }
-        } else {
-            handle(Role.PUBLIC, request);
-        }
+        });
     }
 
     private void handle(Role role, CardRequest request) {

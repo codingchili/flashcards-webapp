@@ -13,6 +13,8 @@ public class VoterEvent implements Storable {
     private String category;
     private Long createdAt;
 
+    public VoterEvent() {}
+
     public VoterEvent(String user, String category) {
         this.user = user;
         this.category = category;
