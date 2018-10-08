@@ -1,3 +1,3 @@
 @echo off
 echo 'Starting ${app} version ${version} ..'
-java -jar ${jar}
+java -jar ${jar} --deploy
