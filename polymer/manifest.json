@@ -5,5 +5,11 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff"
+  "theme_color": "#ec407a",
+  "background_color": "#ffffff",
+  "icons": [{
+    "src": "card-128.png",
+    "sizes": "128x128",
+    "type": "image/png"
+  }]
 }
