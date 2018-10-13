@@ -33,7 +33,7 @@ const application = {
     authenticated: false,
 
     api: function () {
-        return location.origin + ":8180";
+        return location.protocol + "//" + location.hostname + ":8180";
     },
 
     onAuthenticated: function (token) {
