@@ -6,6 +6,7 @@
     "index.html",
     "**/*.json",
     "**/*.jpeg",
+    "**/*.webp",
     "**/*.ico"
   ],
   "extraDependencies": [
