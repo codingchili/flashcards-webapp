@@ -31,7 +31,7 @@ public class Webserver implements CoreService {
         core.vertx().createHttpServer(
                 new ListenerSettings().getHttpOptions()
                         .setCompressionSupported(true))
-                .requestHandler(router::accept)
+                .requestHandler(router)
                 .listen(443, start);
     }
 }

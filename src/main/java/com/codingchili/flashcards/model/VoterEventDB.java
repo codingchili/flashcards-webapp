@@ -23,11 +23,9 @@ public class VoterEventDB implements VoterEventStore {
         this.voters = voters;
         this.logger = voters.context().logger(getClass());
 
-        new EntryWatcher<>(voters, () -> {
-            return voters.query(VoterEvent.CREATED)
-                    .between(0L, getLastValidSecond())
-                    .setName("removeOldVoteEvents");
-        }, () -> POLL_RATE_MS).start(this::remove);
+        new EntryWatcher<>(voters, () -> voters.query(VoterEvent.CREATED)
+                .between(0L, getLastValidSecond())
+                .setName("removeOldVoteEvents"), () -> POLL_RATE_MS).start(this::remove);
     }
 
     private Long getLastValidSecond() {
