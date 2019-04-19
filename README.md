@@ -45,11 +45,16 @@ It is also built using the [chili-core](https://github.com/codingchili/chili-cor
 
 ## Updating certificates on the demo environment
 ```console
-sudo certbot renew
-copy fullchain.pem and privkey.pem from /etc/letsencrypt/live/flashcardsalligator.com/
+# force if certbot says certs are not due for renewal yet.
+sudo certbot renew --force-renewal
+sudo cp /etc/letsencrypt/live/flashcardsalligator.com/privkey.pem ./
+sudo cp /etc/letsencrypt/live/flashcardsalligator.com/fullchain.pem ./
+
+# remember to set a password for the intermediate keystore, keytool bugs out otherwise.
 openssl pkcs12 -export -out keystore.pkcs12 -in fullchain.pem -inkey privkey.pem
-keytool -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -destkeystore keystore.jks
-replace the keystore.jks in the installation.
+
+# genereate the java keystore
+keytool -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -destkeystore keystore2.jks
 ```
 
 ## Contributing
