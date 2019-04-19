@@ -43,6 +43,15 @@ This project makes use of some awesome libraries, including
 
 It is also built using the [chili-core](https://github.com/codingchili/chili-core) framework!
 
+## Updating certificates on the demo environment
+```console
+sudo certbot renew
+copy fullchain.pem and privkey.pem from /etc/letsencrypt/live/flashcardsalligator.com/
+openssl pkcs12 -export -out keystore.pkcs12 -in fullchain.pem -inkey privkey.pem
+keytool -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -destkeystore keystore.jks
+replace the keystore.jks in the installation.
+```
+
 ## Contributing
 1. Submit a PR!
 2. Get it reviewed and tested
