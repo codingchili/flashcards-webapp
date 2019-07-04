@@ -9,17 +9,22 @@ Or try it for yourself at [FlashCardsAlligator](https://flashcardsalligator.com/
 
 ## Build & run
 
-Run from chili-core
-
-``` gradle install -x test ``` 
-
 Build the flashcards jar
 
-``` gradle jar ``` 
+```console
+gradlew jar
+``` 
 
 Start the app
 
-``` java -jar <filename>.jar ``` 
+```console
+java -jar <filename>.jar
+``` 
+
+Package distribution
+```console
+gradlew archiveZip
+```
 
 ## Features
 Planned features
