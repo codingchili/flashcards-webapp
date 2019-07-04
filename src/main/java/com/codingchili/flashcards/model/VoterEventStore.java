@@ -3,8 +3,13 @@ package com.codingchili.flashcards.model;
 import com.codingchili.core.context.CoreContext;
 import com.codingchili.core.storage.IndexedMapPersisted;
 import com.codingchili.core.storage.StorageLoader;
+
+import com.codingchili.flashcards.AppConfig;
 import io.vertx.core.Future;
 
+/**
+ * Persists voting events to disk.
+ */
 public interface VoterEventStore {
     /**
      * Creates a new storage for voter events.
@@ -17,6 +22,7 @@ public interface VoterEventStore {
         new StorageLoader<VoterEvent>(core)
                 .withPlugin(IndexedMapPersisted.class)
                 .withValue(VoterEvent.class)
+                .withDB(AppConfig.db())
                 .build(done -> {
                     if (done.succeeded()) {
                         future.complete(new VoterEventDB(done.result()));

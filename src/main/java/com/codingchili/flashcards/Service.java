@@ -55,7 +55,7 @@ public class Service implements CoreService {
                 core.service(Webserver::new),
 
                 core.listener(() -> new RestListener()
-                        .settings(() -> new ListenerSettings()
+                        .settings(new ListenerSettings()
                                 .setPort(8180)
                                 .setMaxRequestBytes(16384))
                         .handler(new BusRouter())))

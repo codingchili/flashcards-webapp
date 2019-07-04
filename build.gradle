@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.codingchili.chili-core:core:1.1.0'
+    compile 'com.github.codingchili.chili-core:core:1.2.0'
     compile 'org.web3j:core:2.3.1@jar'
-    testCompile 'io.vertx:vertx-unit:3.5.1'
+    testCompile 'io.vertx:vertx-unit:3.7.1'
     testCompile 'junit:junit:4.12'
 }
 

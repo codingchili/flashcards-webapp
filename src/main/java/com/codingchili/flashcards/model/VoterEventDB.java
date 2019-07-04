@@ -1,5 +1,6 @@
 package com.codingchili.flashcards.model;
 
+import com.codingchili.core.context.TimerSource;
 import com.codingchili.core.logging.Logger;
 import com.codingchili.core.storage.AsyncStorage;
 import com.codingchili.core.storage.EntryWatcher;
@@ -25,7 +26,7 @@ public class VoterEventDB implements VoterEventStore {
 
         new EntryWatcher<>(voters, () -> voters.query(VoterEvent.CREATED)
                 .between(0L, getLastValidSecond())
-                .setName("removeOldVoteEvents"), () -> POLL_RATE_MS).start(this::remove);
+                .setName("removeOldVoteEvents"), TimerSource.of(POLL_RATE_MS)).start(this::remove);
     }
 
     private Long getLastValidSecond() {
