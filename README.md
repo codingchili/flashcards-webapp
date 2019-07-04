@@ -9,17 +9,22 @@ Or try it for yourself at [FlashCardsAlligator](https://flashcardsalligator.com/
 
 ## Build & run
 
-Run from chili-core
-
-``` gradle install -x test ``` 
-
 Build the flashcards jar
 
-``` gradle jar ``` 
+```console
+gradlew jar
+``` 
 
 Start the app
 
-``` java -jar <filename>.jar ``` 
+```console
+java -jar <filename>.jar
+``` 
+
+Package distribution
+```console
+gradlew archiveZip
+```
 
 ## Features
 Planned features
@@ -42,6 +47,20 @@ This project makes use of some awesome libraries, including
 - [polymer](https://github.com/Polymer/polymer)
 
 It is also built using the [chili-core](https://github.com/codingchili/chili-core) framework!
+
+## Updating certificates on the demo environment
+```console
+# force if certbot says certs are not due for renewal yet.
+sudo certbot renew --force-renewal
+sudo cp /etc/letsencrypt/live/flashcardsalligator.com/privkey.pem ./
+sudo cp /etc/letsencrypt/live/flashcardsalligator.com/fullchain.pem ./
+
+# remember to set a password for the intermediate keystore, keytool bugs out otherwise.
+openssl pkcs12 -export -out keystore.pkcs12 -in fullchain.pem -inkey privkey.pem
+
+# genereate the java keystore
+keytool -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -destkeystore keystore2.jks
+```
 
 ## Contributing
 1. Submit a PR!
